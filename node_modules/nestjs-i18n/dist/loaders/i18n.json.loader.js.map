@@ -1,0 +1,1 @@
+{"version":3,"file":"i18n.json.loader.js","sourceRoot":"","sources":["../../src/loaders/i18n.json.loader.ts"],"names":[],"mappings":";;;AAAA,iEAGgC;AAEhC,MAAa,cAAe,SAAQ,yCAAkB;IACpD,iBAAiB;QACf,OAAO;YACL,WAAW,EAAE,QAAQ;YACrB,KAAK,EAAE,KAAK;SACb,CAAC;IACJ,CAAC;IACD,UAAU,CAAC,IAAS;QAClB,OAAO,IAAI,CAAC,KAAK,CAAC,IAAI,CAAC,CAAC;IAC1B,CAAC;CACF;AAVD,wCAUC"}
