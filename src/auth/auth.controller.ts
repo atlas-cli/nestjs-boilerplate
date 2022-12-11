@@ -32,16 +32,10 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 export class AuthController {
   constructor(public service: AuthService) {}
 
-  @Post('email/login')
+  @Post('login')
   @HttpCode(HttpStatus.OK)
   public async login(@Body() loginDto: AuthEmailLoginDto) {
     return this.service.validateLogin(loginDto, false);
-  }
-
-  @Post('admin/email/login')
-  @HttpCode(HttpStatus.OK)
-  public async adminLogin(@Body() loginDTO: AuthEmailLoginDto) {
-    return this.service.validateLogin(loginDTO, true);
   }
 
   @Post('email/register')

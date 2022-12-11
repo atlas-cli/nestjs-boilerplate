@@ -5,7 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from './../users/users.module';
 import { IsExist } from './../common/utils/validators/is-exists.validator';
 import { IsNotExist } from './../common/utils/validators/is-not-exists.validator';
 import { ForgotModule } from './forgot/forgot.module';
