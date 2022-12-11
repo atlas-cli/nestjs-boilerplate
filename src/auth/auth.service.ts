@@ -29,7 +29,7 @@ export class AuthService {
   async validateLogin(
     loginDto: AuthEmailLoginDto,
     onlyAdmin: boolean,
-  ): Promise<{ token: string; user: User }> {
+  ): Promise<{ accessToken: string; user: User }> {
     const user = await this.usersService.findOne({
       email: loginDto.email,
     });
@@ -70,12 +70,12 @@ export class AuthService {
     );
 
     if (isValidPassword) {
-      const token = await this.jwtService.sign({
+      const accessToken = await this.jwtService.sign({
         id: user.id,
         role: user.role,
       });
 
-      return { token, user: user };
+      return { accessToken, user: user };
     } else {
       throw new HttpException(
         {

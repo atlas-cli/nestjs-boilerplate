@@ -1,9 +1,13 @@
+import { query } from 'express';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateUser1604164774154 implements MigrationInterface {
   name = 'CreateUser1604164774154';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
+    );
     await queryRunner.query(
       `CREATE TABLE "file" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "path" character varying NOT NULL, CONSTRAINT "PK_36b46d232307066b3a2c9ea3a1d" PRIMARY KEY ("id"))`,
     );

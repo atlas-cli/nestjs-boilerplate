@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
+console.log(__dirname + '/../**/*.entity{.ts,.js}');
+console.log(__dirname + '/migrations/**/*{.ts,.js}');
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -19,7 +21,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       dropSchema: false,
       keepConnectionAlive: true,
       logging: this.configService.get('app.nodeEnv') !== 'production',
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {
         entitiesDir: 'src',
