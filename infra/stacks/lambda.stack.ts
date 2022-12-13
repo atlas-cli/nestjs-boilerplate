@@ -6,6 +6,7 @@ import { join } from 'path'
 import { NodejsFunction, } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { RDS } from 'aws-sdk';
+import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class LambdaServiceStack extends Stack {
     constructor(app: App, id: string, { stage }: any) {
@@ -15,11 +16,19 @@ export class LambdaServiceStack extends Stack {
 
         const roleArn = cdk.Fn.importValue(auroraName + '-role');
         const role = iam.Role.fromRoleArn(this, 'DbRole', roleArn);
-        
+        const vpc = Vpc.fromVpcAttributes(this, 'DbVpc', {
+            vpcId: cdk.Fn.importValue(auroraName + '-vpc-id',),
+            availabilityZones: ['sa-east-1'],
+            publicSubnetIds: [cdk.Fn.importValue(auroraName + '-subnet-id-2',), cdk.Fn.importValue(auroraName + '-subnet-id-2',)]
+        });
+        const securityGroup = SecurityGroup.fromSecurityGroupId(this, 'DbSecurityGroup', cdk.Fn.importValue(auroraName + '-security-group-id'));
 
         const httpLambda = new NodejsFunction(this, name, {
             functionName: name,
             role,
+            vpc,
+            securityGroups: [securityGroup,],
+            allowPublicSubnet: true,
             bundling: {
                 minify: true,
                 externalModules: [
@@ -37,8 +46,12 @@ export class LambdaServiceStack extends Stack {
                     'hbs',
                     'nestjs-redoc',
                     'cache-manager',
+                    'fsevents',
+                    'fastify-swagger',
+                    'swagger-ui-express',
                 ],
                 nodeModules: [
+                    'aws-serverless-express',
                     '@nestjs/microservices',
                     'pg',
                 ],
@@ -65,8 +78,9 @@ export class LambdaServiceStack extends Stack {
                 DATABASE_HOST: cdk.Fn.importValue(auroraName + '-host'),
                 DATABASE_USERNAME: 'postgres',
                 DATABASE_PORT: '5432',
-                DATABASE_NAME: 'aurora-stack-auroraqadbclusterc48fb8ef-0c3tn1t75bys',
+                DATABASE_NAME: 'postgres',
                 DATABASE_REJECT_UNAUTHORIZED: 'true',
+                DATABASE_SSL_ENABLED: 'true'
             },
         });
 

@@ -16,7 +16,7 @@ import { ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 
 export class AuroraServerlessV2Stack extends cdk.Stack {
   constructor(scope: Construct, id: string, { stage }: any) {
-    super(scope, id, );
+    super(scope, id,);
     const name = 'aurora-' + stage;
 
 
@@ -68,15 +68,15 @@ export class AuroraServerlessV2Stack extends cdk.Stack {
       securityGroups: [dbSecurityGroup],
       iamAuth: true,
     });
-    
-    const role = new iam.Role(this, 'DBProxyRole', { 
+
+    const role = new iam.Role(this, 'DBProxyRole', {
       assumedBy: new iam.AnyPrincipal,
       managedPolicies: [
         ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"),
         ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
-    ]
+      ]
     });
-    proxy.grantConnect(role, 'admin');
+    proxy.grantConnect(role, 'postgres');
     // add capacity to the db cluster to enable scaling
     Aspects.of(dbCluster).add({
       visit(node) {
@@ -87,6 +87,22 @@ export class AuroraServerlessV2Stack extends cdk.Stack {
           };
         }
       }
+    });
+    new CfnOutput(this, 'DatabaseVpcId', {
+      value: vpc.vpcId,
+      exportName: name + '-vpc-id',
+    });
+    new CfnOutput(this, 'DatabaseSubnetId1', {
+      value: vpc.publicSubnets[0].subnetId,
+      exportName: name + '-subnet-id-1',
+    });
+    new CfnOutput(this, 'DatabaseSubnetId2', {
+      value: vpc.publicSubnets[1].subnetId,
+      exportName: name + '-subnet-id-2',
+    });
+    new CfnOutput(this, 'DatabaseSecurityGroup', {
+      value: dbSecurityGroup.securityGroupId,
+      exportName: name + '-security-group-id',
     });
     new CfnOutput(this, 'AuroraStackHost', {
       value: proxy.endpoint,
