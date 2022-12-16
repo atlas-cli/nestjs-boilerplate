@@ -1,106 +1,54 @@
-import { ContentHandling, Cors, LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
-import * as cdk from 'aws-cdk-lib';
-import { App, Duration, Stack } from 'aws-cdk-lib';
-import { join } from 'path'
-import { NodejsFunction, } from 'aws-cdk-lib/aws-lambda-nodejs';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import { RDS } from 'aws-sdk';
-import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { App, Stack } from 'aws-cdk-lib';
+import { AuroraDatabaseVpc } from '../constructs/aurora-database-vpc/aurora-database-vpc.construct';
+import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
+import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
+import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambda-nestjs-function.constructs';
+import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
 
 export class LambdaServiceStack extends Stack {
-    constructor(app: App, id: string, { stage }: any) {
-        super(app, id);
-        const name = 'lambda-service-' + stage;
-        const auroraName = 'aurora-' + stage;
+  constructor(app: App, id: string, { stage }: any) {
+    super(app, id);
+    const name = 'lambda-service-' + stage;
+    const auroraName = 'aurora-' + stage;
 
-        const roleArn = cdk.Fn.importValue(auroraName + '-role');
-        const role = iam.Role.fromRoleArn(this, 'DbRole', roleArn);
-        const vpc = Vpc.fromVpcAttributes(this, 'DbVpc', {
-            vpcId: cdk.Fn.importValue(auroraName + '-vpc-id',),
-            availabilityZones: ['sa-east-1'],
-            publicSubnetIds: [cdk.Fn.importValue(auroraName + '-subnet-id-2',), cdk.Fn.importValue(auroraName + '-subnet-id-2',)]
-        });
-        const securityGroup = SecurityGroup.fromSecurityGroupId(this, 'DbSecurityGroup', cdk.Fn.importValue(auroraName + '-security-group-id'));
+    // import vpc, and rds proxy
+    const { vpc, securityGroup } = AuroraDatabaseVpc.fromName(this, auroraName);
+    const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
+      this,
+      auroraName,
+      securityGroup,
+    );
 
-        const httpLambda = new NodejsFunction(this, name, {
-            functionName: name,
-            role,
-            vpc,
-            securityGroups: [securityGroup,],
-            allowPublicSubnet: true,
-            bundling: {
-                minify: true,
-                externalModules: [
-                    'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
-                    'kafkajs',
-                    'mqtt',
-                    'amqplib',
-                    'amqp-connection-manager',
-                    'nats',
-                    '@grpc/grpc-js',
-                    '@grpc/proto-loader',
-                    '@nestjs/websockets/socket-module',
-                    'class-transformer/storage',
-                    'pg-native',
-                    'hbs',
-                    'nestjs-redoc',
-                    'cache-manager',
-                    'fsevents',
-                    'fastify-swagger',
-                    'swagger-ui-express',
-                ],
-                nodeModules: [
-                    'aws-serverless-express',
-                    '@nestjs/microservices',
-                    'pg',
-                ],
-                commandHooks: {
-                    afterBundling(inputDir: string, outputDir: string): string[] {
-                        return [];
-                    },
-                    beforeInstall(inputDir: string, outputDir: string): string[] {
-                        return [];
-                    },
-                    beforeBundling(inputDir: string, outputDir: string): string[] {
-                        console.log(inputDir);
-                        return [];
-                    },
-                },
-            },
-            memorySize: 2048,
-            timeout: Duration.seconds(6),
-            depsLockFilePath: join(__dirname, '..', '..', '..', 'package-lock.json'),
-            entry: join(__dirname, '..', '..', '..', 'dist', 'app', 'users', 'server.js'),
-            runtime: Runtime.NODEJS_16_X,
-            environment: {
-                DATABASE_TYPE: 'postgres',
-                DATABASE_HOST: cdk.Fn.importValue(auroraName + '-host'),
-                DATABASE_USERNAME: 'postgres',
-                DATABASE_PORT: '5432',
-                DATABASE_NAME: 'postgres',
-                DATABASE_REJECT_UNAUTHORIZED: 'true',
-                DATABASE_SSL_ENABLED: 'true'
-            },
-        });
+    // create iam role
+    const { role } = new LambdaRole(this, 'LambdaRole');
 
-        // Integrate the Lambda functions with the API Gateway resource
-        const httpIntegration = new LambdaIntegration(httpLambda, {
-            contentHandling: ContentHandling.CONVERT_TO_TEXT,
-        });
+    // grant access to lambda connect in aurora database
+    proxy.grantConnect(role, 'postgres');
 
+    // create nodejs function
+    const { nodejsFunction } = new LambdaNestJsFunction(
+      this,
+      'NodeJsFunction',
+      {
+        functionName: 'users',
+        moduleName: 'users',
+        vpc,
+        securityGroups: [securityGroup],
+      },
+    );
 
-        // Create an API Gateway resource for each of the CRUD operations
-        const api = new RestApi(this, name + '-api-gateway', {
-            restApiName: name + '-api-gateway',
-            // binaryMediaTypes: ['*/*'],
-            binaryMediaTypes: ['text/plain'],
-            defaultCorsPreflightOptions: {
-                allowOrigins: Cors.ALL_ORIGINS,
-            },
-        });
+    // Create an API Gateway resource for each of the CRUD operations
+    const { api } = new ApiGateway(this, name + '-api-gateway', {
+      restApiName: name + '-api-gateway',
+    });
 
-        const items = api.root.addResource('{proxy+}');
-        items.addMethod('ANY', httpIntegration);
-    }
+    // Integrate the Lambda functions with the API Gateway resource
+    const httpIntegration = new LambdaIntegration(nodejsFunction, {
+      proxy: true,
+    });
+
+    const items = api.root.addResource('{proxy+}');
+    items.addMethod('ANY', httpIntegration);
+  }
 }

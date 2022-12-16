@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { readFileSync } from 'fs';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
+    console.log('lalalalaaaa');
     return {
       type: this.configService.get('database.type'),
       url: this.configService.get('database.url'),
@@ -17,30 +20,18 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: this.configService.get('database.name'),
       synchronize: this.configService.get('database.synchronize'),
       dropSchema: false,
-      keepConnectionAlive: true,
+      keepConnectionAlive: false,
       logging: this.configService.get('app.nodeEnv') !== 'production',
-      entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      ssl: true,
       cli: {
         entitiesDir: 'src',
         migrationsDir: 'src/database/migrations',
         subscribersDir: 'subscriber',
       },
       extra: {
-        // based on https://node-postgres.com/api/pool
-        // max connection pool size
-        max: this.configService.get('database.maxConnections'),
-        ssl: this.configService.get('database.sslEnabled')
-          ? {
-              rejectUnauthorized: this.configService.get(
-                'database.rejectUnauthorized',
-              ),
-              ca: this.configService.get('database.ca') ?? undefined,
-              key: this.configService.get('database.key') ?? undefined,
-              cert: this.configService.get('database.cert') ?? undefined,
-            }
-          : undefined,
-      },
-    } as TypeOrmModuleOptions;
+        sslmode: 'verify-full',
+        sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
+      }
+    } as PostgresConnectionOptions;
   }
 }

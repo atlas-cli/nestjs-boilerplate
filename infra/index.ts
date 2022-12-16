@@ -1,8 +1,13 @@
 import { App, } from 'aws-cdk-lib';
-import { AuroraServerlessV2Stack } from './stacks/aurora.stack';
+import { AuroraStack } from './stacks/aurora.stack';
 import { LambdaServiceStack } from './stacks/lambda.stack';
 
+// application
 const app = new App();
-new AuroraServerlessV2Stack(app, 'aurora-stack', { stage: 'qa'  });
+
+// stacks
+new AuroraStack(app, 'aurora-stack', { stage: 'qa'  });
 new LambdaServiceStack(app, 'lambda-service-stack', { stage: 'qa' });
+
+// run synth
 app.synth();

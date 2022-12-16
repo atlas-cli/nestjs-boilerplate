@@ -9,7 +9,7 @@ export default registerAs('database', () => {
     hostname: process.env.DATABASE_HOST,
     port: 5432,
     username: process.env.DATABASE_USERNAME,
-  });
+  }); 
   const config = ({
     type: process.env.DATABASE_TYPE,
     host: process.env.DATABASE_HOST,
@@ -20,6 +20,10 @@ export default registerAs('database', () => {
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
     maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10) || 100,
     sslEnabled: process.env.DATABASE_SSL_ENABLED === 'true',
+    rejectUnauthorized: process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
+    ca: process.env.DATABASE_CA,
+    key: process.env.DATABASE_KEY,
+    cert: process.env.DATABASE_CERT,
   });
   console.log('database config: ', JSON.stringify(config),);
   return config;

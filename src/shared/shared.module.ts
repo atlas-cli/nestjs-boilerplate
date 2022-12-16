@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtStrategy } from './../common/strategies/jwt.strategy';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
@@ -20,6 +22,16 @@ import { TypeOrmConfigService } from './../common/database/typeorm-config.servic
             ],
             envFilePath: ['.env'],
         }),
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get('auth.secret'),
+                signOptions: {
+                    expiresIn: configService.get('auth.expires'),
+                },
+            }),
+        }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,
             dataSourceFactory: async (options) => {
@@ -30,7 +42,7 @@ import { TypeOrmConfigService } from './../common/database/typeorm-config.servic
         I18nModule.forRootAsync({
             useFactory: (configService: ConfigService) => ({
                 fallbackLanguage: configService.get('app.fallbackLanguage'),
-                loaderOptions: { path: join(__dirname, '../i18n/'), watch: false },
+                loaderOptions: { path: join(__dirname, '/i18n/'), watch: false },
             }),
             resolvers: [
                 {
@@ -46,5 +58,7 @@ import { TypeOrmConfigService } from './../common/database/typeorm-config.servic
         }),
     ],
     controllers: [],
+    providers: [JwtStrategy],
+    exports: [JwtStrategy, JwtModule, ],
 })
 export class SharedModule { }
