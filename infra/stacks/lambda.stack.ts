@@ -5,23 +5,30 @@ import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-
 import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
 import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambda-nestjs-function.constructs';
 import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
+import { ApplicationProps } from '../props/appplication.props';
 
-export class LambdaServiceStack extends Stack {
-  constructor(app: App, id: string, { stage }: any) {
+export class LambdaStack extends Stack {
+  constructor(app: App, id: string, applicationProps: ApplicationProps) {
     super(app, id);
-    const name = 'lambda-service-' + stage;
-    const auroraName = 'aurora-' + stage;
+    const { applicationName, stageName } = applicationProps;
+    const createAuroraDatabaseName = (name: string) =>
+      `${stageName}-${applicationName}-aurora-database-${name}`;
+    const createName = (name: string) =>
+      `${stageName}-${applicationName}-lambda-${name}`;
 
     // import vpc, and rds proxy
-    const { vpc, securityGroup } = AuroraDatabaseVpc.fromName(this, auroraName);
+    const { vpc, securityGroup } = AuroraDatabaseVpc.fromName(
+      this,
+      createAuroraDatabaseName('vpc'),
+    );
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
-      auroraName,
+      createAuroraDatabaseName('proxy'),
       securityGroup,
     );
 
     // create iam role
-    const { role } = new LambdaRole(this, 'LambdaRole');
+    const { role } = new LambdaRole(this, createName('role'), applicationProps);
 
     // grant access to lambda connect in aurora database
     proxy.grantConnect(role, 'postgres');
@@ -29,8 +36,9 @@ export class LambdaServiceStack extends Stack {
     // create nodejs function
     const { nodejsFunction } = new LambdaNestJsFunction(
       this,
-      'NodeJsFunction',
+      createName('function'),
       {
+        ...applicationProps,
         functionName: 'users',
         moduleName: 'users',
         vpc,
@@ -39,16 +47,17 @@ export class LambdaServiceStack extends Stack {
     );
 
     // Create an API Gateway resource for each of the CRUD operations
-    const { api } = new ApiGateway(this, name + '-api-gateway', {
-      restApiName: name + '-api-gateway',
-    });
+    // const { api } = new ApiGateway(this, createName('http'), {
+    //   ...applicationProps,
+    //   restApiName: createName('http'),
+    // // });
 
-    // Integrate the Lambda functions with the API Gateway resource
-    const httpIntegration = new LambdaIntegration(nodejsFunction, {
-      proxy: true,
-    });
+    // // Integrate the Lambda functions with the API Gateway resource
+    // const httpIntegration = new LambdaIntegration(nodejsFunction, {
+    //   proxy: true,
+    // });
 
-    const items = api.root.addResource('{proxy+}');
-    items.addMethod('ANY', httpIntegration);
+    // const items = api.root.addResource('{proxy+}');
+    // items.addMethod('ANY', httpIntegration);
   }
 }

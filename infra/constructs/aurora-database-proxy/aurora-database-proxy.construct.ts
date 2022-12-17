@@ -8,51 +8,65 @@ export class AuroraDatabaseProxy extends Construct {
   proxy: rds.DatabaseProxy;
   constructor(scope: Construct, id: string, props?: AuroraDatabaseProxyProps) {
     super(scope, id);
-    const name = 'aurora-database-proxy';
-    const { auroraDatabaseCluster, auroraDatabaseVpc } = props;
+    const {
+      applicationName,
+      stageName,
+      createNameCustom,
+      auroraDatabaseVpc,
+      auroraDatabaseCluster,
+    } = props;
+    const createName: any =
+      createNameCustom !== undefined
+        ? createNameCustom(stageName, applicationName)
+        : (name: string) =>
+            `${stageName}-${applicationName}-aurora-database-${name}`;
     const { vpc, dbSecurityGroup } = auroraDatabaseVpc;
-    
+
     // create database proxy
-    this.proxy = new rds.DatabaseProxy(this, 'Proxy', {
-      dbProxyName: name,
+    this.proxy = new rds.DatabaseProxy(this, createName('proxy'), {
+      dbProxyName: createName('proxy'),
       proxyTarget: rds.ProxyTarget.fromCluster(auroraDatabaseCluster),
       secrets: [auroraDatabaseCluster.secret!],
       vpc,
       securityGroups: [dbSecurityGroup],
       iamAuth: true,
     });
-
-    // exports
-    new CfnOutput(this, 'AuroraDatabaseProxyArn', {
-      value: this.proxy.dbProxyArn,
-      exportName: name + '-arn',
-    });
-    new CfnOutput(this, 'AuroraDatabaseProxyName', {
-      value: this.proxy.dbProxyName,
-      exportName: name + '-name',
-    });
-    new CfnOutput(this, 'AuroraDatabaseProxyEndpoint', {
-      value: this.proxy.endpoint,
-      exportName: name + '-endpoint',
-    });
-    new CfnOutput(this, 'AuroraDatabaseProxyHost', {
-      value: this.proxy.endpoint,
-      exportName: name + '-host',
-    });
+    this.exports(createName('proxy'));
   }
 
   // export resources
-  exports(name: string) {}
+  exports(scopedName: string) {
+    const createName = (name: string) => `${scopedName}-${name}`;
+    // exports
+    new CfnOutput(this, createName('arn'), {
+      value: this.proxy.dbProxyArn,
+      exportName: createName('arn'),
+    });
+    new CfnOutput(this, createName('name'), {
+      value: this.proxy.dbProxyName,
+      exportName: createName('name'),
+    });
+    new CfnOutput(this, createName('endpoint'), {
+      value: this.proxy.endpoint,
+      exportName: createName('endpoint'),
+    });
+    new CfnOutput(this, createName('host'), {
+      value: this.proxy.endpoint,
+      exportName: createName('host'),
+    });
+  }
 
   // import resrouces
-  static fromNameAndSecurityGroup(scope, auroraName: string, securityGroup) {
+
+  static fromNameAndSecurityGroup(scope, scopedName: string, securityGroup) {
+    const createName = (name: string) => `${scopedName}-${name}`;
     const proxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(
       scope,
       'AuroraDatabaseProxy',
       {
-        dbProxyArn: cdk.Fn.importValue(auroraName + '-proxy-arn'),
-        dbProxyName: cdk.Fn.importValue(auroraName + '-proxy-name'),
-        endpoint: cdk.Fn.importValue(auroraName + '-proxy-endpoint'),
+        dbProxyArn: cdk.Fn.importValue(createName('arn')),
+        dbProxyName: cdk.Fn.importValue(createName('name')),
+        endpoint: cdk.Fn.importValue(createName('endpoint')),
         securityGroups: [securityGroup],
       },
     );

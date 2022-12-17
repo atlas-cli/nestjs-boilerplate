@@ -1,7 +1,8 @@
 import { DatabaseCluster } from "aws-cdk-lib/aws-rds";
+import { ApplicationProps } from "../../../props/appplication.props";
 import { AuroraDatabaseVpc } from "../../aurora-database-vpc/aurora-database-vpc.construct";
 
-export interface AuroraDatabaseProxyProps {
-    auroraDatabaseVpc?: AuroraDatabaseVpc;
+export interface AuroraDatabaseProxyProps extends ApplicationProps {
+    auroraDatabaseVpc: AuroraDatabaseVpc;
     auroraDatabaseCluster: DatabaseCluster;
 }

@@ -14,24 +14,33 @@ export class AuroraDatabaseVpc extends Construct {
   vpc: Vpc;
   dbSecurityGroup: SecurityGroup;
 
-  constructor(scope: Construct, id: string, _props?: AuroraDatabaseVpcProps) {
+  constructor(scope: Construct, id: string, props: AuroraDatabaseVpcProps) {
     super(scope, id);
-    const name = 'aurora-database';
+    const { applicationName, stageName, createNameCustom } = props;
+    const createName: any =
+      createNameCustom !== undefined
+        ? createNameCustom(stageName, applicationName)
+        : (name: string) =>
+            `${stageName}-${applicationName}-aurora-database-${name}`;
 
     // create a vpc
-    this.vpc = new Vpc(this, 'Vpc', {
-      vpcName: [name, 'vpc'].join('-'),
+    this.vpc = new Vpc(this, createName('vpc'), {
+      vpcName: createName('vpc'),
       cidr: '10.0.0.0/16',
       subnetConfiguration: [{ name: 'egress', subnetType: SubnetType.PUBLIC }], // only one subnet is needed
       natGateways: 0, // disable NAT gateways
     });
 
     // create a security group for aurora db
-    this.dbSecurityGroup = new SecurityGroup(this, 'DbSecurityGroup', {
-      securityGroupName: [name, 'securty-group'].join('-'),
-      vpc: this.vpc, // use the vpc created above
-      allowAllOutbound: true, // allow outbound traffic to anywhere
-    });
+    this.dbSecurityGroup = new SecurityGroup(
+      this,
+      createName('security-group'),
+      {
+        securityGroupName: createName('security-group'),
+        vpc: this.vpc, // use the vpc created above
+        allowAllOutbound: true, // allow outbound traffic to anywhere
+      },
+    );
 
     // allow inbound traffic from anywhere to the db
     this.dbSecurityGroup.addIngressRule(
@@ -39,44 +48,45 @@ export class AuroraDatabaseVpc extends Construct {
       Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
       'allow inbound traffic from anywhere to the db on port 5432',
     );
-
-    this.exports(name);
+    this.exports(createName('vpc'));
   }
 
   // export resources
-  exports(name: string) {
-    new CfnOutput(this, 'AuroraDatabaseVpcId', {
+  exports(scopedName: string) {
+    const createName = (name: string) => `${scopedName}-${name}`;
+    new CfnOutput(this, createName('id'), {
       value: this.vpc.vpcId,
-      exportName: name + '-vpc-id',
+      exportName: createName('id'),
     });
-    new CfnOutput(this, 'AuroraDatabaseSubnetId1', {
+    new CfnOutput(this, createName('subnet-id-1'), {
       value: this.vpc.publicSubnets[0].subnetId,
-      exportName: name + '-subnet-id-1',
+      exportName: createName('subnet-id-1'),
     });
-    new CfnOutput(this, 'AuroraDatabaseSubnetId2', {
+    new CfnOutput(this, createName('subnet-id-2 '), {
       value: this.vpc.publicSubnets[1].subnetId,
-      exportName: name + '-subnet-id-2',
+      exportName: createName('subnet-id-2'),
     });
-    new CfnOutput(this, 'AuroraDatabaseSecurityGroup', {
+    new CfnOutput(this, createName('security-group'), {
       value: this.dbSecurityGroup.securityGroupId,
-      exportName: name + '-security-group-id',
+      exportName: createName('security-group'),
     });
   }
 
   // import resources
-  static fromName(scope, auroraName: string) {
-    const vpc = Vpc.fromVpcAttributes(scope, 'AuroraDatabaseVpc', {
-      vpcId: cdk.Fn.importValue(auroraName + '-vpc-id'),
+  static fromName(scope, scopedName: string) {
+    const createName = (name: string) => `${scopedName}-${name}`;
+    const vpc = Vpc.fromVpcAttributes(scope, createName('id'), {
+      vpcId: cdk.Fn.importValue(createName('id')),
       availabilityZones: ['sa-east-1'],
       publicSubnetIds: [
-        cdk.Fn.importValue(auroraName + '-subnet-id-1'),
-        cdk.Fn.importValue(auroraName + '-subnet-id-2'),
+        cdk.Fn.importValue(createName('subnet-id-1')),
+        cdk.Fn.importValue(createName('subnet-id-2')),
       ],
     });
     const securityGroup = SecurityGroup.fromSecurityGroupId(
       scope,
-      'AuroraDatabaseSecurityGroup',
-      cdk.Fn.importValue(auroraName + '-security-group-id'),
+      createName('security-group-id'),
+      cdk.Fn.importValue(createName('security-group-id')),
     );
     return {
       vpc,
