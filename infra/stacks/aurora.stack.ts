@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { AuroraDatabase } from './../constructs/aurora-database/aurora-database.construct';
 import { AuroraDatabaseVpc } from '../constructs/aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
-import { ApplicationProps } from '../props/appplication.props';
+import { ApplicationProps } from '../props/application.props';
 
 export class AuroraStack extends cdk.Stack {
   constructor(

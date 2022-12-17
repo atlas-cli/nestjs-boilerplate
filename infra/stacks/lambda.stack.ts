@@ -5,7 +5,7 @@ import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-
 import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
 import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambda-nestjs-function.constructs';
 import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
-import { ApplicationProps } from '../props/appplication.props';
+import { ApplicationProps } from '../props/application.props';
 
 export class LambdaStack extends Stack {
   constructor(app: App, id: string, applicationProps: ApplicationProps) {

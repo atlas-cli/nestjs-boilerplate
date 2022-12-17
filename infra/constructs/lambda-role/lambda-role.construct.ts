@@ -1,7 +1,7 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { ManagedPolicy } from 'aws-cdk-lib/aws-iam';
-import { ApplicationProps } from '../../props/appplication.props';
+import { ApplicationProps } from '../../props/application.props';
 
 export class LambdaRole extends Construct {
   role: iam.Role;

@@ -1,5 +1,5 @@
 import { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { ApplicationProps } from '../../../props/appplication.props';
+import { ApplicationProps } from '../../../props/application.props';
 
 export interface LambdaNestJsFunctionProps
   extends LambdaNestJsFunctionPropsRequired {}
