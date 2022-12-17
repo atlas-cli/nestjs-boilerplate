@@ -66,9 +66,9 @@ export class AuroraDatabaseVpc extends Construct {
       value: this.vpc.publicSubnets[1].subnetId,
       exportName: createName('subnet-id-2'),
     });
-    new CfnOutput(this, createName('security-group'), {
+    new CfnOutput(this, createName('security-group-id'), {
       value: this.dbSecurityGroup.securityGroupId,
-      exportName: createName('security-group'),
+      exportName: createName('security-group-id'),
     });
   }
 

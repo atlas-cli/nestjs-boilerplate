@@ -14,7 +14,7 @@ export class AuroraStack extends cdk.Stack {
     super(scope, id);
     const { applicationName, stageName } = applicationProps;
     const createName = (name: string) =>
-      `${stageName}-${applicationName}-aurora-database-${name}`;
+      `${stageName}-${applicationName}-aurora-stack-${name}`;
 
     // create aurora database vpc
     const auroraDatabaseVpc = new AuroraDatabaseVpc(
