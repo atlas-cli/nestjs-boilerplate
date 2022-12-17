@@ -5,8 +5,8 @@ import { join } from 'path';
 import {
   DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
   DEFAULT_NESTJS_FUNCTION_PROPS,
+  createDatabaseAuroraEnvironment,
 } from './constants';
-import { createDatabaseAuroraEnvironment } from './constants';
 import { LambdaNestJsFunctionProps } from './props/lambda-nestjs-function.props';
 
 export class LambdaNestJsFunction extends Construct {
@@ -21,21 +21,22 @@ export class LambdaNestJsFunction extends Construct {
       functionName,
       moduleName,
     } = props;
+    const databaseName = `${stageName}-${applicationName}-aurora-database`;
     const createName: any =
       createNameCustom !== undefined
         ? createNameCustom(stageName, applicationName)
         : (name: string) =>
-            `${stageName}-${applicationName}-lambda-nestjs-${name}`;
+          `${stageName}-${applicationName}-lambda-nestjs-${name}`;
 
     const functionProps = {
-      functionName: createName(functionName),
+      ...props,
       ...DEFAULT_NESTJS_FUNCTION_PROPS,
       environment: {
         ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
-        ...createDatabaseAuroraEnvironment(functionName),
+        ...createDatabaseAuroraEnvironment(databaseName),
       },
       entry: join(__dirname, '..', '..', '..', 'app', moduleName, 'server.js'),
-      ...props,
+      functionName: createName(functionName),
     };
     this.nodejsFunction = new NodejsFunction(
       this,

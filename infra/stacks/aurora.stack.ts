@@ -26,7 +26,10 @@ export class AuroraStack extends cdk.Stack {
     const { databaseCluster } = new AuroraDatabase(
       this,
       createName(`cluster`),
-      applicationProps,
+      {
+        ...applicationProps,
+        auroraDatabaseVpc
+      },
     );
 
     // create aurora database proxy

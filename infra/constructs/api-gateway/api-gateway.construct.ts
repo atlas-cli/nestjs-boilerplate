@@ -12,7 +12,6 @@ export class ApiGateway extends Construct {
         ? createNameCustom(stageName, applicationName)
         : (name: string) => `${stageName}-${applicationName}-lambda-${name}`;
 
-    super(scope, id);
     this.api = new RestApi(this, createName(restApiName), {
       restApiName: createName(restApiName),
     });

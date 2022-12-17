@@ -5,7 +5,7 @@ import { SharedModule } from '../shared/shared.module';
 @Module({
   imports: [
     SharedModule,
-    AuthModule,
+    // AuthModule,
   ],
 })
-export class UsersServerModule {}
+export class UsersServerModule { }

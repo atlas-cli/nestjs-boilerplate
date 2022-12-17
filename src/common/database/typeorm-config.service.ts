@@ -9,7 +9,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    console.log('lalalalaaaa');
     return {
       type: this.configService.get('database.type'),
       url: this.configService.get('database.url'),

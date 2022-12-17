@@ -46,7 +46,7 @@ export const DEFAULT_NESTJS_FUNCTION_PROPS = {
   runtime: Runtime.NODEJS_16_X,
   allowPublicSubnet: true,
   bundling: {
-    minify: true,
+    minify: false,
     externalModules: DEFAULT_NESTJS_NODE_EXTERNALS,
     nodeModules: DEFAULT_NESTJS_NODE_MODULE,
     commandHooks: DEFAULT_NESTJS_COMMAND_HOOKS,
@@ -66,7 +66,7 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
 export const createDatabaseAuroraEnvironment = (name: string) => {
   return {
     DATABASE_TYPE: 'postgres',
-    DATABASE_HOST: cdk.Fn.importValue(name + '-host'),
+    DATABASE_HOST: cdk.Fn.importValue(name + '-proxy-host'),
     DATABASE_USERNAME: 'postgres',
     DATABASE_PORT: '5432',
     DATABASE_NAME: 'postgres',

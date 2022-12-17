@@ -1,4 +1,3 @@
-import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { App, Stack } from 'aws-cdk-lib';
 import { AuroraDatabaseVpc } from '../constructs/aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
@@ -6,6 +5,7 @@ import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
 import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambda-nestjs-function.constructs';
 import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
 import { ApplicationProps } from '../props/application.props';
+import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 
 export class LambdaStack extends Stack {
   constructor(app: App, id: string, applicationProps: ApplicationProps) {
@@ -41,23 +41,24 @@ export class LambdaStack extends Stack {
         ...applicationProps,
         functionName: 'users',
         moduleName: 'users',
+        role,
         vpc,
         securityGroups: [securityGroup],
       },
     );
 
     // Create an API Gateway resource for each of the CRUD operations
-    // const { api } = new ApiGateway(this, createName('http'), {
-    //   ...applicationProps,
-    //   restApiName: createName('http'),
-    // // });
+    const { api } = new ApiGateway(this, createName('api-gateway'), {
+      ...applicationProps,
+      restApiName: 'api',
+    });
 
-    // // Integrate the Lambda functions with the API Gateway resource
-    // const httpIntegration = new LambdaIntegration(nodejsFunction, {
-    //   proxy: true,
-    // });
+    // Integrate the Lambda functions with the API Gateway resource
+    const httpIntegration = new LambdaIntegration(nodejsFunction, {
+      proxy: true,
+    });
 
-    // const items = api.root.addResource('{proxy+}');
-    // items.addMethod('ANY', httpIntegration);
+    const items = api.root.addResource('{proxy+}');
+    items.addMethod('ANY', httpIntegration);
   }
 }
