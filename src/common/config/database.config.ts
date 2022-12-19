@@ -3,17 +3,17 @@ import * as AWS from 'aws-sdk';
 
 export default registerAs('database', () => {
   const signer = new AWS.RDS.Signer();
-  const token = signer.getAuthToken({
+  const password = process.env.DATABASE_PASSWORD ?? signer.getAuthToken({
     region: process.env.AWS_REGION,
     hostname: process.env.DATABASE_HOST,
     port: 5432,
     username: process.env.DATABASE_USERNAME,
   });
-  const config = ({
+  const config = {
     type: process.env.DATABASE_TYPE,
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-    password: token,
+    password,
     name: process.env.DATABASE_NAME,
     username: process.env.DATABASE_USERNAME,
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
@@ -23,7 +23,6 @@ export default registerAs('database', () => {
     ca: process.env.DATABASE_CA,
     key: process.env.DATABASE_KEY,
     cert: process.env.DATABASE_CERT,
-  });
-  console.log('database config: ', JSON.stringify(config),);
+  };
   return config;
 });

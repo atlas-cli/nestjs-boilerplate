@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { readFileSync } from 'fs';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Injectable()
@@ -21,16 +20,16 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       dropSchema: false,
       keepConnectionAlive: false,
       logging: this.configService.get('app.nodeEnv') !== 'production',
-      ssl: true,
+      ssl: this.configService.get('database.sslEnabled'),
       cli: {
         entitiesDir: 'src',
         migrationsDir: 'src/database/migrations',
         subscribersDir: 'subscriber',
       },
-      extra: {
+      extra: this.configService.get('database.sslEnabled') ? {
         sslmode: 'verify-full',
         sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
-      }
+      } : {}
     } as PostgresConnectionOptions;
   }
 }

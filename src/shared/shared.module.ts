@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './../common/strategies/jwt.strategy';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { join } from 'path';
-import { DataSource } from 'typeorm';
 import appConfig from './../common/config/app.config';
 import authConfig from './../common/config/auth.config';
 import databaseConfig from './../common/config/database.config';
-import { TypeOrmConfigService } from './../common/database/typeorm-config.service';
 
 @Module({
     imports: [
@@ -32,17 +29,10 @@ import { TypeOrmConfigService } from './../common/database/typeorm-config.servic
                 },
             }),
         }),
-        TypeOrmModule.forRootAsync({
-            useClass: TypeOrmConfigService,
-            dataSourceFactory: async (options) => {
-                const dataSource = await new DataSource(options).initialize();
-                return dataSource;
-            },
-        }),
         I18nModule.forRootAsync({
             useFactory: (configService: ConfigService) => ({
                 fallbackLanguage: configService.get('app.fallbackLanguage'),
-                loaderOptions: { path: join(__dirname, '/i18n/'), watch: false },
+                loaderOptions: { path: join(configService.get('app.i18nDirectory')), watch: false },
             }),
             resolvers: [
                 {
