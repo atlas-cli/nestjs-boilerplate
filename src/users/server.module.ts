@@ -10,13 +10,8 @@ import { AuthModule } from 'auth/auth.module';
 @Module({
   imports: [
     SharedModule,
-    DatabaseModule.forRoot([
-      User,
-      Role,
-      Status,
-      Forgot,
-    ]),
+    DatabaseModule.forRoot([User, Role, Status, Forgot]),
     AuthModule,
   ],
 })
-export class UsersServerModule { }
+export class UsersServerModule {}

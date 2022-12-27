@@ -11,16 +11,11 @@ import { Forgot } from './auth/forgot/entities/forgot.entity';
 @Module({
   imports: [
     SharedModule,
-    DatabaseModule.forRoot([
-      User,
-      Role,
-      Status,
-      Forgot,
-    ]),
+    DatabaseModule.forRoot([User, Role, Status, Forgot]),
     UsersModule,
     AuthModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

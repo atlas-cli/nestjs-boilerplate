@@ -20,7 +20,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "lambda:typeorm:dev": "npx typeorm-lambda-proxy dev-atlas-lambda-database-migration node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda.data-source.js",
+    "lambda:typeorm:prod": "npx typeorm-lambda-proxy prod-atlas-lambda-database-migration node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda.data-source.js",
     "migration:generate": "npm run typeorm -- --dataSource=src/common/database/data-source.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run typeorm -- --dataSource=src/common/database/data-source.ts migration:run",
@@ -56,6 +58,7 @@
     "typeorm": "*"
   },
   "devDependencies": {
+    "@atlas-org/database": "^0.0.2",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",

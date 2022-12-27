@@ -51,7 +51,7 @@ export class AuroraDatabase extends Construct {
           vpc: vpc,
           instanceType: new InstanceType('serverless'),
           autoMinorVersionUpgrade: true,
-          publiclyAccessible: true,
+          publiclyAccessible: false,
           securityGroups: [dbSecurityGroup],
           vpcSubnets: vpc.selectSubnets({
             subnetType: SubnetType.PUBLIC, // use the public subnet created above for the db

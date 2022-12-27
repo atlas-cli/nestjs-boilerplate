@@ -1,14 +1,16 @@
 import { registerAs } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 
-export default registerAs('database', () => {
+const databaseConfig = () => {
   const signer = new AWS.RDS.Signer();
-  const password = process.env.DATABASE_PASSWORD ?? signer.getAuthToken({
-    region: process.env.AWS_REGION,
-    hostname: process.env.DATABASE_HOST,
-    port: 5432,
-    username: process.env.DATABASE_USERNAME,
-  });
+  const password =
+    process.env.DATABASE_PASSWORD ??
+    signer.getAuthToken({
+      region: process.env.AWS_REGION,
+      hostname: process.env.DATABASE_HOST,
+      port: 5432,
+      username: process.env.DATABASE_USERNAME,
+    });
   const config = {
     type: process.env.DATABASE_TYPE,
     host: process.env.DATABASE_HOST,
@@ -25,4 +27,5 @@ export default registerAs('database', () => {
     cert: process.env.DATABASE_CERT,
   };
   return config;
-});
+};
+export default registerAs('database', databaseConfig);

@@ -5,7 +5,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
@@ -26,10 +26,12 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         migrationsDir: 'src/database/migrations',
         subscribersDir: 'subscriber',
       },
-      extra: this.configService.get('database.sslEnabled') ? {
-        sslmode: 'verify-full',
-        sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
-      } : {}
+      extra: this.configService.get('database.sslEnabled')
+        ? {
+            sslmode: 'verify-full',
+            sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
+          }
+        : {},
     } as PostgresConnectionOptions;
   }
 }
