@@ -44,6 +44,8 @@ jobs:
           command: npm run format
   unit_test:
     working_directory: ~/nest-boilerplate
+    docker:
+      - image: cimg/node:16.18.1-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
