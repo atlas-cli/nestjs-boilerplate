@@ -80,7 +80,7 @@ jobs:
       - run:
           name: Run seeds
           command: npm run seed:run
-      - run: 
+      - run:
           name: Run start
           background: true
           command: npm run start
