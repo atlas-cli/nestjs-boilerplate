@@ -1,15 +1,8 @@
 import * as request from 'supertest';
-import {
-  APP_URL,
-  TESTER_EMAIL,
-  TESTER_PASSWORD,
-  MAIL_HOST,
-  MAIL_PORT,
-} from '../utils/constants';
+import { APP_URL, TESTER_EMAIL, TESTER_PASSWORD } from '../utils/constants';
 
 describe('Auth user (e2e)', () => {
   const app = APP_URL;
-  const mail = `http://${MAIL_HOST}:${MAIL_PORT}`;
   const newUserFirstName = `Tester${Date.now()}`;
   const newUserLastName = `E2E`;
   const newUserEmail = `User.${Date.now()}@example.com`;
@@ -29,18 +22,11 @@ describe('Auth user (e2e)', () => {
       });
   });
 
-  it('Login via admin endpoint: /auth/login (POST)', () => {
-    return request(app)
-      .post('/auth/login')
-      .send({ email: TESTER_EMAIL, password: TESTER_PASSWORD })
-      .expect(422);
-  });
-
-  it('Login via admin endpoint with extra spaced: /auth/login (POST)', () => {
+  it('Login via endpoint with extra spaced: /auth/login (POST)', () => {
     return request(app)
       .post('/auth/login')
       .send({ email: TESTER_EMAIL + '  ', password: TESTER_PASSWORD })
-      .expect(422);
+      .expect(200);
   });
 
   it('Do not allow register user with exists email: /auth/email/register (POST)', () => {
@@ -57,7 +43,7 @@ describe('Auth user (e2e)', () => {
         expect(body.errors.email).toBeDefined();
       });
   });
-
+  let hash;
   it('Register new user: /auth/email/register (POST)', async () => {
     return request(app)
       .post('/auth/email/register')
@@ -67,7 +53,13 @@ describe('Auth user (e2e)', () => {
         firstName: newUserFirstName,
         lastName: newUserLastName,
       })
-      .expect(201);
+      .expect(201)
+      .expect(({ body }) => {
+        if (process.env.NODE_ENV !== 'production') {
+          expect(body.hash).toBeDefined();
+          hash = body.hash;
+        }
+      });
   });
 
   it('Login unconfirmed user: /auth/login (POST)', () => {
@@ -79,28 +71,16 @@ describe('Auth user (e2e)', () => {
         expect(body.accessToken).toBeDefined();
       });
   });
-
-  it('Confirm email: /auth/email/confirm (POST)', async () => {
-    const hash = await request(mail)
-      .get('/email')
-      .then(({ body }) =>
-        body
-          .find(
-            (letter) =>
-              letter.to[0].address.toLowerCase() ===
-                newUserEmail.toLowerCase() &&
-              /.*confirm\-email\/(\w+).*/g.test(letter.text),
-          )
-          ?.text.replace(/.*confirm\-email\/(\w+).*/g, '$1'),
-      );
-
-    return request(app)
-      .post('/auth/email/confirm')
-      .send({
-        hash,
-      })
-      .expect(200);
-  });
+  if (process.env.NODE_ENV !== 'production') {
+    it('Confirm email: /auth/email/confirm (POST)', async () => {
+      return request(app)
+        .post('/auth/email/confirm')
+        .send({
+          hash,
+        })
+        .expect(200);
+    });
+  }
 
   it('Login confirmed user: /auth/login (POST)', () => {
     return request(app)
