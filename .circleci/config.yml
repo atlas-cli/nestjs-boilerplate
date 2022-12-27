@@ -100,7 +100,7 @@ workflows:
             - dependencies
       - test:
           requires:
-            - lint
+            - dependencies
       - build:
           requires:
-            - test
+            - dependencies
