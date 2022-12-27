@@ -41,7 +41,7 @@ jobs:
           command: npm run lint
       - run:
           name: Prettier
-          command: npm run prettier
+          command: npm run format
   test:
     working_directory: ~/nest-boilerplate
     docker:
