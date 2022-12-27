@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from 'shared/database.module';
+import { DatabaseModule } from './../shared/database.module';
 import { SharedModule } from '../shared/shared.module';
 import { User } from './../users/entities/user.entity';
 import { Role } from './../common/roles/entities/role.entity';

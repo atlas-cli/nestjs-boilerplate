@@ -5,7 +5,6 @@ import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 import { AuroraDatabaseVpc } from '../aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProps } from './props/aurora-database.props';
-import { AuroraDatabaseVpcProps } from '../aurora-database-vpc/props/aurora-database-vpc.props';
 
 export class AuroraDatabase extends Construct {
   databaseCluster: rds.DatabaseCluster;

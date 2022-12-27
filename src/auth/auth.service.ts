@@ -7,7 +7,6 @@ import { AuthUpdateDto } from './dto/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as crypto from 'crypto';
 import { plainToClass } from 'class-transformer';
-import { AuthProvidersEnum } from './auth-providers.enum';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { UsersService } from './../users/users.service';
 import { ForgotService } from './forgot/forgot.service';
@@ -16,6 +15,7 @@ import { RoleEnum } from './../common/roles/roles.enum';
 import { StatusEnum } from './../common/statuses/statuses.enum';
 import { Role } from './../common/roles/entities/role.entity';
 import { Status } from './../common/statuses/entities/status.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -24,45 +24,15 @@ export class AuthService {
     private usersService: UsersService,
     private forgotService: ForgotService,
     private mailService: MailService,
+    private configService: ConfigService,
   ) {}
 
   async validateLogin(
     loginDto: AuthEmailLoginDto,
-    onlyAdmin: boolean,
   ): Promise<{ accessToken: string; user: User }> {
     const user = await this.usersService.findOne({
       email: loginDto.email,
     });
-
-    if (
-      !user ||
-      (user &&
-        !(onlyAdmin ? [RoleEnum.admin] : [RoleEnum.user]).includes(
-          user.role.id,
-        ))
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'notFound',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
@@ -89,7 +59,7 @@ export class AuthService {
     }
   }
 
-  async register(dto: AuthRegisterLoginDto): Promise<void> {
+  async register(dto: AuthRegisterLoginDto): Promise<any> {
     const hash = crypto
       .createHash('sha256')
       .update(randomStringGenerator())
@@ -113,6 +83,10 @@ export class AuthService {
         hash,
       },
     });
+    if (this.configService.get('app.nodeEnv') !== 'production') {
+      // JUST FOR TESTS
+      return { hash };
+    }
   }
 
   async confirmEmail(hash: string): Promise<void> {

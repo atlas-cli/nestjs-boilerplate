@@ -35,12 +35,19 @@ export const DEFAULT_NESTJS_COMMAND_HOOKS = {
       `cp -R ${inputDir}/src/i18n ${outputDir}/i18n`,
     ];
   },
-  afterBundling: (_inputDir: string, _outputDir: string): string[] => [],
-  beforeInstall: (_inputDir: string, _outputDir: string): string[] => [],
+  afterBundling: (): string[] => [],
+  beforeInstall: (): string[] => [],
 };
 
 export const DEFAULT_NESTJS_FUNCTION_PROPS = {
-  depsLockFilePath: join(__dirname, '..', '..', '..', '..', 'package-lock.json'),
+  depsLockFilePath: join(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    '..',
+    'package-lock.json',
+  ),
   memorySize: 2048,
   timeout: Duration.seconds(6),
   runtime: Runtime.NODEJS_16_X,

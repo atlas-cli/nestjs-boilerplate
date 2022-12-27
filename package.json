@@ -13,21 +13,20 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/app/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps,infra,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm": "env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "lambda:typeorm:dev": "npx typeorm-lambda-proxy dev-atlas-lambda-database-migration node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda.data-source.js",
     "lambda:typeorm:prod": "npx typeorm-lambda-proxy prod-atlas-lambda-database-migration node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda.data-source.js",
-    "migration:generate": "npm run typeorm -- --dataSource=src/common/database/data-source.ts migration:generate",
+    "migration:generate": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
-    "migration:run": "npm run typeorm -- --dataSource=src/common/database/data-source.ts migration:run",
-    "migration:revert": "npm run typeorm -- --dataSource=src/common/database/data-source.ts migration:revert",
-    "schema:drop": "npm run typeorm -- --dataSource=src/common/database/data-source.ts schema:drop",
+    "migration:run": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts migration:run",
+    "migration:revert": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts migration:revert",
+    "schema:drop": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts schema:drop",
     "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
   },
   "dependencies": {
@@ -73,6 +72,7 @@
     "aws-cdk": "^2.54.0",
     "aws-cdk-lib": "^2.54.0",
     "aws-lambda": "^1.0.7",
+    "env-cmd": "^10.1.0",
     "esbuild": "0.16.4",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
@@ -86,7 +86,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.0.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "wait-on": "^7.0.1"
   },
   "jest": {
     "moduleFileExtensions": [

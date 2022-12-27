@@ -21,7 +21,7 @@ export class AuroraDatabaseVpc extends Construct {
       createNameCustom !== undefined
         ? createNameCustom(stageName, applicationName)
         : (name: string) =>
-          `${stageName}-${applicationName}-aurora-database-${name}`;
+            `${stageName}-${applicationName}-aurora-database-${name}`;
 
     // create a vpc
     this.vpc = new Vpc(this, createName('vpc'), {
