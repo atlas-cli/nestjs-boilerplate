@@ -42,7 +42,17 @@ jobs:
       - run:
           name: Prettier
           command: npm run format
-  test:
+  unit_test:
+    working_directory: ~/nest-boilerplate
+    steps:
+      - restore_cache:
+          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          name: Test
+          command: npm run test
+  integration_test:
     working_directory: ~/nest-boilerplate
     docker:
       - image: cimg/node:16.18.1-browsers
@@ -58,9 +68,6 @@ jobs:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
-      - run:
-          name: Test
-          command: npm run test
       - run:
           name: Copy .env
           command: cp .env.example .env
@@ -78,7 +85,7 @@ jobs:
           background: true
           command: npm run start
       - run:
-          name: E2E
+          name: Integration E2E test
           command: npx wait-on http://localhost:3000 & npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
@@ -109,6 +116,9 @@ workflows:
           requires:
             - dependencies
       - test:
+          requires:
+            - dependencies
+      - integration_test:
           requires:
             - dependencies
       - build:
