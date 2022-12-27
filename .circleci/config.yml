@@ -75,10 +75,11 @@ jobs:
           command: npm run seed:run
       - run: 
           name: Run start
-          command: npm run start & npx wait-on http://localhost:3000
+          background: true
+          command: npm run start
       - run:
           name: E2E
-          command: npm run test:e2e
+          command: npx wait-on http://localhost:3000 & npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
