@@ -75,7 +75,7 @@ jobs:
           command: npm run seed:run
       - run: 
           name: Run start
-          command: npm run start &
+          command: npm run start
       - run:
           name: E2E
           command: npm run test:e2e
