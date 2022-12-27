@@ -21,6 +21,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       keepConnectionAlive: false,
       logging: this.configService.get('app.nodeEnv') !== 'production',
       ssl: this.configService.get('database.sslEnabled'),
+      entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
       cli: {
         entitiesDir: 'src',
         migrationsDir: 'src/database/migrations',

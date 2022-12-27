@@ -42,20 +42,19 @@ export class AuroraStack extends cdk.Stack {
     });
 
     // add lambda function for run migrations
-    const { role } = new LambdaRole(this, createName('role-migration'), applicationProps);
+    const { role } = new LambdaRole(
+      this,
+      createName('role-migration'),
+      applicationProps,
+    );
     proxy.grantConnect(role, 'postgres');
 
-
     // add lambda function for run migrations
-    new LambdaDatabaseMigration(
-      this,
-      createName('lambda-database-migration'),
-      {
-        ...applicationProps,
-        role,
-        vpc: auroraDatabaseVpc.vpc,
-        securityGroups: [auroraDatabaseVpc.dbSecurityGroup],
-      },
-    );
+    new LambdaDatabaseMigration(this, createName('lambda-database-migration'), {
+      ...applicationProps,
+      role,
+      vpc: auroraDatabaseVpc.vpc,
+      securityGroups: [auroraDatabaseVpc.dbSecurityGroup],
+    });
   }
 }

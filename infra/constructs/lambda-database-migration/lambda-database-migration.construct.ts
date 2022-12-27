@@ -44,14 +44,8 @@ export class LambdaDatabaseMigration extends Construct {
               `cp -R ${inputDir}/src/common/config/certs/rds-ca-2019-root.pem ${outputDir}/cert`,
             ];
           },
-          afterBundling: (
-            _inputDir: string,
-            _outputDir: string,
-          ): string[] => [],
-          beforeInstall: (
-            _inputDir: string,
-            _outputDir: string,
-          ): string[] => [],
+          afterBundling: (): string[] => [],
+          beforeInstall: (): string[] => [],
         },
         nodeModules: ['typeorm', 'ts-node', '@nestjs/config', 'pg'],
       },

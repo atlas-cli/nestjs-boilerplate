@@ -26,7 +26,7 @@ export class AuroraDatabaseProxy extends Construct {
     this.proxy = new rds.DatabaseProxy(this, createName('proxy'), {
       dbProxyName: createName('proxy'),
       proxyTarget: rds.ProxyTarget.fromCluster(auroraDatabaseCluster),
-      secrets: [auroraDatabaseCluster.secret!],
+      secrets: [auroraDatabaseCluster.secret],
       vpc,
       securityGroups: [dbSecurityGroup],
       iamAuth: true,

@@ -26,7 +26,7 @@ export class LambdaNestJsFunction extends Construct {
       createNameCustom !== undefined
         ? createNameCustom(stageName, applicationName)
         : (name: string) =>
-          `${stageName}-${applicationName}-lambda-nestjs-${name}`;
+            `${stageName}-${applicationName}-lambda-nestjs-${name}`;
 
     const functionProps = {
       ...props,
