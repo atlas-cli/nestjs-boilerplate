@@ -75,7 +75,7 @@ jobs:
           command: npm run seed:run
       - run: 
           name: Run start
-          command: npm run start
+          command: npm run start & npx wait-on http://localhost:3000
       - run:
           name: E2E
           command: npm run test:e2e
