@@ -115,7 +115,7 @@ workflows:
       - lint:
           requires:
             - dependencies
-      - test:
+      - unit_test:
           requires:
             - dependencies
       - integration_test:
