@@ -124,10 +124,10 @@ jobs:
           command: npm run build:infra
       - run:
           name: Test paramters
-          command: sh scripts/diff-infra.sh touch true
+          command: sh scripts/diff-infra.sh true
       - run:
           name: Diff infra core
-          command: cdk diff aurora-database --fail && sh scripts/diff-infra.sh core true || sh scripts/diff-infra.sh core false
+          command: cdk diff aurora-database --fail && sh scripts/diff-infra.sh true || sh scripts/diff-infra.sh false
 workflows:
   version: 2
   full-cycle:
