@@ -1,4 +1,11 @@
 version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@3.1
+
+parameters:
+  diff:
+    type: string
+    default: "false"
 
 jobs:
   checkout:
