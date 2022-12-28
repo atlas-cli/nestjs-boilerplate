@@ -1,12 +1,6 @@
 version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@3.1
-
-parameters:
-  diff:
-    type: string
-    default: "false"
-
 jobs:
   checkout:
     working_directory: ~/nest-boilerplate
@@ -112,6 +106,20 @@ jobs:
           key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/nest-boilerplate/dist/nest-boilerplate
+  diff:
+    working_directory: ~/nest-boilerplate
+    executor: aws-cli/default
+    docker:
+      - image: cimg/node:16.18.1-browsers
+    steps:
+      - restore_cache:
+          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          name: Agent
+          command: circleci-agent step halt
+
   deployment:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
@@ -157,6 +165,9 @@ workflows:
             - dependencies
       - request-infra-deploy:
           type: approval
+          requires:
+            - diff
+      - diff:
           requires:
             - build
             - integration_test
