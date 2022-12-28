@@ -115,8 +115,11 @@ jobs:
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
-          name: Infra
+          name: Build infra
           command: npm run build:infra
+      - run:
+          name: Diff infra core
+          command: cdk diff aurora-database --fail && sh scripts/diff-infra.sh core true || sh scripts/diff-infra.sh core false
 workflows:
   version: 2
   full-cycle:
