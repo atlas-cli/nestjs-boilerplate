@@ -116,9 +116,16 @@ jobs:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
       - run:
-          name: Agent
-          command: circleci-agent step halt
+          name: Build infra
+          command: npm run build:infra
+      - run:
+          name: Diff
+          command: npx cdk diff --all
 
   deployment:
     working_directory: ~/nest-boilerplate
@@ -138,11 +145,8 @@ jobs:
           name: Build infra
           command: npm run build:infra
       - run:
-          name: Test paramters
-          command: sh scripts/diff-infra.sh true
-      - run:
           name: Deploy
-          command: cdk deploy --all
+          command: npx cdk deploy --all
 workflows:
   version: 2
   full-cycle:
