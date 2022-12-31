@@ -186,35 +186,24 @@ workflows:
             - integration_test
             - unit_test
       - approve_deploy_to_dev:
-          filters:
-            branches:
-              only:
-                - feature/cicd-full-cycle
           type: approval
+          context: development
           requires:
-            - diff
+            - diff_to_development
       - approve_deploy_to_production:
-          filters:
-            branches:
-              only:
-                - production
           type: approval
+          context: production
           requires:
-            - diff
-      # - deployment_to_development:
-      #     <<: *deployment
-      #     requires:
-      #       - approve_deploy_to_dev
-      #     context: dev
-      # - approve_deploy_to_production:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - feature/cicd-full-cycle
-      #     type: approval
-      #     requires:
-      #       - diff
-      # - deployment_to_production:
-      #     requires:
-      #       - approve_deploy_to_dev
-      #     context: production
+            - diff_to_production
+      - deployment:
+          name: deployment_to_development
+          context: production
+          requires:
+            - approve_deploy_to_dev
+          context: production
+      - deployment:
+          name: deployment_to_production
+          context: production
+          requires:
+            - approve_deploy_to_production
+          context: production
