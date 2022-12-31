@@ -120,7 +120,7 @@ jobs:
           name: Agent
           command: circleci-agent step halt
 
-  deployment:
+  deploy-to-dev:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
@@ -141,8 +141,8 @@ jobs:
           name: Test paramters
           command: sh scripts/diff-infra.sh true
       - run:
-          name: Diff infra core
-          command: cdk diff aurora-database --fail && sh scripts/diff-infra.sh true || sh scripts/diff-infra.sh false
+          name: Deploy
+          command: echo $NODE_ENV
 workflows:
   version: 2
   full-cycle:
@@ -163,15 +163,21 @@ workflows:
       - build:
           requires:
             - dependencies
-      - request-infra-deploy:
-          type: approval
-          requires:
-            - diff
       - diff:
           requires:
             - build
             - integration_test
             - unit_test
-      - deployment:
+      - approve-deploy-to-dev:
+          filters:
+            branches:
+              only:
+                - master
+          type: approval
           requires:
-            - request-infra-deploy
+            - diff
+      - deploy-to-dev:
+          requires:
+            - deploy-to-dev
+          environment:
+            NODE_ENV: dev
