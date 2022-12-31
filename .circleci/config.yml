@@ -195,15 +195,13 @@ workflows:
           context: production
           requires:
             - diff_to_production
-      # - deployment:
-      #     name: deployment_to_development
-      #     context: development
-      #     requires:
-      #       - approve_deploy_to_dev
-      #     context: production
+      - deployment:
+          name: deployment_to_development
+          context: development
+          requires:
+            - approve_deploy_to_dev
       # - deployment:
       #     name: deployment_to_production
       #     context: production
       #     requires:
       #       - approve_deploy_to_production
-      #     context: production
