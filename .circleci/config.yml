@@ -185,7 +185,7 @@ workflows:
             - build
             - integration_test
             - unit_test
-      - approve_deploy_to_dev:
+      - approve_deploy_to_development:
           type: approval
           context: development
           requires:
@@ -199,9 +199,9 @@ workflows:
           name: deployment_to_development
           context: development
           requires:
-            - approve_deploy_to_dev
-      # - deployment:
-      #     name: deployment_to_production
-      #     context: production
-      #     requires:
-      #       - approve_deploy_to_production
+            - approve_deploy_to_development
+      - deployment:
+          name: deployment_to_production
+          context: production
+          requires:
+            - approve_deploy_to_production
