@@ -164,6 +164,7 @@ workflows:
           requires:
             - dependencies
       - diff:
+          name: diff_to_development
           filters:
             branches:
               only:
@@ -173,6 +174,7 @@ workflows:
             - integration_test
             - unit_test
       - diff:
+          name: diff_to_production
           filters:
             branches:
               only:
