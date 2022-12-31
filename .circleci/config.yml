@@ -172,7 +172,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - feature/cicd-full-cycle
           type: approval
           requires:
             - diff
