@@ -197,7 +197,7 @@ workflows:
             - diff_to_production
       - deployment:
           name: deployment_to_development
-          context: production
+          context: development
           requires:
             - approve_deploy_to_dev
           context: production
