@@ -142,7 +142,7 @@ jobs:
           command: sh scripts/diff-infra.sh true
       - run:
           name: Deploy
-          command: echo $NODE_ENV
+          command: cdk deploy --all
 workflows:
   version: 2
   full-cycle:
