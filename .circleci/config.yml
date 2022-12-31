@@ -105,7 +105,7 @@ jobs:
       - save_cache:
           key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/nest-boilerplate/dist/nest-boilerplate
+            - ~/nest-boilerplate/dist/app
   diff:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
