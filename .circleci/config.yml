@@ -178,6 +178,6 @@ workflows:
             - diff
       - deploy-to-dev:
           requires:
-            - deploy-to-dev
+            - approve-deploy-to-dev
           environment:
             NODE_ENV: dev
