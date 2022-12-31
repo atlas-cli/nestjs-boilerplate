@@ -106,7 +106,7 @@ jobs:
           key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/nest-boilerplate/dist/nest-boilerplate
-  diff: &diff
+  diff:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
@@ -120,7 +120,7 @@ jobs:
           name: Agent
           command: circleci-agent step halt
 
-  deployment: &deployment
+  deployment:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
@@ -195,15 +195,15 @@ workflows:
           context: production
           requires:
             - diff_to_production
-      - deployment:
-          name: deployment_to_development
-          context: development
-          requires:
-            - approve_deploy_to_dev
-          context: production
-      - deployment:
-          name: deployment_to_production
-          context: production
-          requires:
-            - approve_deploy_to_production
-          context: production
+      # - deployment:
+      #     name: deployment_to_development
+      #     context: development
+      #     requires:
+      #       - approve_deploy_to_dev
+      #     context: production
+      # - deployment:
+      #     name: deployment_to_production
+      #     context: production
+      #     requires:
+      #       - approve_deploy_to_production
+      #     context: production
