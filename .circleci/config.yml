@@ -150,7 +150,7 @@ jobs:
           command: npm run build:infra
       - run:
           name: Deploy
-          command: npx cdk deploy --all
+          command: npx cdk deploy --all --require-approval never
 workflows:
   version: 2
   full-cycle:
