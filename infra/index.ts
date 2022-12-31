@@ -6,7 +6,10 @@ import { LambdaStack } from './stacks/lambda.stack';
 const app = new App();
 
 // application config
-const config = { applicationName: 'atlas', stageName: 'dev' };
+const config = {
+  applicationName: 'atlas',
+  stageName: process.env.NODE_ENV ?? 'dev',
+};
 const createName = (name) =>
   `${config.applicationName}-${config.stageName}-${name}`;
 
