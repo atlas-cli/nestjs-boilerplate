@@ -165,6 +165,7 @@ workflows:
             - dependencies
       - diff:
           name: diff_to_development
+          context: development
           filters:
             branches:
               only:
@@ -175,6 +176,7 @@ workflows:
             - unit_test
       - diff:
           name: diff_to_production
+          context: production
           filters:
             branches:
               only:
@@ -183,14 +185,22 @@ workflows:
             - build
             - integration_test
             - unit_test
-      # - approve_deploy_to_dev:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - feature/cicd-full-cycle
-      #     type: approval
-      #     requires:
-      #       - diff
+      - approve_deploy_to_dev:
+          filters:
+            branches:
+              only:
+                - feature/cicd-full-cycle
+          type: approval
+          requires:
+            - diff
+      - approve_deploy_to_production:
+          filters:
+            branches:
+              only:
+                - production
+          type: approval
+          requires:
+            - diff
       # - deployment_to_development:
       #     <<: *deployment
       #     requires:
