@@ -172,6 +172,15 @@ workflows:
             - build
             - integration_test
             - unit_test
+      - diff:
+          filters:
+            branches:
+              only:
+                - production
+          requires:
+            - build
+            - integration_test
+            - unit_test
       # - approve_deploy_to_dev:
       #     filters:
       #       branches:
