@@ -163,8 +163,7 @@ workflows:
       - build:
           requires:
             - dependencies
-      - diff_to_development:
-          <<: *diff
+      - diff:
           filters:
             branches:
               only:
