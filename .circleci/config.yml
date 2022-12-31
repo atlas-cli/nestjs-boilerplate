@@ -149,8 +149,11 @@ jobs:
           name: Build infra
           command: npm run build:infra
       - run:
-          name: Deploy
-          command: npx cdk deploy --all --require-approval never
+          name: Deploy core changes
+          command: npx cdk deploy atlas-$NODE_ENV-aurora-database --require-approval never
+      - run:
+          name: Deploy application changes
+          command: npx cdk deploy atlas-$NODE_ENV-aurora-database --require-approval never
 workflows:
   version: 2
   full-cycle:
