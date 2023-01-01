@@ -5,7 +5,7 @@ import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-
 import { ApplicationProps } from '../props/application.props';
 import { Construct } from 'constructs';
 
-export class AuroraStack extends cdk.Stack {
+export class AuroraStack extends cdk.NestedStack {
   constructor(
     scope: Construct,
     id: string,
@@ -17,26 +17,28 @@ export class AuroraStack extends cdk.Stack {
       `${stageName}-${applicationName}-aurora-stack-${name}`;
 
     // create aurora database vpc
-    const auroraDatabaseVpc = new AuroraDatabaseVpc(
-      this,
-      createName(`vpc`),
-      applicationProps,
-    );
-    // create aurora database cluster
-    const { databaseCluster } = new AuroraDatabase(
-      this,
-      createName(`cluster`),
-      {
-        ...applicationProps,
-        auroraDatabaseVpc,
-      },
-    );
+    // const auroraDatabaseVpc = new AuroraDatabaseVpc(
+    //   this,
+    //   createName(`vpc`),
+    //   applicationProps,
+    // );
+    // auroraDatabaseVpc.vpc.node.addDependency();
 
-    // create aurora database proxy
-    new AuroraDatabaseProxy(this, createName(`proxy`), {
-      ...applicationProps,
-      auroraDatabaseCluster: databaseCluster,
-      auroraDatabaseVpc,
-    });
+    // // create aurora database cluster
+    // const { databaseCluster } = new AuroraDatabase(
+    //   this,
+    //   createName(`cluster`),
+    //   {
+    //     ...applicationProps,
+    //     auroraDatabaseVpc,
+    //   },
+    // );
+
+    // // create aurora database proxy
+    // new AuroraDatabaseProxy(this, createName(`proxy`), {
+    //   ...applicationProps,
+    //   auroraDatabaseCluster: databaseCluster,
+    //   auroraDatabaseVpc,
+    // });
   }
 }
