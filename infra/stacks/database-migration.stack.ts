@@ -6,7 +6,7 @@ import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-
 import { AuroraDatabaseVpc } from '../constructs/aurora-database-vpc/aurora-database-vpc.construct';
 import { LambdaDatabaseMigration } from '../constructs/lambda-database-migration/lambda-database-migration.construct';
 
-export class DatabaseMigrationStack extends cdk.Stack {
+export class DatabaseMigrationStack extends cdk.NestedStack {
   constructor(
     scope: Construct,
     id: string,
@@ -18,31 +18,31 @@ export class DatabaseMigrationStack extends cdk.Stack {
     const createAuroraDatabaseName = (name: string) =>
       `${applicationProps.stageName}-${applicationProps.applicationName}-aurora-database-${name}`;
     // add lambda function for run migrations
-    const { role } = new LambdaRole(
-      this,
-      createName('role-migration'),
-      applicationProps,
-    );
-    // get vpc, security group and proxy
-    const { vpc, securityGroup } = AuroraDatabaseVpc.fromName(
-      this,
-      createAuroraDatabaseName('vpc'),
-    );
-    const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
-      this,
-      createAuroraDatabaseName('proxy'),
-      securityGroup,
-    );
+    // const { role } = new LambdaRole(
+    //   this,
+    //   createName('role-migration'),
+    //   applicationProps,
+    // );
+    // // get vpc, security group and proxy
+    // const { vpc, securityGroup } = AuroraDatabaseVpc.fromName(
+    //   this,
+    //   createAuroraDatabaseName('vpc'),
+    // );
+    // const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
+    //   this,
+    //   createAuroraDatabaseName('proxy'),
+    //   securityGroup,
+    // );
 
-    // grant access to role
-    proxy.grantConnect(role, 'postgres');
+    // // grant access to role
+    // proxy.grantConnect(role, 'postgres');
 
-    // // add lambda function for run migrations
-    new LambdaDatabaseMigration(this, createName('lambda-database-migration'), {
-      ...applicationProps,
-      role,
-      vpc: vpc,
-      securityGroups: [securityGroup],
-    });
+    // // // add lambda function for run migrations
+    // new LambdaDatabaseMigration(this, createName('lambda-database-migration'), {
+    //   ...applicationProps,
+    //   role,
+    //   vpc: vpc,
+    //   securityGroups: [securityGroup],
+    // });
   }
 }
