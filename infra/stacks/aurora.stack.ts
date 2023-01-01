@@ -1,11 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { AuroraDatabase } from './../constructs/aurora-database/aurora-database.construct';
 import { AuroraDatabaseVpc } from '../constructs/aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
-import { LambdaDatabaseMigration } from '../constructs/lambda-database-migration/lambda-database-migration.construct';
 import { ApplicationProps } from '../props/application.props';
-import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
+import { Construct } from 'constructs';
 
 export class AuroraStack extends cdk.Stack {
   constructor(
@@ -35,26 +33,10 @@ export class AuroraStack extends cdk.Stack {
     );
 
     // create aurora database proxy
-    const { proxy } = new AuroraDatabaseProxy(this, createName(`proxy`), {
+    new AuroraDatabaseProxy(this, createName(`proxy`), {
       ...applicationProps,
       auroraDatabaseCluster: databaseCluster,
       auroraDatabaseVpc,
-    });
-
-    // add lambda function for run migrations
-    const { role } = new LambdaRole(
-      this,
-      createName('role-migration'),
-      applicationProps,
-    );
-    proxy.grantConnect(role, 'postgres');
-
-    // add lambda function for run migrations
-    new LambdaDatabaseMigration(this, createName('lambda-database-migration'), {
-      ...applicationProps,
-      role,
-      vpc: auroraDatabaseVpc.vpc,
-      securityGroups: [auroraDatabaseVpc.dbSecurityGroup],
     });
   }
 }
