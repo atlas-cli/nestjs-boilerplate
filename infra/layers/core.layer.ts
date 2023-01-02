@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApplicationProps } from '../props/application.props';
-import { AuroraStack } from '../stacks/aurora.stack';
-import { DatabaseMigrationStack } from '../stacks/database-migration.stack';
+import { AuroraDatabaseResource } from '../resources/aurora-database.resource';
+import { createName } from '../utils/create-name';
 
 export class CoreLayerStack extends cdk.Stack {
   constructor(
@@ -12,23 +12,11 @@ export class CoreLayerStack extends cdk.Stack {
   ) {
     super(scope, id);
 
-    // create name function
-    const createName = (name) =>
-      `${applicationProps.applicationName}-${applicationProps.stageName}-${name}`;
-
-    // nested stacks
-    const auroraStack = new AuroraStack(
-      this,
-      createName('aurora-database'),
+    // aurora database
+    const AURORA_DATABASE_NAME = createName(
+      'aurora-database',
       applicationProps,
     );
-    const databaseMigration = new DatabaseMigrationStack(
-      this,
-      createName('database-migration'),
-      applicationProps,
-    );
-
-    // declare dependency
-    databaseMigration.addDependency(auroraStack);
+    new AuroraDatabaseResource(this, AURORA_DATABASE_NAME, applicationProps);
   }
 }

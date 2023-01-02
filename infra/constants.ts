@@ -1,1 +1,1 @@
-export const DEFAULT_STAGE_NAME = 'dev';
+export const DEFAULT_STAGE_NAME = 'development';

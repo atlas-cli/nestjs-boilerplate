@@ -12,15 +12,15 @@ export class AuroraDatabaseProxy extends Construct {
       applicationName,
       stageName,
       createNameCustom,
-      auroraDatabaseVpc,
       auroraDatabaseCluster,
+      vpc,
+      securityGroup,
     } = props;
     const createName: any =
       createNameCustom !== undefined
         ? createNameCustom(stageName, applicationName)
         : (name: string) =>
             `${stageName}-${applicationName}-aurora-database-${name}`;
-    const { vpc, dbSecurityGroup } = auroraDatabaseVpc;
 
     // create database proxy
     this.proxy = new rds.DatabaseProxy(this, createName('proxy'), {
@@ -28,7 +28,7 @@ export class AuroraDatabaseProxy extends Construct {
       proxyTarget: rds.ProxyTarget.fromCluster(auroraDatabaseCluster),
       secrets: [auroraDatabaseCluster.secret],
       vpc,
-      securityGroups: [dbSecurityGroup],
+      securityGroups: [securityGroup],
       iamAuth: true,
     });
     this.exports(createName('proxy'));

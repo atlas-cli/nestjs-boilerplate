@@ -1,58 +1,45 @@
 import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
-import {
-  Peer,
-  Port,
-  SecurityGroup,
-  SubnetType,
-  Vpc,
-} from 'aws-cdk-lib/aws-ec2';
+import { IVpc, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { AuroraDatabaseVpcProps } from './props/aurora-database-vpc.props';
+import { AuroraDatabaseSecurityGroupProps } from './props/aurora-database-security-group.props';
 
-export class AuroraDatabaseVpc extends Construct {
-  vpc: Vpc;
-  dbSecurityGroup: SecurityGroup;
-
-  constructor(scope: Construct, id: string, props: AuroraDatabaseVpcProps) {
+export class AuroraDatabaseSecurityGroup extends Construct {
+  vpc: IVpc;
+  securityGroup: SecurityGroup;
+  constructor(
+    scope: Construct,
+    id: string,
+    props: AuroraDatabaseSecurityGroupProps,
+  ) {
     super(scope, id);
-    const { applicationName, stageName, createNameCustom } = props;
+    const { applicationName, stageName, createNameCustom, vpc } = props;
+    this.vpc = vpc;
+
     const createName: any =
       createNameCustom !== undefined
         ? createNameCustom(stageName, applicationName)
         : (name: string) =>
             `${stageName}-${applicationName}-aurora-database-${name}`;
 
-    // create a vpc
-    this.vpc = new Vpc(this, createName('vpc'), {
-      vpcName: createName('vpc'),
-      cidr: '10.0.0.0/16',
-      subnetConfiguration: [{ name: 'egress', subnetType: SubnetType.PUBLIC }], // only one subnet is needed
-      natGateways: 0, // disable NAT gateways
+    // create a security group for aurora db
+    this.securityGroup = new SecurityGroup(this, createName('security-group'), {
+      securityGroupName: createName('security-group'),
+      vpc: this.vpc, // use the vpc created above
+      allowAllOutbound: true, // allow outbound traffic to anywhere
     });
 
-    // create a security group for aurora db
-    this.dbSecurityGroup = new SecurityGroup(
-      this,
-      createName('security-group'),
-      {
-        securityGroupName: createName('security-group'),
-        vpc: this.vpc, // use the vpc created above
-        allowAllOutbound: true, // allow outbound traffic to anywhere
-      },
-    );
-
     // allow inbound traffic from anywhere to the db
-    this.dbSecurityGroup.addIngressRule(
+    this.securityGroup.addIngressRule(
       Peer.anyIpv4(),
       Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
       'allow inbound traffic from anywhere to the db on port 5432',
     );
-    this.exports(createName('vpc'));
+    this.exportSecurityGroupAndVpc(createName('vpc'));
   }
 
   // export resources
-  exports(scopedName: string) {
+  exportSecurityGroupAndVpc(scopedName: string) {
     const createName = (name: string) => `${scopedName}-${name}`;
     new CfnOutput(this, createName('id'), {
       value: this.vpc.vpcId,
@@ -67,7 +54,7 @@ export class AuroraDatabaseVpc extends Construct {
       exportName: createName('subnet-id-2'),
     });
     new CfnOutput(this, createName('security-group-id'), {
-      value: this.dbSecurityGroup.securityGroupId,
+      value: this.securityGroup.securityGroupId,
       exportName: createName('security-group-id'),
     });
   }

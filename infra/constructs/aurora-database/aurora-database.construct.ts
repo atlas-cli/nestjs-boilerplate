@@ -3,7 +3,6 @@ import { Aspects } from 'aws-cdk-lib';
 import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { AuroraDatabaseVpc } from '../aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProps } from './props/aurora-database.props';
 
 export class AuroraDatabase extends Construct {
@@ -16,24 +15,13 @@ export class AuroraDatabase extends Construct {
       applicationName,
       stageName,
       createNameCustom,
-      auroraDatabaseVpc,
+      vpc,
+      securityGroup,
     }: AuroraDatabaseProps,
   ) {
     super(scope, id);
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-aurora-database-${name}`;
-
-    // if not provided create a new vpc and security groups
-    const { vpc, dbSecurityGroup } =
-      auroraDatabaseVpc ??
-      new AuroraDatabaseVpc(this, createName('vpc'), {
-        applicationName,
-        stageName,
-        createNameCustom,
-      });
+    const createName: any = (name: string) =>
+      `${stageName}-${applicationName}-aurora-database-${name}`;
 
     // create a aurora db cluster serverless v2 postgres
     this.databaseCluster = new rds.DatabaseCluster(
@@ -51,7 +39,7 @@ export class AuroraDatabase extends Construct {
           instanceType: new InstanceType('serverless'),
           autoMinorVersionUpgrade: true,
           publiclyAccessible: false,
-          securityGroups: [dbSecurityGroup],
+          securityGroups: [securityGroup],
           vpcSubnets: vpc.selectSubnets({
             subnetType: SubnetType.PUBLIC, // use the public subnet created above for the db
           }),
