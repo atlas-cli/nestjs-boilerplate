@@ -180,7 +180,9 @@ workflows:
           filters:
             branches:
               only:
-                - feature/cicd-full-cycle
+                - master
+                - main
+                - develop
           requires:
             - build
             - integration_test
@@ -190,8 +192,8 @@ workflows:
           context: production
           filters:
             branches:
-              only:
-                - production
+              tags:
+                only: /^v.*/
           requires:
             - build
             - integration_test
