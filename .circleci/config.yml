@@ -177,12 +177,6 @@ workflows:
       - diff:
           name: diff_to_development
           context: development
-          filters:
-            branches:
-              only:
-                - master
-                - main
-                - develop
           requires:
             - build
             - integration_test
@@ -202,6 +196,12 @@ workflows:
       - approve_deploy_to_development:
           type: approval
           context: development
+          filters:
+            branches:
+              only:
+                - master
+                - main
+                - develop
           requires:
             - diff_to_development
       - approve_deploy_to_production:
