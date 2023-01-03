@@ -191,9 +191,8 @@ workflows:
           name: diff_to_production
           context: production
           filters:
-            branches:
-              tags:
-                only: /^v.*/
+            tags:
+              only: /^v.*/
           requires:
             - build
             - integration_test
