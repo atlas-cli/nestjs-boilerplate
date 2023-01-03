@@ -2,71 +2,76 @@ import * as cdk from 'aws-cdk-lib';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { createName } from '../../utils/create-name';
 import { AuroraDatabaseProxyProps } from './props/aurora-database-proxy.props';
+import { ApplicationProps } from '../../props/application.props';
 
 export class AuroraDatabaseProxy extends Construct {
   proxy: rds.DatabaseProxy;
-  constructor(scope: Construct, id: string, props?: AuroraDatabaseProxyProps) {
+  constructor(scope: Construct, id: string, props: AuroraDatabaseProxyProps) {
     super(scope, id);
-    const {
-      applicationName,
-      stageName,
-      createNameCustom,
-      auroraDatabaseVpc,
-      auroraDatabaseCluster,
-    } = props;
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-aurora-database-${name}`;
-    const { vpc, dbSecurityGroup } = auroraDatabaseVpc;
 
-    // create database proxy
-    this.proxy = new rds.DatabaseProxy(this, createName('proxy'), {
-      dbProxyName: createName('proxy'),
+    // get vpc, security group and auroraDatabaseCluster
+    const { securityGroup, vpc, auroraDatabaseCluster } = props;
+
+    // create a aurora db cluster serverless v2 postgres
+    const DATABASE_PROXY_NAME = createName('proxy', props);
+    this.proxy = new rds.DatabaseProxy(this, DATABASE_PROXY_NAME, {
+      dbProxyName: DATABASE_PROXY_NAME,
       proxyTarget: rds.ProxyTarget.fromCluster(auroraDatabaseCluster),
       secrets: [auroraDatabaseCluster.secret],
       vpc,
-      securityGroups: [dbSecurityGroup],
+      securityGroups: [securityGroup],
       iamAuth: true,
     });
-    this.exports(createName('proxy'));
+    this.exports('proxy', props);
   }
 
   // export resources
-  exports(scopedName: string) {
-    const createName = (name: string) => `${scopedName}-${name}`;
-    // exports
-    new CfnOutput(this, createName('arn'), {
+  exports(scopedName: string, props: AuroraDatabaseProxyProps) {
+    // create name scoped
+    const createNameScoped = (name, config) =>
+      createName(`${scopedName}-${name}`, config);
+
+    // outputs
+    new CfnOutput(this, createNameScoped('arn', props), {
       value: this.proxy.dbProxyArn,
-      exportName: createName('arn'),
+      exportName: createNameScoped('arn', props),
     });
-    new CfnOutput(this, createName('name'), {
+    new CfnOutput(this, createNameScoped('name', props), {
       value: this.proxy.dbProxyName,
-      exportName: createName('name'),
+      exportName: createNameScoped('name', props),
     });
-    new CfnOutput(this, createName('endpoint'), {
+    new CfnOutput(this, createNameScoped('endpoint', props), {
       value: this.proxy.endpoint,
-      exportName: createName('endpoint'),
+      exportName: createNameScoped('endpoint', props),
     });
-    new CfnOutput(this, createName('host'), {
+    new CfnOutput(this, createNameScoped('host', props), {
       value: this.proxy.endpoint,
-      exportName: createName('host'),
+      exportName: createNameScoped('host', props),
     });
   }
 
   // import resrouces
 
-  static fromNameAndSecurityGroup(scope, scopedName: string, securityGroup) {
-    const createName = (name: string) => `${scopedName}-${name}`;
+  static fromNameAndSecurityGroup(
+    scope,
+    scopedName: string,
+    securityGroup,
+    props: ApplicationProps,
+  ) {
+    // create name scoped
+    const createNameScoped = (name, config) =>
+      createName(`${scopedName}-${name}`, config);
+
+    // import proxy
     const proxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(
       scope,
-      'AuroraDatabaseProxy',
+      createNameScoped('proxy', props),
       {
-        dbProxyArn: cdk.Fn.importValue(createName('arn')),
-        dbProxyName: cdk.Fn.importValue(createName('name')),
-        endpoint: cdk.Fn.importValue(createName('endpoint')),
+        dbProxyArn: cdk.Fn.importValue(createNameScoped('arn', props)),
+        dbProxyName: cdk.Fn.importValue(createNameScoped('name', props)),
+        endpoint: cdk.Fn.importValue(createNameScoped('endpoint', props)),
         securityGroups: [securityGroup],
       },
     );

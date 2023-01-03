@@ -1,18 +1,18 @@
-import { App } from 'aws-cdk-lib';
-import { AuroraStack } from './stacks/aurora.stack';
-import { LambdaStack } from './stacks/lambda.stack';
-
-// application
-const app = new App();
+import { DEFAULT_STAGE_NAME } from './constants';
+import { AtlasInfraestructure } from './factories/infraestructure';
+import { ApplicationLayerStack } from './layers/application.layer';
+import { CoreLayerStack } from './layers/core.layer';
 
 // application config
-const config = { applicationName: 'atlas', stageName: 'dev' };
-const createName = (name) =>
-  `${config.applicationName}-${config.stageName}-${name}`;
-
-// stacks
-new AuroraStack(app, createName('aurora-database'), config);
-new LambdaStack(app, createName('lambda'), config);
-
-// run synth
-app.synth();
+new AtlasInfraestructure({
+  applicationName: 'atlas',
+  stageName: process.env.NODE_ENV ?? DEFAULT_STAGE_NAME,
+  env: {
+    account: process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEPLOY_REGION || process.env.CDK_DEFAULT_REGION,
+  },
+  layersStack: {
+    core: CoreLayerStack,
+    application: ApplicationLayerStack,
+  },
+});

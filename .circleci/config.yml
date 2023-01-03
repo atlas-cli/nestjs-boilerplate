@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  aws-cli: circleci/aws-cli@3.1
 jobs:
   checkout:
     working_directory: ~/nest-boilerplate
@@ -104,11 +105,58 @@ jobs:
       - save_cache:
           key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/nest-boilerplate/dist/nest-boilerplate
+            - ~/nest-boilerplate/dist/app
+  diff:
+    working_directory: ~/nest-boilerplate
+    executor: aws-cli/default
+    docker:
+      - image: cimg/node:16.18.1-browsers
+    steps:
+      - restore_cache:
+          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+      - restore_cache:
+          key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Build infra
+          command: npm run build:infra
+      - run:
+          name: Diff
+          command: npx cdk diff --all
 
+  deployment:
+    working_directory: ~/nest-boilerplate
+    executor: aws-cli/default
+    docker:
+      - image: cimg/node:16.18.1-browsers
+    steps:
+      - restore_cache:
+          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+      - restore_cache:
+          key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Build infra
+          command: npm run build:infra
+      - run:
+          name: Deploy core changes
+          command: npx cdk deploy atlas-$NODE_ENV-aurora-database --require-approval never
+      - run:
+          name: Deploy application changes
+          command: npx cdk deploy atlas-$NODE_ENV-aurora-database --require-approval never
 workflows:
   version: 2
-  ci:
+  full-cycle:
     jobs:
       - checkout
       - dependencies:
@@ -126,3 +174,48 @@ workflows:
       - build:
           requires:
             - dependencies
+      - diff:
+          name: diff_to_development
+          context: development
+          requires:
+            - build
+            - integration_test
+            - unit_test
+      - diff:
+          name: diff_to_production
+          context: production
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
+            - integration_test
+            - unit_test
+      - approve_deploy_to_development:
+          type: approval
+          context: development
+          filters:
+            branches:
+              only:
+                - master
+                - main
+                - develop
+          requires:
+            - diff_to_development
+      - approve_deploy_to_production:
+          type: approval
+          context: production
+          requires:
+            - diff_to_production
+      - deployment:
+          name: deployment_to_development
+          context: development
+          requires:
+            - approve_deploy_to_development
+      - deployment:
+          name: deployment_to_production
+          context: production
+          requires:
+            - approve_deploy_to_production

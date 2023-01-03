@@ -3,8 +3,8 @@ import { Aspects } from 'aws-cdk-lib';
 import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { AuroraDatabaseVpc } from '../aurora-database-vpc/aurora-database-vpc.construct';
 import { AuroraDatabaseProps } from './props/aurora-database.props';
+import { createName } from '../../utils/create-name';
 
 export class AuroraDatabase extends Construct {
   databaseCluster: rds.DatabaseCluster;
@@ -12,33 +12,18 @@ export class AuroraDatabase extends Construct {
   constructor(
     scope: Construct,
     id: string,
-    {
-      applicationName,
-      stageName,
-      createNameCustom,
-      auroraDatabaseVpc,
-    }: AuroraDatabaseProps,
+    auroraDatabaseProps: AuroraDatabaseProps,
   ) {
     super(scope, id);
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-aurora-database-${name}`;
 
-    // if not provided create a new vpc and security groups
-    const { vpc, dbSecurityGroup } =
-      auroraDatabaseVpc ??
-      new AuroraDatabaseVpc(this, createName('vpc'), {
-        applicationName,
-        stageName,
-        createNameCustom,
-      });
+    // get vpc and security group
+    const { securityGroup, vpc } = auroraDatabaseProps;
 
     // create a aurora db cluster serverless v2 postgres
+    const DATABASE_CLUSTER_NAME = createName('cluster', auroraDatabaseProps);
     this.databaseCluster = new rds.DatabaseCluster(
       this,
-      createName('cluster'),
+      DATABASE_CLUSTER_NAME,
       {
         instances: 1,
         iamAuthentication: true,
@@ -51,13 +36,14 @@ export class AuroraDatabase extends Construct {
           instanceType: new InstanceType('serverless'),
           autoMinorVersionUpgrade: true,
           publiclyAccessible: false,
-          securityGroups: [dbSecurityGroup],
+          securityGroups: [securityGroup],
           vpcSubnets: vpc.selectSubnets({
             subnetType: SubnetType.PUBLIC, // use the public subnet created above for the db
           }),
         },
       },
     );
+
     // add capacity to the db cluster to enable scaling
     Aspects.of(this.databaseCluster).add({
       visit(node) {

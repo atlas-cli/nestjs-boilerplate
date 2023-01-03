@@ -2,6 +2,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
+import { createName } from '../../utils/create-name';
 import {
   DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
   DEFAULT_NESTJS_FUNCTION_PROPS,
@@ -18,20 +19,18 @@ export class LambdaDatabaseMigration extends Construct {
     props: LambdaDatabaseMigrationProps,
   ) {
     super(scope, id);
-    const { createNameCustom, stageName, applicationName } = props;
-    const databaseName = `${stageName}-${applicationName}-aurora-database`;
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-lambda-database-${name}`;
 
+    // build database name
+    const AURORA_DATABASE_NAME = createName('aurora-database', props);
+
+    // create database function
+    const DATABASE_MIGRATION_FUNCTION_NAME = createName('migration', props);
     const functionProps = {
       ...props,
       ...DEFAULT_NESTJS_FUNCTION_PROPS,
       environment: {
         ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
-        ...createDatabaseAuroraEnvironment(databaseName),
+        ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
       },
       bundling: {
         minify: false,
@@ -60,11 +59,11 @@ export class LambdaDatabaseMigration extends Construct {
         'database',
         'index.js',
       ),
-      functionName: createName('migration'),
+      functionName: DATABASE_MIGRATION_FUNCTION_NAME,
     };
     this.nodejsFunction = new NodejsFunction(
       this,
-      createName('migration'),
+      DATABASE_MIGRATION_FUNCTION_NAME,
       functionProps,
     );
   }
