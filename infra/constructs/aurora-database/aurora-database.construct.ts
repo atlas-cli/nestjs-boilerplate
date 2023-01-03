@@ -4,6 +4,7 @@ import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 import { AuroraDatabaseProps } from './props/aurora-database.props';
+import { createName } from '../../utils/create-name';
 
 export class AuroraDatabase extends Construct {
   databaseCluster: rds.DatabaseCluster;
@@ -11,22 +12,18 @@ export class AuroraDatabase extends Construct {
   constructor(
     scope: Construct,
     id: string,
-    {
-      applicationName,
-      stageName,
-      createNameCustom,
-      vpc,
-      securityGroup,
-    }: AuroraDatabaseProps,
+    auroraDatabaseProps: AuroraDatabaseProps,
   ) {
     super(scope, id);
-    const createName: any = (name: string) =>
-      `${stageName}-${applicationName}-aurora-database-${name}`;
+
+    // get vpc and security group
+    const { securityGroup, vpc } = auroraDatabaseProps;
 
     // create a aurora db cluster serverless v2 postgres
+    const DATABASE_CLUSTER_NAME = createName('cluster', auroraDatabaseProps);
     this.databaseCluster = new rds.DatabaseCluster(
       this,
-      createName('cluster'),
+      DATABASE_CLUSTER_NAME,
       {
         instances: 1,
         iamAuthentication: true,
@@ -46,6 +43,7 @@ export class AuroraDatabase extends Construct {
         },
       },
     );
+
     // add capacity to the db cluster to enable scaling
     Aspects.of(this.databaseCluster).add({
       visit(node) {

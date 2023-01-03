@@ -2,6 +2,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
+import { createName } from '../../utils/create-name';
 import {
   DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
   DEFAULT_NESTJS_FUNCTION_PROPS,
@@ -14,33 +15,27 @@ export class LambdaNestJsFunction extends Construct {
   nodejsFunction: NodejsFunction;
   constructor(scope: Construct, id: string, props: LambdaNestJsFunctionProps) {
     super(scope, id);
-    const {
-      createNameCustom,
-      stageName,
-      applicationName,
-      functionName,
-      moduleName,
-    } = props;
-    const databaseName = `${stageName}-${applicationName}-aurora-database`;
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-lambda-nestjs-${name}`;
+
+    // build database name
+    const AURORA_DATABASE_NAME = createName('aurora-database', props);
+    const { functionName, moduleName } = props;
+
+    // create database function
+    const NESTJS_FUNCTION_NAME = createName(functionName, props);
 
     const functionProps = {
       ...props,
       ...DEFAULT_NESTJS_FUNCTION_PROPS,
       environment: {
         ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
-        ...createDatabaseAuroraEnvironment(databaseName),
+        ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
       },
       entry: join(__dirname, '..', '..', '..', 'app', moduleName, 'server.js'),
-      functionName: createName(functionName),
+      functionName: NESTJS_FUNCTION_NAME,
     };
     this.nodejsFunction = new NodejsFunction(
       this,
-      createName(functionName),
+      NESTJS_FUNCTION_NAME,
       functionProps,
     );
   }

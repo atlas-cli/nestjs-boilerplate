@@ -11,7 +11,7 @@ export class ApplicationLayerStack extends cdk.Stack {
     id: string,
     applicationProps: ApplicationProps,
   ) {
-    super(scope, id);
+    super(scope, id, applicationProps);
 
     // application for run database migration
     const DATABASE_MIGRATION_NAME = createName(

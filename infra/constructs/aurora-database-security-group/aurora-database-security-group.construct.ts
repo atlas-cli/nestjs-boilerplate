@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
 import { IVpc, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
+import { createName } from '../../utils/create-name';
 import { AuroraDatabaseSecurityGroupProps } from './props/aurora-database-security-group.props';
 
 export class AuroraDatabaseSecurityGroup extends Construct {
@@ -13,18 +14,14 @@ export class AuroraDatabaseSecurityGroup extends Construct {
     props: AuroraDatabaseSecurityGroupProps,
   ) {
     super(scope, id);
-    const { applicationName, stageName, createNameCustom, vpc } = props;
-    this.vpc = vpc;
 
-    const createName: any =
-      createNameCustom !== undefined
-        ? createNameCustom(stageName, applicationName)
-        : (name: string) =>
-            `${stageName}-${applicationName}-aurora-database-${name}`;
+    //get vpc
+    this.vpc = props.vpc;
 
     // create a security group for aurora db
-    this.securityGroup = new SecurityGroup(this, createName('security-group'), {
-      securityGroupName: createName('security-group'),
+    const SECURITY_GROUP_NAME = createName('security-group', props);
+    this.securityGroup = new SecurityGroup(this, SECURITY_GROUP_NAME, {
+      securityGroupName: SECURITY_GROUP_NAME,
       vpc: this.vpc, // use the vpc created above
       allowAllOutbound: true, // allow outbound traffic to anywhere
     });
@@ -35,45 +32,55 @@ export class AuroraDatabaseSecurityGroup extends Construct {
       Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
       'allow inbound traffic from anywhere to the db on port 5432',
     );
-    this.exportSecurityGroupAndVpc(createName('vpc'));
+
+    // export security group and vpc
+    this.exportSecurityGroupAndVpc('security-group', props);
   }
 
   // export resources
-  exportSecurityGroupAndVpc(scopedName: string) {
-    const createName = (name: string) => `${scopedName}-${name}`;
-    new CfnOutput(this, createName('id'), {
+  exportSecurityGroupAndVpc(scopedName: string, props) {
+    // create name scoped
+    const createNameScoped = (name, config) =>
+      createName(`${scopedName}-${name}`, config);
+
+    // outputs
+    new CfnOutput(this, createNameScoped('id', props), {
       value: this.vpc.vpcId,
-      exportName: createName('id'),
+      exportName: createNameScoped('id', props),
     });
-    new CfnOutput(this, createName('subnet-id-1'), {
+    new CfnOutput(this, createNameScoped('subnet-id-1', props), {
       value: this.vpc.publicSubnets[0].subnetId,
-      exportName: createName('subnet-id-1'),
+      exportName: createNameScoped('subnet-id-1', props),
     });
-    new CfnOutput(this, createName('subnet-id-2 '), {
+    new CfnOutput(this, createNameScoped('subnet-id-2 ', props), {
       value: this.vpc.publicSubnets[1].subnetId,
-      exportName: createName('subnet-id-2'),
+      exportName: createNameScoped('subnet-id-2', props),
     });
-    new CfnOutput(this, createName('security-group-id'), {
+    new CfnOutput(this, createNameScoped('security-group-id', props), {
       value: this.securityGroup.securityGroupId,
-      exportName: createName('security-group-id'),
+      exportName: createNameScoped('security-group-id', props),
     });
   }
 
   // import resources
-  static fromName(scope, scopedName: string) {
-    const createName = (name: string) => `${scopedName}-${name}`;
-    const vpc = Vpc.fromVpcAttributes(scope, createName('id'), {
-      vpcId: cdk.Fn.importValue(createName('id')),
+  static fromName(scope, scopedName: string, props) {
+    // create name scoped
+    const createNameScoped = (name) =>
+      createName(`${scopedName}-${name}`, props);
+
+    // vpc resource
+    const vpc = Vpc.fromVpcAttributes(scope, createNameScoped('id'), {
+      vpcId: cdk.Fn.importValue(createNameScoped('id')),
       availabilityZones: ['sa-east-1'],
       publicSubnetIds: [
-        cdk.Fn.importValue(createName('subnet-id-1')),
-        cdk.Fn.importValue(createName('subnet-id-2')),
+        cdk.Fn.importValue(createNameScoped('subnet-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-id-2')),
       ],
     });
     const securityGroup = SecurityGroup.fromSecurityGroupId(
       scope,
-      createName('security-group-id'),
-      cdk.Fn.importValue(createName('security-group-id')),
+      createNameScoped('security-group-id'),
+      cdk.Fn.importValue(createNameScoped('security-group-id')),
     );
     return {
       vpc,

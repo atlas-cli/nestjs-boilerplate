@@ -17,29 +17,19 @@ export class LambdaResource extends Construct {
     super(scope, id);
     // setup prefix
     const createName = (name, config) =>
-      defaultCreateName(`database-migration-${name}`, config);
-
-    // naming aurora database import services
-    const createAuroraDatabaseName = (name, config) =>
-      defaultCreateName(`aurora-database-${name}`, config);
+      defaultCreateName(`lambda-${name}`, config);
 
     // import vpc, and rds proxy
-    const SECURITY_GROUP_NAME = createAuroraDatabaseName(
-      'security-group',
-      applicationProps,
-    );
     const { vpc, securityGroup } = AuroraDatabaseSecurityGroup.fromName(
       this,
-      SECURITY_GROUP_NAME,
-    );
-    const AURORA_DATABASE_PROXY_NAME = createAuroraDatabaseName(
-      'proxy',
+      'security-group',
       applicationProps,
     );
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
-      AURORA_DATABASE_PROXY_NAME,
+      'proxy',
       securityGroup,
+      applicationProps,
     );
 
     // create iam role
@@ -68,7 +58,10 @@ export class LambdaResource extends Construct {
     );
 
     // Create an API Gateway resource for each of the CRUD operations
-    const API_GATEWAY_FUNCTION_NAME = createName('function', applicationProps);
+    const API_GATEWAY_FUNCTION_NAME = createName(
+      'api-gateway',
+      applicationProps,
+    );
     const { api } = new ApiGateway(this, API_GATEWAY_FUNCTION_NAME, {
       ...applicationProps,
       restApiName: 'api',

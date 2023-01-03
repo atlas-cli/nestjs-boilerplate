@@ -1,32 +1,18 @@
-import { App } from 'aws-cdk-lib';
 import { DEFAULT_STAGE_NAME } from './constants';
+import { AtlasInfraestructure } from './factories/infraestructure';
 import { ApplicationLayerStack } from './layers/application.layer';
 import { CoreLayerStack } from './layers/core.layer';
-import { createName } from './utils/create-name';
-
-// application
-const app = new App();
 
 // application config
-const config = {
+new AtlasInfraestructure({
   applicationName: 'atlas',
   stageName: process.env.NODE_ENV ?? DEFAULT_STAGE_NAME,
-};
-
-// core layer
-const CORE_STACK_NAME = createName('core-layer', config);
-const coreStack = new CoreLayerStack(app, CORE_STACK_NAME, config);
-
-// application layer
-const APPLICATION_STACK_NAME = createName('application-layer', config);
-const applicationStack = new ApplicationLayerStack(
-  app,
-  APPLICATION_STACK_NAME,
-  config,
-);
-
-// dependencies
-applicationStack.addDependency(coreStack);
-
-// run synth
-app.synth();
+  env: {
+    account: process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEPLOY_REGION || process.env.CDK_DEFAULT_REGION,
+  },
+  layersStack: {
+    core: CoreLayerStack,
+    application: ApplicationLayerStack,
+  },
+});

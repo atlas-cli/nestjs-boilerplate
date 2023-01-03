@@ -10,7 +10,7 @@ export class CoreLayerStack extends cdk.Stack {
     id: string,
     applicationProps: ApplicationProps,
   ) {
-    super(scope, id);
+    super(scope, id, applicationProps);
 
     // aurora database
     const AURORA_DATABASE_NAME = createName(

@@ -26,21 +26,18 @@ export class DatabaseMigrationResource extends Construct {
     const { role } = new LambdaRole(this, LAMBDA_ROLE_NAME, applicationProps);
 
     // get vpc, security group
-    const SECURITY_GROUP_NAME = createAuroraDatabaseName(
+    const { vpc, securityGroup } = AuroraDatabaseSecurityGroup.fromName(
+      this,
       'security-group',
       applicationProps,
     );
-    const { vpc, securityGroup } = AuroraDatabaseSecurityGroup.fromName(
-      this,
-      SECURITY_GROUP_NAME,
-    );
 
     // get proxy
-    const PROXY_NAME = createAuroraDatabaseName('proxy', applicationProps);
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
-      PROXY_NAME,
+      'proxy',
       securityGroup,
+      applicationProps,
     );
 
     // grant access to lambda role
