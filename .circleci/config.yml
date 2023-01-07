@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@3.1
+  sonarcloud: sonarsource/sonarcloud@1.1.0
 jobs:
   checkout:
     working_directory: ~/nest-boilerplate
@@ -54,7 +55,8 @@ jobs:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
           name: Test
-          command: npm run test
+          command: npm run test:cov
+      - sonarcloud/scan
   integration_test:
     working_directory: ~/nest-boilerplate
     docker:
@@ -163,6 +165,7 @@ workflows:
           requires:
             - dependencies
       - unit_test:
+          context: sonarcloud
           requires:
             - dependencies
       - integration_test:
