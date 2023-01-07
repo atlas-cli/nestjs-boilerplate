@@ -36,7 +36,7 @@ export class DatabaseMigrationResource extends Construct {
     // get proxy
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
-      'proxy',
+      'aurora-database-proxy',
       securityGroup,
       applicationProps,
     );
