@@ -1,6 +1,5 @@
 import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
-import { AppModule } from 'app.module';
 import validationOptions from './utils/validation-options';
 import { Reflector } from '@nestjs/core';
 
