@@ -7,6 +7,7 @@ import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { createName as defaultCreateName } from '../utils/create-name';
 
 export class AuroraDatabaseResource extends Construct {
+  auroraDatabaseProxy: AuroraDatabaseProxy;
   constructor(
     scope: Construct,
     id: string,
@@ -48,7 +49,7 @@ export class AuroraDatabaseResource extends Construct {
 
     // create aurora database proxy
     const DATABASE_PROXY_NAME = createName('proxy', applicationProps);
-    new AuroraDatabaseProxy(this, DATABASE_PROXY_NAME, {
+    this.auroraDatabaseProxy = new AuroraDatabaseProxy(this, DATABASE_PROXY_NAME, {
       ...applicationProps,
       auroraDatabaseCluster: databaseCluster,
       vpc,

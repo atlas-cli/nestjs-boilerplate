@@ -31,6 +31,7 @@ export class AuroraDatabase extends Construct {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_13_6,
         }),
+        storageEncrypted: true,
         instanceProps: {
           vpc: vpc,
           instanceType: new InstanceType('serverless'),
