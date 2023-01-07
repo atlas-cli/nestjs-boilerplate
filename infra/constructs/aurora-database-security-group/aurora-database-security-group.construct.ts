@@ -44,10 +44,10 @@ export class AuroraDatabaseSecurityGroup extends Construct {
       createName(`${scopedName}-${name}`, config);
 
     // outputs
-    createOutput(createNameScoped('id', props), this.vpc.vpcId);
-    createOutput(createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
-    createOutput(createNameScoped('subnet-id-2', props), this.vpc.publicSubnets[1].subnetId);
-    createOutput(createNameScoped('security-group-id', props), this.securityGroup.securityGroupId);
+    createOutput(this, createNameScoped('id', props), this.vpc.vpcId);
+    createOutput(this, createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
+    createOutput(this, createNameScoped('subnet-id-2', props), this.vpc.publicSubnets[1].subnetId);
+    createOutput(this, createNameScoped('security-group-id', props), this.securityGroup.securityGroupId);
   }
 
   // import resources
