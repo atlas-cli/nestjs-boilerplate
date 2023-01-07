@@ -34,6 +34,7 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# infra outputs
 cdk.out/*
 
 # documentatin dist
