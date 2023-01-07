@@ -4,7 +4,7 @@ import { ApplicationLayerStack } from './layers/application.layer';
 import { CoreLayerStack } from './layers/core.layer';
 
 // application config
-new AtlasInfraestructure({
+const infraestructure = new AtlasInfraestructure({
   applicationName: 'atlas',
   stageName: process.env.NODE_ENV ?? DEFAULT_STAGE_NAME,
   env: {
@@ -16,3 +16,6 @@ new AtlasInfraestructure({
     application: ApplicationLayerStack,
   },
 });
+
+// exec synth
+infraestructure.synth();

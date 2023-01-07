@@ -1,8 +1,6 @@
-import { PartialType } from '@nestjs/swagger';
+import { PartialType, ApiProperty } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
-
 import { Transform } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional, MinLength, Validate } from 'class-validator';
 import { IsNotExist } from './../../common/utils/validators/is-not-exists.validator';
 import { Role } from './../../common/roles/entities/role.entity';

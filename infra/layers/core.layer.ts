@@ -5,6 +5,7 @@ import { AuroraDatabaseResource } from '../resources/aurora-database.resource';
 import { createName } from '../utils/create-name';
 
 export class CoreLayerStack extends cdk.Stack {
+  auroraDatabaseResource: AuroraDatabaseResource;
   constructor(
     scope: Construct,
     id: string,
@@ -17,6 +18,6 @@ export class CoreLayerStack extends cdk.Stack {
       'aurora-database',
       applicationProps,
     );
-    new AuroraDatabaseResource(this, AURORA_DATABASE_NAME, applicationProps);
+    this.auroraDatabaseResource = new AuroraDatabaseResource(this, AURORA_DATABASE_NAME, applicationProps);
   }
 }

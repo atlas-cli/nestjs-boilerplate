@@ -7,6 +7,7 @@ import { LambdaDatabaseMigration } from '../constructs/lambda-database-migration
 import { createName as defaultCreateName } from '../utils/create-name';
 
 export class DatabaseMigrationResource extends Construct {
+  lambdaDatabaseMigration: LambdaDatabaseMigration;
   constructor(
     scope: Construct,
     id: string,
@@ -48,7 +49,7 @@ export class DatabaseMigrationResource extends Construct {
       'lambda-database-migration',
       applicationProps,
     );
-    new LambdaDatabaseMigration(this, LAMBDA_DATABASE_MIGRATION_NAME, {
+    this.lambdaDatabaseMigration = new LambdaDatabaseMigration(this, LAMBDA_DATABASE_MIGRATION_NAME, {
       ...applicationProps,
       role,
       vpc: vpc,

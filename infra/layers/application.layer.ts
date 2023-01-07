@@ -6,6 +6,8 @@ import { LambdaResource } from '../resources/lambda.resources';
 import { createName } from '../utils/create-name';
 
 export class ApplicationLayerStack extends cdk.Stack {
+  databaseMigrationResource: DatabaseMigrationResource;
+  lambdaResource: LambdaResource;
   constructor(
     scope: Construct,
     id: string,
@@ -18,7 +20,7 @@ export class ApplicationLayerStack extends cdk.Stack {
       'aurora-database',
       applicationProps,
     );
-    new DatabaseMigrationResource(
+    this.databaseMigrationResource = new DatabaseMigrationResource(
       this,
       DATABASE_MIGRATION_NAME,
       applicationProps,
@@ -26,6 +28,6 @@ export class ApplicationLayerStack extends cdk.Stack {
 
     // lambda users resource
     const LAMBDA_RESOURCE_NAME = createName('lambda', applicationProps);
-    new LambdaResource(this, LAMBDA_RESOURCE_NAME, applicationProps);
+    this.lambdaResource = new LambdaResource(this, LAMBDA_RESOURCE_NAME, applicationProps);
   }
 }

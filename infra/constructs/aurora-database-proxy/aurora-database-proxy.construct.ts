@@ -1,10 +1,10 @@
 import * as cdk from 'aws-cdk-lib';
 import * as rds from 'aws-cdk-lib/aws-rds';
-import { CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { createName } from '../../utils/create-name';
 import { AuroraDatabaseProxyProps } from './props/aurora-database-proxy.props';
 import { ApplicationProps } from '../../props/application.props';
+import { createOutput } from '../../utils/create-output';
 
 export class AuroraDatabaseProxy extends Construct {
   proxy: rds.DatabaseProxy;
@@ -34,22 +34,10 @@ export class AuroraDatabaseProxy extends Construct {
       createName(`${scopedName}-${name}`, config);
 
     // outputs
-    new CfnOutput(this, createNameScoped('arn', props), {
-      value: this.proxy.dbProxyArn,
-      exportName: createNameScoped('arn', props),
-    });
-    new CfnOutput(this, createNameScoped('name', props), {
-      value: this.proxy.dbProxyName,
-      exportName: createNameScoped('name', props),
-    });
-    new CfnOutput(this, createNameScoped('endpoint', props), {
-      value: this.proxy.endpoint,
-      exportName: createNameScoped('endpoint', props),
-    });
-    new CfnOutput(this, createNameScoped('host', props), {
-      value: this.proxy.endpoint,
-      exportName: createNameScoped('host', props),
-    });
+    createOutput(this, createNameScoped('arn', props), this.proxy.dbProxyArn);
+    createOutput(this, createNameScoped('name', props), this.proxy.dbProxyName);
+    createOutput(this, createNameScoped('endpoint', props), this.proxy.endpoint);
+    createOutput(this, createNameScoped('host', props), this.proxy.endpoint);
   }
 
   // import resrouces
