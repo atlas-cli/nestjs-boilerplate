@@ -25,7 +25,7 @@ export class AuthService {
     private forgotService: ForgotService,
     private mailService: MailService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async validateLogin(
     loginDto: AuthEmailLoginDto,
@@ -51,6 +51,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
+            // NOSONAR
             password: 'incorrectPassword',
           },
         },

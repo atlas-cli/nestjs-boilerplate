@@ -4,13 +4,14 @@ import { RoleEnum } from './../../../roles/roles.enum';
 import { StatusEnum } from './../../../statuses/statuses.enum';
 import { User } from './../../../../users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { ADMIN_PASSWORD, TESTER_PASSWORD } from '../../constants';
 
 @Injectable()
 export class UserSeedService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
-  ) {}
+  ) { }
 
   async run() {
     const countAdmin = await this.repository.count({
@@ -27,7 +28,7 @@ export class UserSeedService {
           firstName: 'Super',
           lastName: 'Admin',
           email: 'admin@example.com',
-          password: 'secret',
+          password: ADMIN_PASSWORD,
           role: {
             id: RoleEnum.admin,
             name: 'Admin',
@@ -54,7 +55,7 @@ export class UserSeedService {
           firstName: 'John',
           lastName: 'Doe',
           email: 'john.doe@example.com',
-          password: 'secret',
+          password: TESTER_PASSWORD,
           role: {
             id: RoleEnum.user,
             name: 'User',
