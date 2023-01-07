@@ -1,5 +1,8 @@
 # NestJS in Serverless Application with CDK
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
+[![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
+
 ## Description
 
 NestJS in Serverless Application with postgres(typeorm) CDK for startup projects.
