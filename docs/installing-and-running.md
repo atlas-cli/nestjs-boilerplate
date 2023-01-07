@@ -26,12 +26,11 @@
     ```
 
 1. Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
-   Change `MAIL_HOST=maildev` to `MAIL_HOST=localhost`
 
 1. Run additional container:
 
     ```bash
-    docker compose up -d postgres adminer maildev redis
+    docker compose up -d postgres redis
     ```
 
 1. Install dependency
@@ -98,7 +97,6 @@ If you want quick run your app, you can use following commands:
 ## Links
 
 - Swagger (API docs): http://localhost:3000/docs
-- Adminer (client for DB): http://localhost:8080
 
 ---
 
