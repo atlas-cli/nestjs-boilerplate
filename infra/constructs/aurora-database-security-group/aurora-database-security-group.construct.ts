@@ -3,6 +3,7 @@ import { CfnOutput } from 'aws-cdk-lib';
 import { IVpc, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { createName } from '../../utils/create-name';
+import { createOutput } from '../../utils/create-output';
 import { AuroraDatabaseSecurityGroupProps } from './props/aurora-database-security-group.props';
 
 export class AuroraDatabaseSecurityGroup extends Construct {
@@ -44,22 +45,10 @@ export class AuroraDatabaseSecurityGroup extends Construct {
       createName(`${scopedName}-${name}`, config);
 
     // outputs
-    new CfnOutput(this, createNameScoped('id', props), {
-      value: this.vpc.vpcId,
-      exportName: createNameScoped('id', props),
-    });
-    new CfnOutput(this, createNameScoped('subnet-id-1', props), {
-      value: this.vpc.publicSubnets[0].subnetId,
-      exportName: createNameScoped('subnet-id-1', props),
-    });
-    new CfnOutput(this, createNameScoped('subnet-id-2 ', props), {
-      value: this.vpc.publicSubnets[1].subnetId,
-      exportName: createNameScoped('subnet-id-2', props),
-    });
-    new CfnOutput(this, createNameScoped('security-group-id', props), {
-      value: this.securityGroup.securityGroupId,
-      exportName: createNameScoped('security-group-id', props),
-    });
+    createOutput(createNameScoped('id', props), this.vpc.vpcId);
+    createOutput(createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
+    createOutput(createNameScoped('subnet-id-2', props), this.vpc.publicSubnets[1].subnetId);
+    createOutput(createNameScoped('security-group-id', props), this.securityGroup.securityGroupId);
   }
 
   // import resources
