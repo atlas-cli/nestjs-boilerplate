@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import * as rds from 'aws-cdk-lib/aws-rds';
-import { CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { createName } from '../../utils/create-name';
 import { AuroraDatabaseProxyProps } from './props/aurora-database-proxy.props';
