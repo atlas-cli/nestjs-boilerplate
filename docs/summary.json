@@ -1,0 +1,32 @@
+[
+    {
+        "title": "Auth",
+        "file": "auth.md"
+    },
+    {
+        "title": "Working with database",
+        "file": "database.md"
+    },
+    {
+        "title": "Installing and Running",
+        "file": "installing-and-running.md"
+    },
+    {
+        "title": "Contribution",
+        "file": "contribution.md",
+        "children": [
+            {
+                "title": "Bug Reports",
+                "file": "contribution/bug-reports.md"
+            },
+            {
+                "title": "Features Requests",
+                "file": "contribution/feature-requests.md"
+            },
+            {
+                "title": "Pull Requests",
+                "file": "contribution/pull-requests.md"
+            }
+        ]
+    }
+]

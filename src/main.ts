@@ -1,20 +1,21 @@
 import 'reflect-metadata';
 
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory, } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
-import validationOptions from './common/utils/validation-options';
-import { useContainer } from 'class-validator';
+import { setupSwagger } from 'swagger';
+import commonBootstrap from './common/bootstrap';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  // enable swagger documentation
+  if (configService.get('app.swaggerEnabled') === 'true') setupSwagger(app);
 
-  app.useGlobalPipes(new ValidationPipe(validationOptions));
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  // common bootstrap
+  commonBootstrap(app, AppModule);
+
   await app.listen(configService.get('app.port'));
   console.log('Running in: http://localhost:' + configService.get('app.port'));
 }
