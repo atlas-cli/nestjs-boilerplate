@@ -72,6 +72,8 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :rocket: A contribution template guide has been created for sharing with your team or for contributing to this project.
 
+- :security: Set up SonarCloud project settings to improve your code security
+
 ## Quick run
 
 ```bash
