@@ -26,6 +26,8 @@
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts migration:run",
     "migration:revert": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts migration:revert",
+    "documentation": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe",
+    "documentation:serve": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe -s",
     "schema:drop": "npm run typeorm -- --dataSource=src/common/database/local.data-source.ts schema:drop",
     "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
   },
@@ -38,7 +40,7 @@
     "@nestjs/microservices": "^8.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^8.0.0",
-    "@nestjs/swagger": "^5.0.0",
+    "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^8.0.1",
     "aws-sdk": "^2.1273.0",
     "aws-serverless-express": "^3.4.0",
@@ -58,6 +60,7 @@
   },
   "devDependencies": {
     "@atlas-org/database": "^0.0.2",
+    "@compodoc/compodoc": "^1.1.19",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",

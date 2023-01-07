@@ -36,6 +36,9 @@ lerna-debug.log*
 
 cdk.out/*
 
+# documentatin dist
+documentation
+
 .data
 /files
 .env
