@@ -24,7 +24,7 @@ export class AuroraDatabaseProxy extends Construct {
       securityGroups: [securityGroup],
       iamAuth: true,
     });
-    this.exports('proxy', props);
+    this.exports('aurora-database-proxy', props);
   }
 
   // export resources

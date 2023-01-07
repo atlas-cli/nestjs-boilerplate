@@ -27,7 +27,7 @@ export class LambdaResource extends Construct {
     );
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
-      'proxy',
+      'aurora-database-proxy',
       securityGroup,
       applicationProps,
     );
