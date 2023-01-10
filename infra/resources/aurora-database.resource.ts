@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { AuroraDatabase } from '../constructs/aurora-database/aurora-database.construct';
-import { AuroraDatabaseSecurityGroup } from '../constructs/aurora-database-security-group/aurora-database-security-group.construct';
+import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
 import { ApplicationProps } from '../props/application.props';
 import { Construct } from 'constructs';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Port, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { createName as defaultCreateName } from '../utils/create-name';
 
 export class AuroraDatabaseResource extends Construct {
@@ -25,10 +26,19 @@ export class AuroraDatabaseResource extends Construct {
     });
 
     // create aurora database security group
-    const SECURITY_GROUP_NAME = createName('security-group', applicationProps);
-    const { securityGroup } = new AuroraDatabaseSecurityGroup(
+    const databaseSecurityGroup = new GenericSecurityGroup(
       this,
-      SECURITY_GROUP_NAME,
+      createName('database-sg', applicationProps),
+      {
+        vpc,
+        ...applicationProps,
+      },
+    );
+
+    // ProxySG
+    const databaseProxySecurityGroup = new GenericSecurityGroup(
+      this,
+      createName('database-proxy-sg', applicationProps),
       {
         vpc,
         ...applicationProps,
@@ -43,17 +53,20 @@ export class AuroraDatabaseResource extends Construct {
       {
         ...applicationProps,
         vpc,
-        securityGroup,
+        securityGroup: databaseSecurityGroup.securityGroup,
       },
     );
-
+    
     // create aurora database proxy
     const DATABASE_PROXY_NAME = createName('proxy', applicationProps);
     this.auroraDatabaseProxy = new AuroraDatabaseProxy(this, DATABASE_PROXY_NAME, {
       ...applicationProps,
       auroraDatabaseCluster: databaseCluster,
       vpc,
-      securityGroup,
+      securityGroup: databaseProxySecurityGroup.securityGroup,
     });
+    
+    //Add Security Group Rules
+    databaseProxySecurityGroup.addIngressSecurityGroup(databaseSecurityGroup.securityGroup, Port.tcp(databaseCluster.clusterEndpoint.port), `Access for the ${this.auroraDatabaseProxy.node.id} proxy`);
   }
 }
