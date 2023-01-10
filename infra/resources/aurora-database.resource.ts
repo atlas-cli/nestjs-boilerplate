@@ -67,6 +67,10 @@ export class AuroraDatabaseResource extends Construct {
     });
     
     //Add Security Group Rules
-    databaseProxySecurityGroup.addIngressSecurityGroup(databaseSecurityGroup.securityGroup, Port.tcp(databaseCluster.clusterEndpoint.port), `Access for the ${this.auroraDatabaseProxy.node.id} proxy`);
+    databaseProxySecurityGroup.addIngressSecurityGroup(
+      databaseSecurityGroup.securityGroup,
+      Port.tcp(databaseCluster.clusterEndpoint.port),
+      `Access for the ${this.auroraDatabaseProxy.node.id} proxy`
+      );
   }
 }
