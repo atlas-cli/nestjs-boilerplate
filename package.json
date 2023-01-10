@@ -62,6 +62,8 @@
   },
   "devDependencies": {
     "@atlas-org/database": "^0.0.2",
+    "@aws-sdk/client-eventbridge": "^3.245.0",
+    "@aws-sdk/client-lambda": "^3.245.0",
     "@compodoc/compodoc": "^1.1.19",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",

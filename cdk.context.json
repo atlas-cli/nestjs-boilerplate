@@ -60,5 +60,36 @@
         ]
       }
     ]
+  },
+  "vpc-provider:account=217904959673:filter.isDefault=true:region=sa-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-020ae21eff13ffbc9",
+    "vpcCidrBlock": "172.31.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0b6a31098dae6dffc",
+            "cidr": "172.31.0.0/20",
+            "availabilityZone": "sa-east-1a",
+            "routeTableId": "rtb-063bfae89ce9d2cd6"
+          },
+          {
+            "subnetId": "subnet-022d0431351bec457",
+            "cidr": "172.31.16.0/20",
+            "availabilityZone": "sa-east-1b",
+            "routeTableId": "rtb-063bfae89ce9d2cd6"
+          },
+          {
+            "subnetId": "subnet-03f0497d8197fef34",
+            "cidr": "172.31.32.0/20",
+            "availabilityZone": "sa-east-1c",
+            "routeTableId": "rtb-063bfae89ce9d2cd6"
+          }
+        ]
+      }
+    ]
   }
 }
