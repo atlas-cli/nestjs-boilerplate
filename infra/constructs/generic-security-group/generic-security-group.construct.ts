@@ -26,14 +26,7 @@ export class GenericSecurityGroup extends Construct {
       vpc: this.vpc, // use the vpc created above
       allowAllOutbound: true, // allow outbound traffic to anywhere
     });
-
-    // // allow inbound traffic from anywhere to the db
-    // this.securityGroup.addIngressRule(
-    //   Peer.anyIpv4(),
-    //   Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
-    //   'allow inbound traffic from anywhere to the db on port 5432',
-    // );
-
+    
     // export security group and vpc
     this.exportSecurityGroupAndVpc('security-group', props);
   }
