@@ -15,7 +15,7 @@
 1. Clone repository
 
     ```bash
-    git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
+    git clone --depth 1 https://github.com/slingui-dev/server-side.git my-app
     ```
 
 1. Go to folder, and copy `env-example` as `.env`.
@@ -25,12 +25,12 @@
     cp env-example .env
     ```
 
-1. Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
+1. Change `DATABASE_URI=` to `DATABASE_URI=localhost`
 
 1. Run additional container:
 
     ```bash
-    docker compose up -d postgres redis
+    docker compose up -d mongo redis
     ```
 
 1. Install dependency
@@ -68,7 +68,7 @@ If you want quick run your app, you can use following commands:
 1. Clone repository
 
     ```bash
-    git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
+    git clone --depth 1 https://github.com/slingui-dev/server-side.git my-app
     ```
 
 1. Go to folder, and copy `env-example` as `.env`.
@@ -102,4 +102,4 @@ If you want quick run your app, you can use following commands:
 
 Next: [Working with database](database.md)
 
-GitHub: https://github.com/atlas-cli/nestjs-boilerplate
+GitHub: https://github.com/slingui-dev/server-side

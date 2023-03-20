@@ -1,11 +1,18 @@
-# NestJS in Serverless Application with CDK
+# Slingui Services
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 
 ## Description
 
-NestJS in Serverless Application with postgres(typeorm) CDK for startup projects.
+NestJS in Serverless Application with mongo CDK for startup projects.
+
+## Packages
+
+1. NestJS
+2. Typescript
+3. CDK
+4. JEST
 
 ## Table of Contents
 
@@ -15,7 +22,7 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 ## Features
 
-- :file_folder: Database: This feature uses TypeORM, an ORM (Object-Relational Mapping) library that simplifies the process of working with databases in your application.
+- :file_folder: Database: This feature uses Mongoose, an ORM (Object-Relational Mapping) library that simplifies the process of working with databases in your application.
 
 - :seedling: Seeding: This feature allows you to seed your database with initial data, which can be useful for testing and development purposes.
 
@@ -43,9 +50,9 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :earth_americas: Default environments development and production: This feature includes default environments for development and production, which can be used to separate your code and infrastructure for different stages of the development process.
 
-- :file_folder: TypeORM lambda environment: This feature allows you to use TypeORM in a lambda environment, allowing you to run your database operations in a serverless environment.
+- :file_folder: MongoDB lambda environment: This feature allows you to use MongoDB in a lambda environment, allowing you to run your database operations in a serverless environment.
 
-- :file_folder: Postgres environment: This feature allows you to set up a Postgres database environment, which can be used to store and manage data.
+- :file_folder: mongo environment: This feature allows you to set up a mongo database environment, which can be used to store and manage data.
 
 - :key: AWS IAM authentication for database and environment setup: This feature allows you to use AWS IAM (Identity and Access Management) to authenticate and authorize access to the database and environment.
 
@@ -80,7 +87,7 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 ## Quick run
 
 ```bash
-git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
+git clone --depth 1 https://github.com/slingui-dev/server-side.git my-app
 cd my-app/
 cp env-example .env
 docker compose up -d
@@ -95,17 +102,17 @@ docker compose logs
 ## Comfortable development
 
 ```bash
-git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
+git clone --depth 1 https://github.com/slingui-dev/server-side.git my-app
 cd my-app/
 cp env-example .env
 ```
 
-Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
+Change `DATABASE_HOST=mongo` to `DATABASE_HOST=localhost`
 
 Run additional container:
 
 ```bash
-docker compose up -d postgres redis
+docker compose up -d mongo redis
 ```
 
 ```bash

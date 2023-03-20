@@ -10,6 +10,6 @@ patches and features.
 
 ## Using the issue tracker
 
-The issue tracker is the preferred channel for [bug reports](https://github.com/atlas-cli/nestjs-boilerplate/blob/main/wiki/docs/contribution/bug-reports.md),
-[features requests](https://github.com/atlas-cli/nestjs-boilerplate/blob/main/wiki/docs/contribution/feature-requests.md) and [submitting pull
-requests](https://github.com/atlas-cli/nestjs-boilerplate/blob/main/wiki/docs/contribution/pull-requests.md).
+The issue tracker is the preferred channel for [bug reports](https://github.com/slingui-dev/server-side/blob/main/wiki/docs/contribution/bug-reports.md),
+[features requests](https://github.com/slingui-dev/server-side/blob/main/wiki/docs/contribution/feature-requests.md) and [submitting pull
+requests](https://github.com/slingui-dev/server-side/blob/main/wiki/docs/contribution/pull-requests.md).

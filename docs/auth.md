@@ -50,4 +50,4 @@ sequenceDiagram
 
 Next: [Serialization](serialization.md)
 
-GitHub: https://github.com/atlas-cli/nestjs-boilerplate
+GitHub: https://github.com/slingui-dev/server-side
