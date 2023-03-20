@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-boilerplate",
+  "name": "slingui-server-side",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -24,8 +24,8 @@
     "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
   },
   "dependencies": {
-    "@atlas-org/microservices": "^0.0.2",
-    "@nestjs/common": "^8.4.7",
+    "@atlas-org/microservices": "^0.0.6",
+    "@nestjs/common": "^9.3.10",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.3.10",
     "@nestjs/jwt": "^10.0.2",
@@ -51,7 +51,6 @@
     "swagger-ui-express": "^4.6.0"
   },
   "devDependencies": {
-    "@atlas-org/database": "^0.0.2",
     "@compodoc/compodoc": "^1.1.19",
     "@nestjs/cli": "^9.3.0",
     "@nestjs/schematics": "^8.0.0",
