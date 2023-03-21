@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from 'shared/database.module';
 import appConfig from './../../config/app.config';
 import databaseConfig from './../../config/database.config';
 import { RoleSeedModule } from './role/role-seed.module';
@@ -13,6 +14,7 @@ import { UserSeedModule } from './user/user-seed.module';
       load: [databaseConfig, appConfig],
       envFilePath: ['.env'],
     }),
+    DatabaseModule.forRoot(),
     RoleSeedModule,
     StatusSeedModule,
     UserSeedModule,

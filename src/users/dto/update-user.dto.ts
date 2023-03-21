@@ -3,9 +3,9 @@ import { CreateUserDto } from './create-user.dto';
 import { Transform } from 'class-transformer';
 import { IsEmail, IsOptional, MinLength, Validate } from 'class-validator';
 import { IsNotExist } from './../../common/utils/validators/is-not-exists.validator';
-import { Role } from './../../common/roles/entities/role.entity';
+import { Role } from '../../common/roles/models/role.model';
 import { IsExist } from './../../common/utils/validators/is-exists.validator';
-import { Status } from './../../common/statuses/entities/status.entity';
+import { Status } from '../../common/statuses/models/status.model';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({ example: 'test1@example.com' })
