@@ -85,7 +85,7 @@ jobs:
           command: cp .env.example .env
       - run:
           name: Wait for MongoDB to start
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run:
           name: Run migrations
           command: npm run migration:run
