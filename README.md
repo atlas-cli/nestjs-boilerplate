@@ -112,7 +112,7 @@ Change `DATABASE_HOST=mongo` to `DATABASE_HOST=localhost`
 Run additional container:
 
 ```bash
-docker compose up -d mongo redis
+docker compose up -d mongo
 ```
 
 ```bash
