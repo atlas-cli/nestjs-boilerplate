@@ -3,6 +3,17 @@ orbs:
   aws-cli: circleci/aws-cli@3.1
   slack: circleci/slack@4.10.1
 jobs:
+  status:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "Sending status"
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1workflows:
   checkout:
     working_directory: ~/nest-boilerplate
     docker:
@@ -163,6 +174,12 @@ workflows:
       - build:
           requires:
             - dependencies
+      - status:
+          requires:
+            - build
+            - lint
+            - unit_test
+            - integration_test
       # - diff:
       #     name: diff_to_development
       #     context: development
