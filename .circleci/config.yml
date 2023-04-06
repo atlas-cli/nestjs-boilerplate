@@ -175,6 +175,7 @@ workflows:
           requires:
             - dependencies
       - status:
+          context: slack-secrets
           requires:
             - build
             - lint
