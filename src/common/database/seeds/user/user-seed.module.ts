@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'shared/database.module';
-import { UserFactory } from './../../../../users/entities/user.entity';
+import { UserFactory } from '../../../../users/models/user.model';
 import { UserSeedService } from './user-seed.service';
 
 @Module({

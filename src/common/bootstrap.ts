@@ -1,4 +1,8 @@
-import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import validationOptions from './utils/validation-options';
 import { Reflector } from '@nestjs/core';
@@ -9,9 +13,12 @@ import { Reflector } from '@nestjs/core';
  *
  */
 
-export default async function commonBootstrap(app: INestApplication, module: any,) {
-    useContainer(app.select(module), { fallbackOnErrors: true });
+export default async function commonBootstrap(
+  app: INestApplication,
+  module: any,
+) {
+  useContainer(app.select(module), { fallbackOnErrors: true });
 
-    app.useGlobalPipes(new ValidationPipe(validationOptions));
-    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalPipes(new ValidationPipe(validationOptions));
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 }

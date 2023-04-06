@@ -36,7 +36,11 @@ export class AuroraDatabaseProxy extends Construct {
     // outputs
     createOutput(this, createNameScoped('arn', props), this.proxy.dbProxyArn);
     createOutput(this, createNameScoped('name', props), this.proxy.dbProxyName);
-    createOutput(this, createNameScoped('endpoint', props), this.proxy.endpoint);
+    createOutput(
+      this,
+      createNameScoped('endpoint', props),
+      this.proxy.endpoint,
+    );
     createOutput(this, createNameScoped('host', props), this.proxy.endpoint);
   }
 

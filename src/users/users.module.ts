@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { IsExist } from './../common/utils/validators/is-exists.validator';
 import { IsNotExist } from './../common/utils/validators/is-not-exists.validator';
 import { DatabaseModule } from 'shared/database.module';
-import { UserFactory } from './entities/user.entity';
+import { UserFactory } from './models/user.model';
 
 @Module({
   imports: [DatabaseModule.forFeatureAsync([UserFactory])],

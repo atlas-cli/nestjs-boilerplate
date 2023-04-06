@@ -13,7 +13,9 @@ export class MailService {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async userSignUp(_mailData: MailData<{ hash: string }>) {
+    // todo: create email de confirmação do aluno
     return;
   }
 

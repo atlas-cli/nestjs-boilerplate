@@ -4,11 +4,10 @@ import {
   Schema,
   SchemaFactory,
 } from '@nestjs/mongoose';
-import { AuthProvidersEnum } from './../../auth/auth-providers.enum';
+import { AuthProvidersEnum } from '../../auth/auth-providers.enum';
 import * as bcrypt from 'bcryptjs';
 import { Exclude, Expose } from 'class-transformer';
-import { HydratedDocument } from 'mongoose';
-import { ConfigService } from '@nestjs/config';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -16,6 +15,8 @@ export type UserDocument = HydratedDocument<User>;
   timestamps: true,
 })
 export class User {
+  _id: Types.ObjectId;
+
   @Prop({ unique: true, isRequired: false, index: true })
   email: string | null;
 
@@ -63,26 +64,35 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 export const UserFactory: AsyncModelFactory = {
   name: User.name,
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) => {
+  useFactory: () => {
     const schema = UserSchema;
-    schema.pre('save', function (next) {
-      // only hash the password if it has been modified (or is new)
-      if (!this.isModified('password')) return next();
-
-      // generate a salt
-      bcrypt.genSalt(configService.get('auth.secret'), (err, salt) => {
-        if (err) return next(err);
-
-        // hash the password using our new salt
-        bcrypt.hash(this.password, salt, (err, hash) => {
+    const bcryptPassword = (command) => {
+      return function (next) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let user: any = this;
+        if (command === 'save') {
+          if (!this.isModified('password')) {
+            return next();
+          }
+        } else {
+          if (this._update !== undefined) {
+            user = this._update;
+            if (user.password === undefined) return next();
+          }
+        }
+        bcrypt.genSalt((err, salt) => {
           if (err) return next(err);
-          // override the cleartext password with the hashed one
-          this.password = hash;
-          next();
+          bcrypt.hash(user.password, salt, (err, hash) => {
+            if (err) return next(err);
+            user.password = hash;
+            this.password = hash;
+            next();
+          });
         });
-      });
-    });
+      };
+    };
+    schema.pre<User>('save', bcryptPassword('save'));
+    schema.pre<User>('updateOne', bcryptPassword('updateOne'));
     return schema;
   },
 };

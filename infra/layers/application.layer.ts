@@ -28,6 +28,10 @@ export class ApplicationLayerStack extends cdk.Stack {
 
     // lambda users resource
     const LAMBDA_RESOURCE_NAME = createName('lambda', applicationProps);
-    this.lambdaResource = new LambdaResource(this, LAMBDA_RESOURCE_NAME, applicationProps);
+    this.lambdaResource = new LambdaResource(
+      this,
+      LAMBDA_RESOURCE_NAME,
+      applicationProps,
+    );
   }
 }

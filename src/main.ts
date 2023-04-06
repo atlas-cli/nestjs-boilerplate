@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { setupSwagger } from 'swagger';
 import commonBootstrap from './common/bootstrap';

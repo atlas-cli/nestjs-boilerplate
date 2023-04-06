@@ -23,6 +23,7 @@ import { RoleEnum } from './../common/roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './../common/roles/roles.guard';
 import { infinityPagination } from './../common/utils/infinity-pagination';
+import { Types } from 'mongoose';
 
 @ApiBearerAuth()
 @Roles(RoleEnum.admin)
@@ -56,13 +57,14 @@ export class UsersController {
     if (limit > 50) {
       limit = 50;
     }
+    const skip = page * limit;
 
     return infinityPagination(
       await this.usersService.findManyWithPagination({
-        page,
+        skip,
         limit,
       }),
-      { page, limit },
+      { skip, limit },
     );
   }
 
@@ -71,8 +73,8 @@ export class UsersController {
   })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne({ id: +id });
+  findOne(@Param('id') id: Types.ObjectId) {
+    return this.usersService.findOne({ _id: id });
   }
 
   @SerializeOptions({
@@ -80,12 +82,15 @@ export class UsersController {
   })
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: number, @Body() updateProfileDto: UpdateUserDto) {
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateProfileDto: UpdateUserDto,
+  ) {
     return this.usersService.update(id, updateProfileDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: Types.ObjectId) {
     return this.usersService.softDelete(id);
   }
 }

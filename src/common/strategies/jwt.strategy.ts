@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 
-type JwtPayload = Pick<any, 'id' | 'role'> & { iat: number; exp: number };
+type JwtPayload = Pick<any, '_id' | 'role'> & { iat: number; exp: number };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public validate(payload: JwtPayload) {
-    if (!payload.id) {
+    if (!payload._id) {
       throw new UnauthorizedException();
     }
 

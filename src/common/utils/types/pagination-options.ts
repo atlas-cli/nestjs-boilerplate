@@ -1,4 +1,4 @@
 export interface IPaginationOptions {
-  page: number;
+  skip: number;
   limit: number;
 }

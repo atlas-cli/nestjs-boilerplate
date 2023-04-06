@@ -49,11 +49,15 @@ export class AuroraDatabaseResource extends Construct {
 
     // create aurora database proxy
     const DATABASE_PROXY_NAME = createName('proxy', applicationProps);
-    this.auroraDatabaseProxy = new AuroraDatabaseProxy(this, DATABASE_PROXY_NAME, {
-      ...applicationProps,
-      auroraDatabaseCluster: databaseCluster,
-      vpc,
-      securityGroup,
-    });
+    this.auroraDatabaseProxy = new AuroraDatabaseProxy(
+      this,
+      DATABASE_PROXY_NAME,
+      {
+        ...applicationProps,
+        auroraDatabaseCluster: databaseCluster,
+        vpc,
+        securityGroup,
+      },
+    );
   }
 }

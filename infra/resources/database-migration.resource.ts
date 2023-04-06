@@ -49,11 +49,15 @@ export class DatabaseMigrationResource extends Construct {
       'lambda-database-migration',
       applicationProps,
     );
-    this.lambdaDatabaseMigration = new LambdaDatabaseMigration(this, LAMBDA_DATABASE_MIGRATION_NAME, {
-      ...applicationProps,
-      role,
-      vpc: vpc,
-      securityGroups: [securityGroup],
-    });
+    this.lambdaDatabaseMigration = new LambdaDatabaseMigration(
+      this,
+      LAMBDA_DATABASE_MIGRATION_NAME,
+      {
+        ...applicationProps,
+        role,
+        vpc: vpc,
+        securityGroups: [securityGroup],
+      },
+    );
   }
 }

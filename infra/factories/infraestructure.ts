@@ -10,7 +10,11 @@ export class AtlasInfraestructure {
 
     // core layer
     const CORE_STACK_NAME = createName('core-layer', config);
-    const coreStack = new config.layersStack.core(this.app, CORE_STACK_NAME, config);
+    const coreStack = new config.layersStack.core(
+      this.app,
+      CORE_STACK_NAME,
+      config,
+    );
 
     // application layer
     const APPLICATION_STACK_NAME = createName('application-layer', config);

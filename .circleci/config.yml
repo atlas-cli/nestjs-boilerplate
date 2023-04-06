@@ -59,13 +59,10 @@ jobs:
     working_directory: ~/nest-boilerplate
     docker:
       - image: cimg/node:16.18.1-browsers
-      - image: cimg/postgres:14.6
+      - image: circleci/mongo:3.6
         environment:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
+          - MONGODB_USERNAME: user
+          - MONGODB_PASSWORD: secret
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -75,7 +72,7 @@ jobs:
           name: Copy .env
           command: cp .env.example .env
       - run:
-          name: Wait for Postgres to start
+          name: Wait for MongoDB to start
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Run migrations
@@ -106,51 +103,51 @@ jobs:
           key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/nest-boilerplate/dist/app
-  diff:
-    working_directory: ~/nest-boilerplate
-    executor: aws-cli/default
-    docker:
-      - image: cimg/node:16.18.1-browsers
-    steps:
-      - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
-      - restore_cache:
-          key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_DEFAULT_REGION
-      - run:
-          name: Build infra
-          command: npm run build:infra
-      - run:
-          name: Diff
-          command: npx cdk diff --all
+  # diff:
+  #   working_directory: ~/nest-boilerplate
+  #   executor: aws-cli/default
+  #   docker:
+  #     - image: cimg/node:16.18.1-browsers
+  #   steps:
+  #     - restore_cache:
+  #         key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+  #     - restore_cache:
+  #         key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+  #     - restore_cache:
+  #         key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+  #     - aws-cli/setup:
+  #         aws-access-key-id: AWS_ACCESS_KEY_ID
+  #         aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+  #         aws-region: AWS_DEFAULT_REGION
+  #     - run:
+  #         name: Build infra
+  #         command: npm run build:infra
+  #     - run:
+  #         name: Diff
+  #         command: npx cdk diff --all
 
-  deployment:
-    working_directory: ~/nest-boilerplate
-    executor: aws-cli/default
-    docker:
-      - image: cimg/node:16.18.1-browsers
-    steps:
-      - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
-      - restore_cache:
-          key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_DEFAULT_REGION
-      - run:
-          name: Build infra
-          command: npm run build:infra
-      - run:
-          name: Deploy
-          command: npx cdk deploy --all --require-approval never
+  # deployment:
+  #   working_directory: ~/nest-boilerplate
+  #   executor: aws-cli/default
+  #   docker:
+  #     - image: cimg/node:16.18.1-browsers
+  #   steps:
+  #     - restore_cache:
+  #         key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+  #     - restore_cache:
+  #         key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
+  #     - restore_cache:
+  #         key: v0-build-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+  #     - aws-cli/setup:
+  #         aws-access-key-id: AWS_ACCESS_KEY_ID
+  #         aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+  #         aws-region: AWS_DEFAULT_REGION
+  #     - run:
+  #         name: Build infra
+  #         command: npm run build:infra
+  #     - run:
+  #         name: Deploy
+  #         command: npx cdk deploy --all --require-approval never
 workflows:
   version: 2
   full-cycle:
@@ -171,48 +168,48 @@ workflows:
       - build:
           requires:
             - dependencies
-      - diff:
-          name: diff_to_development
-          context: development
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - diff:
-          name: diff_to_production
-          context: production
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - approve_deploy_to_development:
-          type: approval
-          context: development
-          filters:
-            branches:
-              only:
-                - master
-                - main
-                - develop
-          requires:
-            - diff_to_development
-      - approve_deploy_to_production:
-          type: approval
-          context: production
-          requires:
-            - diff_to_production
-      - deployment:
-          name: deployment_to_development
-          context: development
-          requires:
-            - approve_deploy_to_development
-      - deployment:
-          name: deployment_to_production
-          context: production
-          requires:
-            - approve_deploy_to_production
+      # - diff:
+      #     name: diff_to_development
+      #     context: development
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - diff:
+      #     name: diff_to_production
+      #     context: production
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         ignore: /.*/
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - approve_deploy_to_development:
+      #     type: approval
+      #     context: development
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      #           - main
+      #           - develop
+      #     requires:
+      #       - diff_to_development
+      # - approve_deploy_to_production:
+      #     type: approval
+      #     context: production
+      #     requires:
+      #       - diff_to_production
+      # - deployment:
+      #     name: deployment_to_development
+      #     context: development
+      #     requires:
+      #       - approve_deploy_to_development
+      # - deployment:
+      #     name: deployment_to_production
+      #     context: production
+      #     requires:
+      #       - approve_deploy_to_production
