@@ -3,12 +3,6 @@ orbs:
   aws-cli: circleci/aws-cli@3.1
   slack: circleci/slack@4.10.1
 jobs:
-  - slack/notify:
-      event: fail
-      template: basic_fail_1
-  - slack/notify:
-      event: pass
-      template: success_tagged_deploy_1
   checkout:
     working_directory: ~/nest-boilerplate
     docker:
@@ -169,7 +163,7 @@ workflows:
       - build:
           requires:
             - dependencies
-      - notify:
+      - slack/on-hold:
           context: slack-secrets
           requires:
             - build
