@@ -152,24 +152,25 @@ workflows:
           requires:
             - checkout
       - lint:
+          post-steps:
+            - slack/status
           requires:
             - dependencies
       - unit_test:
+          post-steps:
+            - slack/status
           requires:
             - dependencies
       - integration_test:
+          post-steps:
+            - slack/status
           requires:
             - dependencies
       - build:
+          post-steps:
+            - slack/status
           requires:
             - dependencies
-      - slack/on-hold:
-          context: slack-secrets
-          requires:
-            - build
-            - integration_test
-            - unit_test
-            - lint
       # - diff:
       #     name: diff_to_development
       #     context: development
