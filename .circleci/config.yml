@@ -71,7 +71,7 @@ jobs:
     working_directory: ~/nest-boilerplate
     docker:
       - image: cimg/node:16.18.1-browsers
-      - image: circleci/mongo:3.6
+      - image: circleci/mongo:4.4
         environment:
           - MONGODB_USERNAME: user
           - MONGODB_PASSWORD: secret
