@@ -22,8 +22,11 @@ import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
+import { MongooseSerializerInterceptor } from './../common/interceptors/mongoose/serializer.interceptor';
+import { User } from 'users/models/user.model';
 
 @ApiTags('Auth')
+@UseInterceptors(MongooseSerializerInterceptor(User))
 @Controller({
   path: 'auth',
   version: '1',

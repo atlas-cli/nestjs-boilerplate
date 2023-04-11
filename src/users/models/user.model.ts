@@ -8,6 +8,7 @@ import { AuthProvidersEnum } from '../../auth/auth-providers.enum';
 import * as bcrypt from 'bcryptjs';
 import { Exclude, Expose } from 'class-transformer';
 import { HydratedDocument, Types } from 'mongoose';
+import { UserRoleRelation, UserRoleRelationSchema } from './user-role.relation';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -45,10 +46,10 @@ export class User {
   })
   userMetadata: any;
 
-  //   @ManyToOne(() => Role, {
-  //     eager: true,
-  //   })
-  //   role?: Role | null;
+  @Prop({
+    type: [UserRoleRelationSchema],
+  })
+  roles: UserRoleRelation[];
 
   //   @ManyToOne(() => Status, {
   //     eager: true,

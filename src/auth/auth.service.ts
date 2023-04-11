@@ -11,7 +11,6 @@ import { UsersService } from './../users/users.service';
 import { ForgotService } from './forgot/forgot.service';
 import { MailService } from './../common/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
-import { plainToJson } from './../common/utils/transformers/to-json';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +42,7 @@ export class AuthService {
 
       return {
         accessToken,
-        user: plainToJson(User, user),
+        user: user,
       };
     } else {
       throw new HttpException(
@@ -165,10 +164,9 @@ export class AuthService {
   }
 
   async me(user: User): Promise<User> {
-    const createdUser = await this.usersService.findOne({
+    return await this.usersService.findOne({
       _id: user._id,
     });
-    return plainToJson(User, createdUser);
   }
 
   async update(user: User, userDto: AuthUpdateDto): Promise<User> {
@@ -209,10 +207,9 @@ export class AuthService {
 
     await this.usersService.update(user._id, userDto);
 
-    const currentUser = await this.usersService.findOne({
+    return await this.usersService.findOne({
       _id: user._id,
     });
-    return plainToJson(User, currentUser);
   }
 
   async softDelete(user: User): Promise<void> {

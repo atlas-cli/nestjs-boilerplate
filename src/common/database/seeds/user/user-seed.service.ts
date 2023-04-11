@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { RoleEnum } from './../../../roles/roles.enum';
+import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../../../../users/models/user.model';
 import { TESTER_PASSWORD } from './../../constants';
 
@@ -19,6 +20,19 @@ export class UserSeedService {
         lastName: 'Doe',
         email: 'john.doe@example.com',
         password: TESTER_PASSWORD,
+        roles: [
+          {
+            role: RoleEnum.user,
+          },
+          {
+            role: RoleEnum.admin,
+          },
+          {
+            role: RoleEnum.teacher,
+            organizationId: new Types.ObjectId(),
+            permissions: ['test'],
+          },
+        ],
       });
     }
   }

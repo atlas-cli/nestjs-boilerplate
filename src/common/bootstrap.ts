@@ -6,6 +6,7 @@ import {
 import { useContainer } from 'class-validator';
 import validationOptions from './utils/validation-options';
 import { Reflector } from '@nestjs/core';
+import { MongooseExceptionInteceptor } from './interceptors/mongoose/exception.interceptor';
 
 /**
  * Core bootstrap module should be loaded here.
@@ -21,4 +22,5 @@ export default async function commonBootstrap(
 
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(new MongooseExceptionInteceptor());
 }

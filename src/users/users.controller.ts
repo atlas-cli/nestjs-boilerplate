@@ -18,15 +18,12 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Roles } from './../common/roles/roles.decorator';
-import { RoleEnum } from './../common/roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './../common/roles/roles.guard';
 import { infinityPagination } from './../common/utils/infinity-pagination';
 import { Types } from 'mongoose';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.admin)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Users')
 @Controller({
