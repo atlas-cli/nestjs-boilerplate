@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RoleFactory } from './../../../roles/models/role.model';
+import { RoleFactory } from '../../../access-control/roles/models/role.model';
 import { DatabaseModule } from 'shared/database.module';
 import { RoleSeedService } from './role-seed.service';
 

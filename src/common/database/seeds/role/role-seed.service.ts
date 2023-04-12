@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role, RoleDocument } from './../../../roles/models/role.model';
-import { RolesDataSource } from './../../../roles/roles.data-source';
+import { Role, RoleDocument } from './../../../access-control/roles/models/role.model';
+import { RolesDataSource } from './../../../access-control/roles/roles.data-source';
 import { Model } from 'mongoose';
 
 @Injectable()

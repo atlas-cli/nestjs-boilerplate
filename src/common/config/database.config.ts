@@ -7,6 +7,7 @@ const databaseConfig = () => {
   const config = {
     type: process.env.DATABASE_TYPE,
     uri: process.env.DATABASE_URI,
+    seedUri: process.env.DATABASE_URI_SEED,
   };
   return config;
 };

@@ -6,25 +6,28 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Query,
   DefaultValuePipe,
   ParseIntPipe,
   HttpStatus,
   HttpCode,
   SerializeOptions,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from './../common/roles/roles.guard';
 import { infinityPagination } from './../common/utils/infinity-pagination';
 import { Types } from 'mongoose';
+import { UseAbility } from './../common/access-control/decorators/use-ability.decorator';
+import { Actions } from './../common/access-control/types/actions';
+import { AuthGuard } from '@nestjs/passport';
+import { AccessControlGuard } from './../common/access-control/access-control.guard';
 
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), AccessControlGuard)
 @ApiTags('Users')
 @Controller({
   path: 'users',
@@ -46,11 +49,14 @@ export class UsersController {
     groups: ['admin'],
   })
   @Get()
+  @UseAbility('users', Actions.read)
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Request() request,
   ) {
+    console.log(request.conditions);
     if (limit > 50) {
       limit = 50;
     }

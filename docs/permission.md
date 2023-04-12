@@ -6,7 +6,7 @@ Create a new permission to read any profile
 const profileReadPermission = new Permission(
   'profile',
   PermissionAction.read,
-  PermissionPosession.any,
+  Possession.any,
 );
 ```
 

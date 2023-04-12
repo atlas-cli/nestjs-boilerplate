@@ -1,4 +1,4 @@
-import { Permission } from '../permissions/permission';
+import { Permission } from '../types/permission';
 import { RoleEnum } from './roles.enum';
 
 // Define Role class

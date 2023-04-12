@@ -1,14 +1,13 @@
-import { PermissionAction } from './action';
-import { PermissionPosession } from './possession';
-
+import { Actions } from './actions';
+import { Possession } from './possession';
 export class Permission {
   static divider = ':'; // Define divider for string representation of permission
 
   // Constructor to create a new permission
   constructor(
-    private resource: string,
-    private action: PermissionAction,
-    private possesion: PermissionPosession,
+    public resource: string,
+    public action: Actions,
+    public possesion: Possession,
   ) {}
 
   // Method to convert permission to string
@@ -28,8 +27,8 @@ export class Permission {
       throw new Error('missing permission props');
     }
     const [resource, action, possesion] = props;
-    const actionEnum = PermissionAction[action];
-    const possesionEnum = PermissionPosession[possesion];
+    const actionEnum = Actions[action];
+    const possesionEnum = Possession[possesion];
     if (actionEnum === undefined) {
       throw new Error('action props not have correct value');
     }

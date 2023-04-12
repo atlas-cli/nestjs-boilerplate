@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Role } from './../../common/roles/models/role.model';
+import { Role } from '../../common/access-control/roles/models/role.model';
 import { Types } from 'mongoose';
 
 @Schema({ _id: false })
