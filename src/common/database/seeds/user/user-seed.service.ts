@@ -28,6 +28,11 @@ export class UserSeedService {
             role: RoleEnum.admin,
           },
           {
+            role: RoleEnum.student,
+            organizationId: new Types.ObjectId(),
+            permissions: ['users:read:any'],
+          },
+          {
             role: RoleEnum.teacher,
             organizationId: new Types.ObjectId(),
             permissions: ['users:read:any'],

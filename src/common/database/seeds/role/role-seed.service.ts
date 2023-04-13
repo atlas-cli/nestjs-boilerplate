@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role, RoleDocument } from './../../../access-control/roles/models/role.model';
-import { RolesDataSource } from './../../../access-control/roles/roles.data-source';
+import {
+  Role,
+  RoleDocument,
+} from './../../../access-control/roles/models/role.model';
+import { RolesBuilder } from '../../../access-control/roles/roles.builder';
 import { Model } from 'mongoose';
 
 @Injectable()
@@ -11,15 +14,15 @@ export class RoleSeedService {
   ) {}
 
   async run() {
-    const roles = RolesDataSource.getRoles();
+    const roles = RolesBuilder.getRoles();
 
-    const changes = roles.map(({ name, permissions, isDynamic }) => {
+    const changes = roles.map(({ name, permissions, isOrganizationRole }) => {
       return this.repository.findOneAndUpdate(
         { _id: name },
         {
           _id: name,
           name,
-          isDynamic,
+          isOrganizationRole,
           permissions: permissions.map((permission) => permission.toString()),
         },
         {

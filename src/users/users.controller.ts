@@ -12,7 +12,6 @@ import {
   HttpStatus,
   HttpCode,
   SerializeOptions,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -22,9 +21,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { infinityPagination } from './../common/utils/infinity-pagination';
 import { Types } from 'mongoose';
 import { UseAbility } from './../common/access-control/decorators/use-ability.decorator';
-import { Actions } from './../common/access-control/types/actions';
+import { Action } from './../common/access-control/types/action';
 import { AuthGuard } from '@nestjs/passport';
 import { AccessControlGuard } from './../common/access-control/access-control.guard';
+import { ResourceCondition } from './../common/access-control/decorators/resource-condition.decorator';
+import { ResourceConditions } from './../common/access-control/types/resource-condition';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), AccessControlGuard)
@@ -49,14 +50,21 @@ export class UsersController {
     groups: ['admin'],
   })
   @Get()
-  @UseAbility('users', Actions.read)
+  @UseAbility('users', Action.read)
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Request() request,
+    @ResourceCondition() resourceCondition: ResourceConditions,
   ) {
-    console.log(request.conditions);
+    console.log(
+      'example of resourceCondition Find Many',
+      resourceCondition.toMongoFind(),
+    );
+    console.log(
+      'example of resourceCondition Find One',
+      resourceCondition.toMongoFindOne('64386517a9ca122ffafbb001'),
+    );
     if (limit > 50) {
       limit = 50;
     }

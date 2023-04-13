@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from 'shared/database.module';
+import { DatabaseModule } from './../../shared/database.module';
 import { UserFactory } from './../../users/models/user.model';
-import { UserProfileRule } from './rules/user-profile.rule';
+import { UserAccessControlRule } from './rules/user-access-control.rule';
 
 @Module({
   imports: [DatabaseModule.forFeatureAsync([UserFactory])],
-  providers: [UserProfileRule],
-  exports: [UserProfileRule],
+  providers: [UserAccessControlRule],
+  exports: [UserAccessControlRule],
 })
 export class AccessControlModule {}

@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { AccessControlGuard } from './../common/access-control/access-control.guard';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
+
+  const mock_ForceFailGuard = { CanActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,7 +17,10 @@ describe('UsersController', () => {
         },
       ],
       controllers: [UsersController],
-    }).compile();
+    })
+      .overrideGuard(AccessControlGuard)
+      .useValue(mock_ForceFailGuard)
+      .compile();
 
     controller = module.get<UsersController>(UsersController);
   });

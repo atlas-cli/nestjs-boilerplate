@@ -1,24 +1,17 @@
 import { SetMetadata } from '@nestjs/common';
-import { Actions } from '../types/actions';
-import { Permission } from '../types/permission';
-import { Possession } from '../types/possession';
+import { Action } from '../types/action';
+import { RouteAbility } from '../types/route-ability';
 
+/**
+ * The metadata key for the `UseAbility` decorator.
+ */
 export const ABILITIES_KEY = 'abilities';
-export const UseAbility = (resource: any, action: Actions) =>
-  SetMetadata(ABILITIES_KEY, new Ability(resource, action));
 
-export class Ability {
-  constructor(public resource: any, public action: Actions) {}
-  hasAbility(permissions: Permission[]): false | Possession {
-    const ability = permissions.find((permission) => {
-      return (
-        permission.resource === this.resource &&
-        permission.action === this.action
-      );
-    });
-    if (ability === undefined) {
-      return false;
-    }
-    return ability.possesion;
-  }
-}
+/**
+ * A decorator to define the resource and action required to access a route.
+ *
+ * @param resource - The resource required to access the route.
+ * @param action - The action required to access the route.
+ */
+export const UseAbility = (resource: any, action: Action) =>
+  SetMetadata(ABILITIES_KEY, new RouteAbility(resource, action));
