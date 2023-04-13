@@ -8,8 +8,13 @@ import {
 import { map, Observable } from 'rxjs';
 
 @Injectable()
-export class MongooseExceptionInteceptor implements NestInterceptor {
-  private verifyHaveDocument(document: any) {
+export class MongooseExceptionInterceptor implements NestInterceptor {
+  /**
+   * Verifies if a document has been serialized, otherwise it throws a BadGatewayException
+   * @param document - The document to be verified
+   * @returns The verified document
+   */
+  private verifyHaveDocument(document: any): any {
     if (document === undefined) {
       return document;
     }
@@ -28,13 +33,21 @@ export class MongooseExceptionInteceptor implements NestInterceptor {
     this.throwBadGateway();
   }
 
-  throwBadGateway() {
+  /**
+   * Throws a BadGatewayException
+   */
+  throwBadGateway(): void {
     throw new BadGatewayException(
-      'you cannot return a mongodb document without serializing it with classToJson or with an interceptor',
+      'You cannot return a MongoDB document without serializing it with `classToJson` or with an interceptor',
     );
   }
 
-  private verifyIsArray(response: any | any[]) {
+  /**
+   * Verifies if a response is an array or a single document, and verifies if each document is serialized
+   * @param response - The response to be verified
+   * @returns The verified response
+   */
+  private verifyIsArray(response: any | any[]): any | any[] {
     if (response === undefined) {
       return response;
     }
@@ -44,6 +57,13 @@ export class MongooseExceptionInteceptor implements NestInterceptor {
 
     return this.verifyHaveDocument(response);
   }
+
+  /**
+   * Intercepts the incoming request and verifies the response
+   * @param _: The ExecutionContext instance
+   * @param next - The CallHandler instance
+   * @returns The Observable of the verified response
+   */
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(map((response) => this.verifyIsArray(response)));
   }
