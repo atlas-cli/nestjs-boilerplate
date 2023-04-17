@@ -82,7 +82,7 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 ```bash
 git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
 cd my-app/
-cp env-example .env
+cp .env.example .env
 docker compose up -d
 ```
 
