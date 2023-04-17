@@ -1,3 +1,6 @@
+import { Action } from '../types/action';
+import { Permission } from '../types/permission';
+import { Possession } from '../types/possession';
 import { Role } from '../types/role';
 import { RoleEnum } from './roles.enum';
 
@@ -15,7 +18,9 @@ export class RolesBuilder {
     const guest = new Role(RoleEnum.guest);
 
     // Create user role with permissions to read and delete profile
-    const user = new Role(RoleEnum.user).canAllOwn('profile');
+    const user = new Role(RoleEnum.user)
+      .canAllOwn('profile')
+      .can(new Permission('organizations', Action.create, Possession.own));
 
     // Create admin role with permissions to read and delete profile
     const admin = new Role(RoleEnum.admin);
@@ -24,7 +29,9 @@ export class RolesBuilder {
     const student = new Role(RoleEnum.student).setAsOrganizationRole();
 
     // Create organization teacher role
-    const teacher = new Role(RoleEnum.teacher).setAsOrganizationRole();
+    const teacher = new Role(RoleEnum.teacher)
+      .setAsOrganizationRole()
+      .canAllOwn('organizations');
 
     // Return array of all roles
     return [guest, admin, user, student, teacher];

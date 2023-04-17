@@ -23,6 +23,9 @@ export class MongooseExceptionInterceptor implements NestInterceptor {
         if (document[key] === undefined) {
           return;
         }
+        if (Array.isArray(document[key])) {
+          document[key].map((document) => this.verifyHaveDocument(document));
+        }
         if (document[key]._doc !== undefined) {
           this.throwBadGateway();
         }

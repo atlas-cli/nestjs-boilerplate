@@ -13,6 +13,7 @@ import {
   HttpCode,
   SerializeOptions,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -26,9 +27,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { AccessControlGuard } from './../common/access-control/access-control.guard';
 import { ResourceCondition } from './../common/access-control/decorators/resource-condition.decorator';
 import { ResourceConditions } from './../common/access-control/types/resource-condition';
+import { User } from './models/user.model';
+import { MongooseSerializerInterceptor } from './../common/interceptors/mongoose/serializer.interceptor';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), AccessControlGuard)
+@UseInterceptors(MongooseSerializerInterceptor(User))
 @ApiTags('Users')
 @Controller({
   path: 'users',
@@ -53,7 +57,7 @@ export class UsersController {
   @UseAbility('users', Action.read)
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @ResourceCondition() resourceCondition: ResourceConditions,
   ) {
@@ -82,7 +86,9 @@ export class UsersController {
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Get(':id')
+  // Get user by ID. Only allow valid ObjectID to prevent route conflicts.
+  // URL format: /users/:id, where :id is a valid MongoDB ObjectID.
+  @Get(':id([0-9a-fA-F]{24})(/?)')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: Types.ObjectId) {
     return this.usersService.findOne({ _id: id });

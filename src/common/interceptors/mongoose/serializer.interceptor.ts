@@ -27,6 +27,9 @@ export function MongooseSerializerInterceptor(
           return document;
         }
         Object.keys(document).forEach((key) => {
+          if (Array.isArray(document[key])) {
+            document[key] = document[key].map(this.changePlainObjectToClass);
+          }
           if (document[key] instanceof Document) {
             document[key] = plainToJson(classToIntercept, document[key]);
           }
