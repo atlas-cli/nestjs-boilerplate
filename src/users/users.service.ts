@@ -6,7 +6,7 @@ import { IPaginationOptions } from './../common/utils/types/pagination-options';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './models/user.model';
-import { RolesBuilder } from 'common/access-control/roles/roles.builder';
+import { RolesBuilder } from './../common/access-control/roles/roles.builder';
 
 @Injectable()
 export class UsersService {

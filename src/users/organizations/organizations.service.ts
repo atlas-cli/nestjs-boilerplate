@@ -10,7 +10,7 @@ import {
   OrganizationDocument,
 } from './models/organization.model';
 import { UsersService } from './../users.service';
-import { RoleEnum } from 'common/access-control/roles/roles.enum';
+import { RoleEnum } from './../../common/access-control/roles/roles.enum';
 
 @Injectable()
 export class OrganizationsService {
