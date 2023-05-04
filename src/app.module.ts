@@ -3,6 +3,7 @@ import { DatabaseModule } from './shared/database.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { OrganizationsModule } from './users/organizations/organizations.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { OrganizationsModule } from './users/organizations/organizations.module'
     DatabaseModule.forRoot(),
     UsersModule,
     OrganizationsModule,
+    SubscriptionsModule,
     AuthModule,
   ],
   controllers: [],

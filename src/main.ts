@@ -7,7 +7,7 @@ import { setupSwagger } from 'swagger';
 import commonBootstrap from './common/bootstrap';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
 
   // enable swagger documentation

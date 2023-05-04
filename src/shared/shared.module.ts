@@ -7,12 +7,13 @@ import { join } from 'path';
 import appConfig from './../common/config/app.config';
 import authConfig from './../common/config/auth.config';
 import databaseConfig from './../common/config/database.config';
+import stripeConfig from './../common/config/stripe.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, authConfig],
+      load: [appConfig, databaseConfig, authConfig, stripeConfig],
       envFilePath: ['.env'],
     }),
     JwtModule.registerAsync({

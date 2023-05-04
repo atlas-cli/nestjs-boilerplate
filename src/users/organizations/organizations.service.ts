@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IPaginationOptions } from './../../common/utils/types/pagination-options';
-import { Model, Types } from 'mongoose';
+import { Model, Types, UpdateQuery } from 'mongoose';
 import { User } from './../models/user.model';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
@@ -31,6 +31,7 @@ export class OrganizationsService {
     return await this.organizationModel.create({
       _id: organizationId,
       name: createOrganizationDto.name,
+      email: createOrganizationDto.email,
       owner,
       plan: 0,
     });
@@ -47,7 +48,10 @@ export class OrganizationsService {
     return this.organizationModel.findOne({ _id });
   }
 
-  update(id: string, updateProfileDto: UpdateOrganizationDto) {
+  update(
+    id: string | Types.ObjectId,
+    updateProfileDto: UpdateQuery<OrganizationDocument>,
+  ) {
     return this.organizationModel.updateOne(
       {
         _id: id,

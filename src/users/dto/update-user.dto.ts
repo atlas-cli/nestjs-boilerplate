@@ -1,7 +1,13 @@
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsOptional, MinLength, Validate } from 'class-validator';
+import {
+  IsEmail,
+  IsEmpty,
+  IsOptional,
+  MinLength,
+  Validate,
+} from 'class-validator';
 import { IsNotExist } from './../../common/utils/validators/is-not-exists.validator';
 import { Role } from '../../common/access-control/roles/models/role.model';
 import { IsExist } from './../../common/utils/validators/is-exists.validator';
@@ -25,6 +31,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   provider?: string;
 
   socialId?: string | null;
+
+  @IsEmpty()
+  stripeCustomerId?: string | null;
 
   @ApiProperty({ example: 'John' })
   @IsOptional()

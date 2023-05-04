@@ -31,7 +31,8 @@ export class RolesBuilder {
     // Create organization teacher role
     const teacher = new Role(RoleEnum.teacher)
       .setAsOrganizationRole()
-      .canAllOwn('organizations');
+      .canAllOwn('organizations')
+      .canAllOwn('subscription');
 
     // Return array of all roles
     return [guest, admin, user, student, teacher];

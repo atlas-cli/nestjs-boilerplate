@@ -1,5 +1,4 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Transform } from 'class-transformer';
 import { HydratedDocument, Types } from 'mongoose';
 import { User } from './../../models/user.model';
 
@@ -14,9 +13,14 @@ export class Organization {
   @Prop({ isRequired: true, index: true })
   name: string;
 
+  @Prop({ isRequired: true, index: true })
+  email: string;
+
   @Prop({ type: Types.ObjectId, ref: User.name, isRequired: true, index: true })
-  @Transform(({ obj }) => obj.owner.toString())
   owner: Types.ObjectId;
+
+  @Prop({ isRequired: false, index: true })
+  stripeCustomerId: string | null;
 
   plan: number;
 }

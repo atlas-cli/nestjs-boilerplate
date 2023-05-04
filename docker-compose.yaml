@@ -21,5 +21,11 @@ services:
       - .env
     depends_on:
       - mongodb
+  stripe:
+    image: stripe/stripe-cli
+    container_name: stripe-cli
+    command: "listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to api:${APP_PORT}/subscriptions/stripe/webhook"
+    env_file:
+      - .env
 volumes:
   mongodb_data_container:

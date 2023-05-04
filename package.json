@@ -1,6 +1,6 @@
 {
   "name": "slingui-server-side",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "author": "",
   "private": true,
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@atlas-org/microservices": "^0.0.6",
+    "@golevelup/nestjs-stripe": "^0.6.1",
     "@nestjs/common": "^9.3.10",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.3.10",
@@ -48,6 +49,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "stripe": "^11.18.0",
     "swagger-ui-express": "^4.6.0"
   },
   "devDependencies": {
