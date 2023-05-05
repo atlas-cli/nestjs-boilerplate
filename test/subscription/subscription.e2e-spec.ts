@@ -13,6 +13,7 @@ describe('Subscription tests (e2e)', () => {
 
   let accessToken: string;
   let organizationId: string;
+  let subscriptionId: string;
 
   let stripeClient: Stripe;
   let paymentIntentId: string;
@@ -69,6 +70,38 @@ describe('Subscription tests (e2e)', () => {
       });
   });
 
+  it('should be an active subscription for this organization', () => {
+    return request(app)
+      .get('/subscriptions/active/' + organizationId)
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+        expect(body._id).toBeDefined();
+        subscriptionId = body._id;
+        expect(body.plan).toBeDefined();
+        expect(body.status).toBe('active');
+      });
+  });
+
+  it('should not be able to cancel a free subscription', () => {
+    return request(app)
+      .delete('/subscriptions/cancel')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        subscriptionId,
+      })
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+        expect(body.message).toBe('you cannot cancel free subscription');
+      });
+  });
+
   it('should not be able to create another free subscription', () => {
     return request(app)
       .post('/subscriptions/create')
@@ -88,20 +121,6 @@ describe('Subscription tests (e2e)', () => {
         expect(body.message).toBe(
           'you already have an active free subscription',
         );
-      });
-  });
-
-  it('should be an active subscription for this organization', () => {
-    return request(app)
-      .get('/subscriptions/active/' + organizationId)
-      .auth(accessToken, {
-        type: 'bearer',
-      })
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body).toBeDefined();
-        expect(body.plan).toBeDefined();
-        expect(body.status).toBe('active');
       });
   });
 
@@ -138,7 +157,7 @@ describe('Subscription tests (e2e)', () => {
       .expect(422);
   });
 
-  it('create previously invoice and subscription for this user', () => {
+  it('create an invoice that will not be paid and will be canceled due to the next subscription', () => {
     return request(app)
       .post('/subscriptions/create')
       .auth(accessToken, {
@@ -215,6 +234,8 @@ describe('Subscription tests (e2e)', () => {
       .expect(200)
       .expect(({ body }) => {
         expect(body).toBeDefined();
+        expect(body._id).toBeDefined();
+        subscriptionId = body._id;
         expect(body.plan).toBeDefined();
         expect(body.status).toBe('active');
         expect(body.quotas.students).toBe(10);
@@ -222,7 +243,6 @@ describe('Subscription tests (e2e)', () => {
         expect(body.quotas.storage).toBe(5);
       });
   });
-
   it('should not be able to create a pro subscription as it already exists (POST)', () => {
     return request(app)
       .post('/subscriptions/create')
@@ -247,6 +267,38 @@ describe('Subscription tests (e2e)', () => {
         expect(body.message).toBe(
           'you already have an active subscription please make update',
         );
+      });
+  });
+
+  it('should be able to cancel a pro subscription', () => {
+    return request(app)
+      .delete('/subscriptions/cancel')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        subscriptionId,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('wait 2 seconds to webhook active a plan', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  });
+
+  it('must have a property indicating that it will be canceled in the next period', () => {
+    return request(app)
+      .get('/subscriptions/active/' + organizationId)
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+        expect(body.cancelAtPeriodEnd).toBe(true);
       });
   });
 
@@ -321,6 +373,8 @@ describe('Subscription tests (e2e)', () => {
       .expect(200)
       .expect(({ body }) => {
         expect(body).toBeDefined();
+        expect(body._id).toBeDefined();
+        subscriptionId = body._id;
         expect(body.plan).toBeDefined();
         expect(body.status).toBe('active');
         expect(body.quotas.students).toBe(10);
@@ -353,7 +407,6 @@ describe('Subscription tests (e2e)', () => {
       })
       .expect(200)
       .expect(({ body }) => {
-        console.log(body);
         expect(body).toBeDefined();
       });
   });
@@ -379,7 +432,78 @@ describe('Subscription tests (e2e)', () => {
       })
       .expect(200)
       .expect(({ body }) => {
-        console.log(body);
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('should be able to cancel a subscription', () => {
+    return request(app)
+      .delete('/subscriptions/cancel')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        subscriptionId,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('should be able to update a subscription and reativate subscription (POST)', () => {
+    return request(app)
+      .put('/subscriptions/update')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        planId: 1,
+        organizationId,
+        currency: 'brl',
+        interval: 'month',
+        products: [
+          { id: 'professional' },
+          { id: 'students', quantity: 20 },
+          { id: 'classroom', quantity: 20 },
+          { id: 'recording', quantity: 0 },
+          { id: 'storage', quantity: 5 },
+        ],
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('wait 2 seconds to webhook active a plan', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  });
+
+  it('must have a property indicating that it will be not canceled in the next period becouse has update', () => {
+    return request(app)
+      .get('/subscriptions/active/' + organizationId)
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+        expect(body.cancelAtPeriodEnd).toBe(false);
+      });
+  });
+
+  it('should be able to cancel a subscription', () => {
+    return request(app)
+      .delete('/subscriptions/cancel')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        subscriptionId,
+      })
+      .expect(200)
+      .expect(({ body }) => {
         expect(body).toBeDefined();
       });
   });

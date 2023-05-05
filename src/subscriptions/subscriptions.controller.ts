@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -23,6 +24,7 @@ import { ResourceConditions } from './../common/access-control/types/resource-co
 import { ResourceCondition } from './../common/access-control/decorators/resource-condition.decorator';
 import Stripe from 'stripe';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { CancelSubscriptionDto } from './dto/cancel-subscription.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), AccessControlGuard)
@@ -159,11 +161,32 @@ export class SubscriptionsController {
       updateSubscriptionDto,
     );
 
-    console.log('items', items);
     await this.subscriptionsService.updateStripeSubscription(
       currentSubscription.stripeSubscriptionId,
       updateSubscriptionDto,
       items,
+    );
+  }
+
+  @Delete('cancel')
+  @UseAbility('subscription', Action.delete)
+  async cancelSubscription(
+    @Body() cancelSubscriptionDto: CancelSubscriptionDto,
+    @ResourceCondition() resource: ResourceConditions,
+  ) {
+    const subscriptionId = cancelSubscriptionDto.subscriptionId;
+    const { stripeSubscriptionId, organization, plan } =
+      await this.subscriptionsService.getSubscription(subscriptionId);
+
+    // valid have permission to cancel for this organization
+    resource.toMongoFindOne(organization.toString(), '_id');
+
+    // if is free plan you cannot cancel a subscription
+    if (plan === 0) {
+      throw new BadRequestException('you cannot cancel free subscription');
+    }
+    await this.subscriptionsService.cancelStripeSubscriptionOnPeriodEnd(
+      stripeSubscriptionId,
     );
   }
 }

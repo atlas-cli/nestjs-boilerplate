@@ -39,6 +39,9 @@ export class Subscription {
 
   @Prop({ enum: SubscriptionStatus, default: SubscriptionStatus.incomplete })
   status: string;
+
+  @Prop({ type: Boolean, default: false })
+  cancelAtPeriodEnd: boolean;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);

@@ -10,11 +10,11 @@ export class StripeHandlersService {
   async handleCheckoutSessionCompleted(event: Stripe.Event) {
     const subscriptionData: Stripe.Subscription = event.data
       .object as Stripe.Subscription;
-    await this.subscriptionsService.updateSubscriptionStatus(
-      subscriptionData.id,
-      {
-        status: subscriptionData.status,
-      },
-    );
+
+    console.log('subscriptionData', subscriptionData);
+    await this.subscriptionsService.updateSubscription(subscriptionData.id, {
+      status: subscriptionData.status,
+      cancelAtPeriodEnd: subscriptionData.cancel_at_period_end,
+    });
   }
 }

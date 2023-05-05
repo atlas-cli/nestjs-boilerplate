@@ -156,7 +156,11 @@ export class SubscriptionsService {
       .filter((subscriptionItem) => {
         return !items.find((item) => item.price === subscriptionItem.price.id);
       })
-      .map((subscriptionItem) => ({ id: subscriptionItem.id, quantity: 0 }));
+      .map((subscriptionItem) => ({
+        id: subscriptionItem.id,
+        quantity: 0,
+        deleted: true,
+      }));
 
     subscription = await this.stripeClient.subscriptions.update(
       stripeSubscriptionId,
@@ -173,19 +177,34 @@ export class SubscriptionsService {
 
     const quotas = this.buildQuotas(createSubscriptionDto);
 
-    await this.updateSubscriptionStatus(stripeSubscriptionId, {
+    await this.updateSubscription(stripeSubscriptionId, {
       plan: createSubscriptionDto.planId,
       status: subscription.status,
       quotas,
     });
   }
-  async updateSubscriptionStatus(stripeSubscriptionId, update) {
+  async updateSubscription(stripeSubscriptionId, update) {
     return await this.subscriptionRepository.updateOne(
       {
         stripeSubscriptionId,
       },
       update,
     );
+  }
+
+  async getSubscription(subscriptionId) {
+    return await this.subscriptionRepository.findOne(
+      new Types.ObjectId(subscriptionId),
+    );
+  }
+
+  async cancelStripeSubscriptionImmediately(stripeSubscriptionId: string) {
+    await this.stripeClient.subscriptions.cancel(stripeSubscriptionId);
+  }
+  async cancelStripeSubscriptionOnPeriodEnd(stripeSubscriptionId: string) {
+    await this.stripeClient.subscriptions.update(stripeSubscriptionId, {
+      cancel_at_period_end: true,
+    });
   }
 
   async getActiveSubscription(organizationId) {
