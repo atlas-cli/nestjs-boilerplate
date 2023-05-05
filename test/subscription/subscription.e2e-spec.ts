@@ -70,7 +70,7 @@ describe('Subscription tests (e2e)', () => {
       });
   });
 
-  it('should be an active subscription for this organization', () => {
+  it('should be an active free subscription for this organization', () => {
     return request(app)
       .get('/subscriptions/active/' + organizationId)
       .auth(accessToken, {
@@ -270,7 +270,65 @@ describe('Subscription tests (e2e)', () => {
       });
   });
 
-  it('should be able to cancel a pro subscription', () => {
+  it('should be able to cancel a subscription', () => {
+    return request(app)
+      .delete('/subscriptions/cancel')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        subscriptionId,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('should be able to update a subscription and reativate subscription (POST)', () => {
+    return request(app)
+      .put('/subscriptions/update')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        planId: 2,
+        organizationId,
+        currency: 'brl',
+        interval: 'month',
+        products: [
+          { id: 'organization' },
+          { id: 'students', quantity: 20 },
+          { id: 'teachers', quantity: 5 },
+          { id: 'classroom', quantity: 20 },
+          { id: 'recording', quantity: 1 },
+          { id: 'storage', quantity: 5 },
+        ],
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('wait 2 seconds to webhook active a plan', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  });
+
+  it('must have a property indicating that it will be not canceled in the next period becouse has update', () => {
+    return request(app)
+      .get('/subscriptions/active/' + organizationId)
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toBeDefined();
+        expect(body.cancelAtPeriodEnd).toBe(false);
+      });
+  });
+
+  it('should be able to cancel a subscription', () => {
     return request(app)
       .delete('/subscriptions/cancel')
       .auth(accessToken, {
@@ -344,27 +402,12 @@ describe('Subscription tests (e2e)', () => {
       .expect(({ body }) => {
         expect(body).toBeDefined();
         expect(body.subscriptionId).toBeDefined();
-        expect(body.clientSecret).toBeDefined();
+        // expect(body.clientSecret).toBeDefined();
         paymentIntentId = body.paymentIntent;
       });
   });
 
-  it('setup stripe client and make subscription paid', async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [SharedModule, StripeSharedModule],
-    }).compile();
-
-    stripeClient = module.get<Stripe>(STRIPE_CLIENT_TOKEN);
-    await stripeClient.paymentIntents.confirm(paymentIntentId, {
-      payment_method: 'pm_card_visa',
-    });
-  });
-
-  it('wait 2 seconds to webhook active a plan', async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-  });
-
-  it('should be an active subscription for this organization', () => {
+  it('should be an trailing subscription for this organization', () => {
     return request(app)
       .get('/subscriptions/active/' + organizationId)
       .auth(accessToken, {
@@ -376,7 +419,7 @@ describe('Subscription tests (e2e)', () => {
         expect(body._id).toBeDefined();
         subscriptionId = body._id;
         expect(body.plan).toBeDefined();
-        expect(body.status).toBe('active');
+        expect(body.status).toBe('trialing');
         expect(body.quotas.students).toBe(10);
         expect(body.quotas.classroom).toBe(5);
         expect(body.quotas.recording).toBe(body.quotas.classroom);
@@ -411,7 +454,23 @@ describe('Subscription tests (e2e)', () => {
       });
   });
 
-  it('should be able to update a subscription with quantities for other plan (POST)', () => {
+  it('should be able to create checkout sesseion', () => {
+    return request(app)
+      .post('/subscriptions/session')
+      .auth(accessToken, {
+        type: 'bearer',
+      })
+      .send({
+        organizationId,
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        console.log(body);
+        expect(body).toBeDefined();
+      });
+  });
+
+  it('should not be able to update a subscription in trial to pro plan', () => {
     return request(app)
       .put('/subscriptions/update')
       .auth(accessToken, {
@@ -430,7 +489,7 @@ describe('Subscription tests (e2e)', () => {
           { id: 'storage', quantity: 5 },
         ],
       })
-      .expect(200)
+      .expect(400)
       .expect(({ body }) => {
         expect(body).toBeDefined();
       });
@@ -444,31 +503,6 @@ describe('Subscription tests (e2e)', () => {
       })
       .send({
         subscriptionId,
-      })
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body).toBeDefined();
-      });
-  });
-
-  it('should be able to update a subscription and reativate subscription (POST)', () => {
-    return request(app)
-      .put('/subscriptions/update')
-      .auth(accessToken, {
-        type: 'bearer',
-      })
-      .send({
-        planId: 1,
-        organizationId,
-        currency: 'brl',
-        interval: 'month',
-        products: [
-          { id: 'professional' },
-          { id: 'students', quantity: 20 },
-          { id: 'classroom', quantity: 20 },
-          { id: 'recording', quantity: 0 },
-          { id: 'storage', quantity: 5 },
-        ],
       })
       .expect(200)
       .expect(({ body }) => {
@@ -480,31 +514,12 @@ describe('Subscription tests (e2e)', () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
   });
 
-  it('must have a property indicating that it will be not canceled in the next period becouse has update', () => {
+  it('subscription trial is cancelled immediately', () => {
     return request(app)
       .get('/subscriptions/active/' + organizationId)
       .auth(accessToken, {
         type: 'bearer',
       })
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body).toBeDefined();
-        expect(body.cancelAtPeriodEnd).toBe(false);
-      });
-  });
-
-  it('should be able to cancel a subscription', () => {
-    return request(app)
-      .delete('/subscriptions/cancel')
-      .auth(accessToken, {
-        type: 'bearer',
-      })
-      .send({
-        subscriptionId,
-      })
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body).toBeDefined();
-      });
+      .expect(404);
   });
 });

@@ -1,5 +1,6 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { OrganizationStatus } from '../enums/organization-status.enum';
 import { User } from './../../models/user.model';
 
 export type OrganizationDocument = HydratedDocument<Organization>;
@@ -21,6 +22,12 @@ export class Organization {
 
   @Prop({ isRequired: false, index: true })
   stripeCustomerId: string | null;
+
+  @Prop({ enum: OrganizationStatus, default: OrganizationStatus.inactive })
+  status: string;
+
+  @Prop({ isRequired: false, default: false })
+  hasUsedTrial: boolean;
 
   plan: number;
 }

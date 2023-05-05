@@ -12,6 +12,8 @@ import { ProductFactory } from './models/product.model';
 import { OrganizationsModule } from 'users/organizations/organizations.module';
 import { SubscriptionFactory } from './models/subscription.model';
 import { StripeHandlersService } from './webhooks/stripe/stripe-handler.service';
+import { PlansController } from './plans/plans.controller';
+import { PlansService } from './plans/plans.service';
 
 @Module({
   imports: [
@@ -25,8 +27,14 @@ import { StripeHandlersService } from './webhooks/stripe/stripe-handler.service'
     UsersModule,
     OrganizationsModule,
   ],
-  controllers: [SubscriptionsController],
-  providers: [IsExist, IsNotExist, SubscriptionsService, StripeHandlersService],
+  controllers: [SubscriptionsController, PlansController],
+  providers: [
+    IsExist,
+    IsNotExist,
+    SubscriptionsService,
+    PlansService,
+    StripeHandlersService,
+  ],
   exports: [SubscriptionsService],
 })
 export class SubscriptionsModule {}

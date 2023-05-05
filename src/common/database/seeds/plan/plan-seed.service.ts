@@ -24,7 +24,7 @@ export class PlanSeedService {
       {
         _id: plan.id,
         name: plan.name,
-        isTrial: plan.isTrial,
+        trialPeriodDays: plan.trialPeriodDays,
         defaultQuotas: plan.defaultQuotas,
         requiredProducts: plan.requiredProducts,
       },

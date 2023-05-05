@@ -26,9 +26,14 @@ export function MongooseSerializerInterceptor(
         if (document === undefined) {
           return document;
         }
+        if (document === null) {
+          return document;
+        }
         Object.keys(document).forEach((key) => {
           if (Array.isArray(document[key])) {
-            document[key] = document[key].map(this.changePlainObjectToClass);
+            document[key] = document[key].map((d) =>
+              this.changePlainObjectToClass(d),
+            );
           }
           if (document[key] instanceof Document) {
             document[key] = plainToJson(classToIntercept, document[key]);
@@ -49,7 +54,7 @@ export function MongooseSerializerInterceptor(
       response: PlainLiteralObject | PlainLiteralObject[],
     ) {
       if (Array.isArray(response)) {
-        return response.map(this.changePlainObjectToClass);
+        return response.map((r) => this.changePlainObjectToClass(r));
       }
 
       return this.changePlainObjectToClass(response);

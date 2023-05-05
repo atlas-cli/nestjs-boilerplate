@@ -24,9 +24,11 @@ export class MongooseExceptionInterceptor implements NestInterceptor {
           return;
         }
         if (Array.isArray(document[key])) {
-          document[key].map((document) => this.verifyHaveDocument(document));
+          document[key].map((document) => {
+            return this.verifyHaveDocument(document);
+          });
         }
-        if (document[key]._doc !== undefined) {
+        if (document[key]?._doc !== undefined) {
           this.throwBadGateway();
         }
       });
@@ -55,7 +57,7 @@ export class MongooseExceptionInterceptor implements NestInterceptor {
       return response;
     }
     if (Array.isArray(response)) {
-      return response.map(this.verifyHaveDocument);
+      return response.map((d) => this.verifyHaveDocument(d));
     }
 
     return this.verifyHaveDocument(response);

@@ -1,5 +1,5 @@
 import { InjectStripeClient } from '@golevelup/nestjs-stripe';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import Stripe from 'stripe';
@@ -13,20 +13,25 @@ import {
 } from './models/subscription.model';
 import { SubscriptionStatus } from './enums/subscription-status.enum';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { PlansService } from './plans/plans.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     @InjectModel(Product.name)
-    private productRepository: Model<ProductDocument>,
+    private productModel: Model<ProductDocument>,
     @InjectModel(Subscription.name)
-    private subscriptionRepository: Model<SubscriptionDocument>,
-    private organizationService: OrganizationsService,
-    @InjectStripeClient() private stripeClient: Stripe,
+    private subscriptionModel: Model<SubscriptionDocument>,
+    @InjectStripeClient()
+    private stripeClient: Stripe,
+    private organizationsService: OrganizationsService,
+    private plansService: PlansService,
+    private configService: ConfigService,
   ) {}
   async createStripeOrganizationCustomer(organizationId: string) {
     const customerOrganizationId = new Types.ObjectId(organizationId);
-    const organization = await this.organizationService.findOne(
+    const organization = await this.organizationsService.findOne(
       customerOrganizationId,
     );
     if (organization.stripeCustomerId !== undefined) {
@@ -37,7 +42,7 @@ export class SubscriptionsService {
       email: organization.email,
       name: organization.name,
     });
-    await this.organizationService.update(customerOrganizationId, {
+    await this.organizationsService.update(customerOrganizationId, {
       stripeCustomerId: customer.id,
     });
     return customer.id;
@@ -50,7 +55,7 @@ export class SubscriptionsService {
     if (productsIds.length === 0) {
       productsIds.push('trial');
     }
-    const products = await this.productRepository.find({
+    const products = await this.productModel.find({
       stripeProductId: { $in: productsIds },
     });
 
@@ -96,22 +101,41 @@ export class SubscriptionsService {
     organizationId: string,
     items: { price: string }[],
   ) {
+    const plan = await this.plansService.findOne(createSubscriptionDto.planId);
+    const organization = await this.organizationsService.findOne(
+      organizationId,
+    );
+    let trialPeriodParams = {};
+    if (plan.trialPeriodDays > 0 && organization.hasUsedTrial === false) {
+      await this.organizationsService.update(organizationId, {
+        hasUsedTrial: true,
+      });
+      trialPeriodParams = {
+        trial_period_days: plan.trialPeriodDays,
+        trial_settings: {
+          end_behavior: {
+            missing_payment_method: 'cancel',
+          },
+        },
+      };
+    }
     const subscription = await this.stripeClient.subscriptions.create({
       customer: customerId,
       items,
       currency: createSubscriptionDto.currency,
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      ...trialPeriodParams,
       metadata: {
         planId: createSubscriptionDto.planId,
         organization: organizationId,
       },
-      expand: ['latest_invoice.payment_intent'],
     });
 
     const quotas = this.buildQuotas(createSubscriptionDto);
 
-    await this.subscriptionRepository.create({
+    await this.subscriptionModel.create({
       stripeSubscriptionId: subscription.id,
       plan: createSubscriptionDto.planId,
       organization: new Types.ObjectId(organizationId),
@@ -136,7 +160,7 @@ export class SubscriptionsService {
   }
   async updateStripeSubscription(
     stripeSubscriptionId: string,
-    createSubscriptionDto: UpdateSubscriptionDto,
+    updateSubscriptionDto: UpdateSubscriptionDto,
     items: { price: string; id?: string }[],
   ) {
     let subscription = await this.stripeClient.subscriptions.retrieve(
@@ -161,7 +185,19 @@ export class SubscriptionsService {
         quantity: 0,
         deleted: true,
       }));
-
+    if (subscription.status === 'trialing') {
+      const plan = await this.plansService.findOne(
+        updateSubscriptionDto.planId,
+      );
+      if (
+        plan.trialPeriodDays === undefined ||
+        plan.trialPeriodDays === undefined
+      ) {
+        throw new BadRequestException(
+          'you cannot you cannot switch from a trial plan to a non-trial plan, you need cancel your subscription and create another',
+        );
+      }
+    }
     subscription = await this.stripeClient.subscriptions.update(
       stripeSubscriptionId,
       {
@@ -169,22 +205,22 @@ export class SubscriptionsService {
         proration_behavior: 'create_prorations',
         items: [...items, ...removedItems],
         metadata: {
-          planId: createSubscriptionDto.planId,
-          organization: createSubscriptionDto.organizationId,
+          planId: updateSubscriptionDto.planId,
+          organization: updateSubscriptionDto.organizationId,
         },
       },
     );
 
-    const quotas = this.buildQuotas(createSubscriptionDto);
+    const quotas = this.buildQuotas(updateSubscriptionDto);
 
     await this.updateSubscription(stripeSubscriptionId, {
-      plan: createSubscriptionDto.planId,
+      plan: updateSubscriptionDto.planId,
       status: subscription.status,
       quotas,
     });
   }
   async updateSubscription(stripeSubscriptionId, update) {
-    return await this.subscriptionRepository.updateOne(
+    return await this.subscriptionModel.updateOne(
       {
         stripeSubscriptionId,
       },
@@ -192,8 +228,15 @@ export class SubscriptionsService {
     );
   }
 
+  async createSession(costumerOrganizationId) {
+    return await this.stripeClient.billingPortal.sessions.create({
+      customer: costumerOrganizationId,
+      return_url: this.configService.get('app.frontendDomain'),
+    });
+  }
+
   async getSubscription(subscriptionId) {
-    return await this.subscriptionRepository.findOne(
+    return await this.subscriptionModel.findOne(
       new Types.ObjectId(subscriptionId),
     );
   }
@@ -202,13 +245,14 @@ export class SubscriptionsService {
     await this.stripeClient.subscriptions.cancel(stripeSubscriptionId);
   }
   async cancelStripeSubscriptionOnPeriodEnd(stripeSubscriptionId: string) {
-    await this.stripeClient.subscriptions.update(stripeSubscriptionId, {
+    return await this.stripeClient.subscriptions.update(stripeSubscriptionId, {
       cancel_at_period_end: true,
+      trial_end: 'now',
     });
   }
 
   async getActiveSubscription(organizationId) {
-    return await this.subscriptionRepository
+    return await this.subscriptionModel
       .findOne({
         organization: new Types.ObjectId(organizationId),
         status: {

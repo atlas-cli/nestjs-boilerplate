@@ -13,8 +13,8 @@ export class Plan {
   @Prop({ isRequired: false, index: true })
   name: string | null;
 
-  @Prop({ isRequired: false, default: true })
-  isTrial: boolean;
+  @Prop({ type: Number, isRequired: false })
+  trialPeriodDays: number;
 
   @Prop({
     type: Object,

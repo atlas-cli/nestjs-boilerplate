@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -25,6 +26,7 @@ import { ResourceCondition } from './../common/access-control/decorators/resourc
 import Stripe from 'stripe';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { CancelSubscriptionDto } from './dto/cancel-subscription.dto';
+import { CreateSessionDto } from './dto/create-session.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), AccessControlGuard)
@@ -105,7 +107,7 @@ export class SubscriptionsController {
       createSubscriptionDto.organizationId,
       items,
     );
-    // console.log('subscription', subscription);
+
     const invoice = subscription.latest_invoice as Stripe.Invoice;
     let clientSecret;
     if (invoice.payment_intent !== null) {
@@ -125,6 +127,24 @@ export class SubscriptionsController {
     return response;
   }
 
+  @Post('session')
+  @UseAbility('subscription', Action.create)
+  async createSession(
+    @Body() createSesssionDto: CreateSessionDto,
+    @ResourceCondition() resource: ResourceConditions,
+  ) {
+    // valid have access to subscription of this organization
+    resource.toMongoFindOne(createSesssionDto.organizationId, '_id');
+
+    // create if not exists organization with customer in stripe
+    const stripeCustomerId =
+      await this.subscriptionsService.createStripeOrganizationCustomer(
+        createSesssionDto.organizationId,
+      );
+
+    return await this.subscriptionsService.createSession(stripeCustomerId);
+  }
+
   @Get('active/:id')
   @UseAbility('subscription', Action.read)
   async activeSubscription(
@@ -132,9 +152,12 @@ export class SubscriptionsController {
     @ResourceCondition() resource: ResourceConditions,
   ) {
     resource.toMongoFindOne(organizationId, '_id');
-    return await this.subscriptionsService.getActiveSubscription(
-      organizationId,
-    );
+    const activeSubscription =
+      await this.subscriptionsService.getActiveSubscription(organizationId);
+    if (activeSubscription === null) {
+      throw new NotFoundException('no active subscription');
+    }
+    return activeSubscription;
   }
 
   @Put('update')
@@ -185,7 +208,7 @@ export class SubscriptionsController {
     if (plan === 0) {
       throw new BadRequestException('you cannot cancel free subscription');
     }
-    await this.subscriptionsService.cancelStripeSubscriptionOnPeriodEnd(
+    return await this.subscriptionsService.cancelStripeSubscriptionOnPeriodEnd(
       stripeSubscriptionId,
     );
   }

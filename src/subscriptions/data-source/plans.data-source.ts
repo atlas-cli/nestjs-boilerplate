@@ -3,14 +3,13 @@ interface PlanItem {
   name: string;
   defaultQuotas: any;
   requiredProducts: any;
-  isTrial: boolean;
+  trialPeriodDays?: number;
 }
 
 export const plans: PlanItem[] = [
   {
     id: 0,
     name: 'Trial',
-    isTrial: true,
     defaultQuotas: {
       students: 3,
       teachers: 1,
@@ -23,7 +22,6 @@ export const plans: PlanItem[] = [
   {
     id: 1,
     name: 'Professional',
-    isTrial: false,
     defaultQuotas: {
       teachers: 1,
     },
@@ -32,8 +30,8 @@ export const plans: PlanItem[] = [
   {
     id: 2,
     name: 'Organization',
-    isTrial: false,
     defaultQuotas: {},
+    trialPeriodDays: 14,
     requiredProducts: [
       'organization',
       'teachers',
