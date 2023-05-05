@@ -80,14 +80,11 @@ jobs:
       - run:
           name: Copy .env
           command: cp .env.example .env
-      - run:
-          name: Source .env
-          command: source .env set && echo $STRIPE_API_KEY
       - setup_remote_docker:
           version: 20.10.14
       - run:
           name: Run stripe listen
-          command: docker run --rm -it stripe/stripe-cli listen --api-key $STRIPE_API_KEY
+          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY
       - run:
           name: Wait for MongoDB to start
           command: dockerize -wait tcp://localhost:27017 -timeout 1m
