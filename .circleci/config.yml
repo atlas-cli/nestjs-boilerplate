@@ -82,7 +82,7 @@ jobs:
           command: cp .env.example .env
       - run:
           name: Source .env
-          command: source .env set
+          command: source .env set && echo $STRIPE_API_KEY
       - setup_remote_docker:
           version: 20.10.14
       - run:
