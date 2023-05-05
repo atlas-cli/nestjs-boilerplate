@@ -81,6 +81,12 @@ jobs:
           name: Copy .env
           command: cp .env.example .env
       - run:
+          name: Source .env
+          command: source .env set
+      - run:
+          name: Run stripe listen
+          command: docker run --rm -it stripe/stripe-cli listen --api-key $STRIPE_API_KEY
+      - run:
           name: Wait for MongoDB to start
           command: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run:
