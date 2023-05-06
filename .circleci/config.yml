@@ -93,12 +93,15 @@ jobs:
           background: true
           command: npm run start
       - run:
-          name: Integration E2E test
-          command: npx wait-on http://localhost:3000 & npm run test:e2e
+          name: Wait port
+          command: npm install -g wait-port && wait-port localhost:3000
       - run:
           name: Run stripe listen
-          command:  source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --device-name local --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
+          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
           background: true
+      - run:
+          name: Integration E2E test
+          command: npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
