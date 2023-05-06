@@ -85,6 +85,7 @@ jobs:
       - run:
           name: Run stripe listen
           command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY
+          background: true
       - run:
           name: Wait for MongoDB to start
           command: dockerize -wait tcp://localhost:27017 -timeout 1m
