@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  mongodb:
+  localhost:
     image: mongo:latest
     environment:
       - MONGODB_DATABASE=${DATABASE_NAME}
