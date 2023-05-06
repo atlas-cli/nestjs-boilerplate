@@ -174,7 +174,7 @@ export class SubscriptionsController {
         updateSubscriptionDto.organizationId,
       );
 
-    if (currentSubscription === undefined) {
+    if (currentSubscription === null) {
       throw new BadRequestException(
         'you dont have paid subscription to update',
       );
