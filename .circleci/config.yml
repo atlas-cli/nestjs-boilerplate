@@ -94,7 +94,7 @@ jobs:
           command: npm run start
       - run:
           name: Run stripe listen
-          command: source .env set && npx wait-on http://localhost:3000 & docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
+          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --device-name local --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
           background: true
       - run:
           name: Integration E2E test
