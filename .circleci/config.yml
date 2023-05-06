@@ -83,10 +83,6 @@ jobs:
       - setup_remote_docker:
           version: 20.10.14
       - run:
-          name: Run stripe listen
-          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
-          background: true
-      - run:
           name: Wait for MongoDB to start
           command: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run:
@@ -96,6 +92,10 @@ jobs:
           name: Run start
           background: true
           command: npm run start
+      - run:
+          name: Run stripe listen
+          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
+          background: true
       - run:
           name: Integration E2E test
           command: npx wait-on http://localhost:3000 & npm run test:e2e
