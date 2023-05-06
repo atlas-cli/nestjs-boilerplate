@@ -20,7 +20,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - mongodb
+      - localhost
   stripe:
     image: stripe/stripe-cli
     container_name: stripe-cli
