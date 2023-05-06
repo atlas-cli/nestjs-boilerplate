@@ -94,10 +94,10 @@ jobs:
           command: npm run start
       - run:
           name: Wait port
-          command: npm install -g wait-port && wait-port localhost:3000
+          command: npm install -g wait-port && wait-port 127.0.0.1:3000
       - run:
           name: Run stripe listen
-          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to localhost:$APP_PORT/subscriptions/stripe/webhook
+          command: source .env set && docker run --rm -it stripe/stripe-cli listen --api-key=$STRIPE_API_KEY --forward-to 127.0.0.1:$APP_PORT/subscriptions/stripe/webhook
           background: true
       - run:
           name: Integration E2E test
