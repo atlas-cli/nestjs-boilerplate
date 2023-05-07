@@ -70,7 +70,7 @@ jobs:
   integration_test:
     working_directory: ~/nest-boilerplate
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2023.04.2
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
