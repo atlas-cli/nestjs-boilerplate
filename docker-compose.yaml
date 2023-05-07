@@ -12,8 +12,8 @@ services:
   api: 
     build: .
     volumes:
-      - .:/app
-      - /app/node_modules
+    - .:/app
+    # - /app/node_modules
     ports:
       - ${APP_PORT}:${APP_PORT}
     command: npm run start:dev
