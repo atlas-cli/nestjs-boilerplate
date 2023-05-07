@@ -84,8 +84,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Run start
-          background: true
-          command: docker compose up --wait api
+          command: docker compose up -d --wait api
       - run:
           name: Wait port
           command: docker compose exec api npx wait-on tcp:3000
