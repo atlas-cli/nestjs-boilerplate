@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  localhost:
+  mongodb:
     image: mongo:latest
     environment:
       - MONGODB_DATABASE=${DATABASE_NAME}
@@ -12,7 +12,7 @@ services:
   api: 
     build: .
     volumes:
-      - .:/app
+      # - .:/app
       - /app/node_modules
     ports:
       - ${APP_PORT}:${APP_PORT}
@@ -20,7 +20,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - localhost
+      - mongodb
   stripe:
     image: stripe/stripe-cli
     container_name: stripe-cli
