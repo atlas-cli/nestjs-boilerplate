@@ -87,7 +87,7 @@ jobs:
           command: docker compose up -d --wait api
       - run:
           name: Wait port
-          command: docker compose exec api npx wait-on tcp:3000
+          command: node test/wait-on.js
       - run:
           name: Run seeds
           command: docker compose exec api npm run seed:run
