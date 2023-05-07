@@ -70,7 +70,7 @@ jobs:
   integration_test:
     working_directory: ~/nest-boilerplate
     machine:
-      image: cimg/node:16.18.1-browsers
+      image: ubuntu-2004:202010-01
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
