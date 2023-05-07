@@ -88,13 +88,13 @@ jobs:
           command: docker compose up
       - run:
           name: Wait port
-          command: node test/wait-on.js
+          command: docker compose exec api node test/wait-on.js
       - run:
           name: Run seeds
           command: docker compose exec api npm run seed:run
       - run:
           name: Integration E2E test
-          command: npm run test:e2e
+          command: docker compose exec api npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
