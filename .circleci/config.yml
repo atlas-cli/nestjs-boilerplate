@@ -85,13 +85,13 @@ jobs:
       - run:
           name: Run start
           background: true
-          command: docker compose up
-      - run:
-          name: Wait port
-          command: docker compose exec api npx wait-on http://localhost:3000
+          command: docker compose up --wait api
       - run:
           name: Run seeds
           command: docker compose exec api npm run seed:run
+      - run:
+          name: Wait port
+          command: docker compose exec api npx wait-on tcp:3000
       - run:
           name: Integration E2E test
           command: npm run test:e2e
