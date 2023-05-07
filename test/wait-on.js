@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 async function waitFor404() {
-    const url = 'http://localhost:3000';
+    const url = 'http://127.0.0.1:3000';
 
     while (true) {
         try {
