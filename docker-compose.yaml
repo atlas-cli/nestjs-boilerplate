@@ -11,8 +11,8 @@ services:
       - mongodb_data_container:/data/db
   api: 
     build: .
-    # volumes:
-    # - .:/app
+    volumes:
+    - .:/app
     # - /app/node_modules
     ports:
       - ${APP_PORT}:${APP_PORT}
