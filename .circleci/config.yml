@@ -87,11 +87,11 @@ jobs:
           background: true
           command: docker compose up --wait api
       - run:
-          name: Run seeds
-          command: docker compose exec api npm run seed:run
-      - run:
           name: Wait port
           command: docker compose exec api npx wait-on tcp:3000
+      - run:
+          name: Run seeds
+          command: docker compose exec api npm run seed:run
       - run:
           name: Integration E2E test
           command: npm run test:e2e
