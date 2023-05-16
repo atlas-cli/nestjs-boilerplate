@@ -1,10 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   AsyncModelFactory,
   ModelDefinition,
   MongooseModule,
 } from '@nestjs/mongoose';
+import { ConnectionFactory } from 'common/database/factories/connection.factory';
 
 @Module({
   imports: [],
@@ -12,11 +12,7 @@ import {
 export class DatabaseModule {
   public static forRoot(): DynamicModule {
     return MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('database.uri'),
-      }),
-      inject: [ConfigService],
+      useClass: ConnectionFactory,
     });
   }
   public static forFeature(models: ModelDefinition[]): DynamicModule {

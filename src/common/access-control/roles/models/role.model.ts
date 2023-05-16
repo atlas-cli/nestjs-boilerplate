@@ -10,7 +10,7 @@ export type RoleDocument = HydratedDocument<Role>;
 })
 export class Role {
   // The ID of the role in this case im not ussing objectid
-  @Prop({ type: String, isRequired: true, index: true })
+  @Prop({ type: String, isRequired: true, unique: true })
   _id: string;
 
   // The name of the role

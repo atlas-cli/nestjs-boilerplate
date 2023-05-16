@@ -11,11 +11,15 @@ export class ApiGateway extends Construct {
     // get resetApiName
     const { restApiName } = props;
 
-    // create a aurora db cluster serverless v2 postgres
+    // create a restApi name
     const REST_API_NAME = createName(restApiName, props);
 
     this.api = new RestApi(this, REST_API_NAME, {
       restApiName: REST_API_NAME,
+      domainName: {
+        domainName: props.domainName,
+        certificate: props.certificate,
+      },
     });
   }
 }

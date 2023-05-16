@@ -1,4 +1,4 @@
-import { AtlasFactory } from '@atlas-org/microservices';
+import { LambdaServerFactory } from './../common/factories/lambda-server.factory';
 import { SubscriptionsServerModule } from './server.module';
 
-export const handler = AtlasFactory.create(SubscriptionsServerModule);
+export const handler = LambdaServerFactory.create(SubscriptionsServerModule);

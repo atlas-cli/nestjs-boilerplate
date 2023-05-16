@@ -1,4 +1,5 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
@@ -6,7 +7,7 @@ import { createName } from '../../utils/create-name';
 import {
   DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
   DEFAULT_NESTJS_FUNCTION_PROPS,
-  createDatabaseAuroraEnvironment,
+  createDatabaseEnvironment,
 } from './constants';
 import { LambdaNestJsFunctionProps } from './props/lambda-nestjs-function.props';
 
@@ -17,7 +18,7 @@ export class LambdaNestJsFunction extends Construct {
     super(scope, id);
 
     // build database name
-    const AURORA_DATABASE_NAME = createName('aurora-database', props);
+    const DATABASE_CLUSTER_NAME = createName('cluster', props);
     const { functionName, moduleName } = props;
 
     // create database function
@@ -28,8 +29,9 @@ export class LambdaNestJsFunction extends Construct {
       ...DEFAULT_NESTJS_FUNCTION_PROPS,
       environment: {
         ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT,
-        ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
+        ...createDatabaseEnvironment(DATABASE_CLUSTER_NAME),
       },
+      tracing: Tracing.ACTIVE,
       entry: join(__dirname, '..', '..', '..', 'app', moduleName, 'server.js'),
       functionName: NESTJS_FUNCTION_NAME,
     };

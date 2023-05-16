@@ -465,7 +465,6 @@ describe('Subscription tests (e2e)', () => {
       })
       .expect(201)
       .expect(({ body }) => {
-        console.log(body);
         expect(body).toBeDefined();
       });
   });

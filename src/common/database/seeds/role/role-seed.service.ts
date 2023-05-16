@@ -16,21 +16,28 @@ export class RoleSeedService {
   async run() {
     const roles = RolesBuilder.getRoles();
 
-    const changes = roles.map(({ name, permissions, isOrganizationRole }) => {
-      return this.repository.findOneAndUpdate(
-        { _id: name },
-        {
-          _id: name,
-          name,
-          isOrganizationRole,
-          permissions: permissions.map((permission) => permission.toString()),
-        },
-        {
-          upsert: true,
-          setDefaultsOnInsert: true,
-        },
-      );
-    });
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    const changes = roles.map(
+      async ({ name, permissions, isOrganizationRole }, index) => {
+        await delay(index * 100);
+
+        return this.repository.findOneAndUpdate(
+          { _id: name },
+          {
+            _id: name,
+            name,
+            isOrganizationRole,
+            permissions: permissions.map((permission) => permission.toString()),
+          },
+          {
+            upsert: true,
+            setDefaultsOnInsert: true,
+          },
+        );
+      },
+    );
 
     await Promise.all(changes);
   }

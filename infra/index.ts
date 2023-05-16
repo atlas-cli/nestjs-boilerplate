@@ -7,6 +7,8 @@ import { CoreLayerStack } from './layers/core.layer';
 const infraestructure = new AtlasInfraestructure({
   applicationName: 'atlas',
   stageName: process.env.NODE_ENV ?? DEFAULT_STAGE_NAME,
+  domainName: 'dev.api.slingui.com',
+  idPublicHostZone: 'Z028747811XT7C6YDWWWA',
   env: {
     account: process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEPLOY_REGION || process.env.CDK_DEFAULT_REGION,

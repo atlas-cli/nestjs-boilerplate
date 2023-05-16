@@ -38,7 +38,7 @@ export class ProductSeedService {
    */
   async createProduct(product: any): Promise<Stripe.Product> {
     const prices = await this.createOrUpdateProductOnStripe(product);
-    product.prices = product.prices.map((price, i) => ({
+    product.prices = product.prices.map((price) => ({
       id: prices[price.type],
       ...price,
     }));

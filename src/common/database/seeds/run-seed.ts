@@ -6,7 +6,7 @@ import { PlanSeedService } from './plan/plan-seed.service';
 import { ProductSeedService } from './product/product-seed.service';
 import { UserSeedService } from './user/user-seed.service';
 
-const runSeed = async () => {
+export const runSeed = async () => {
   const app = await NestFactory.create(SeedModule);
 
   // run
@@ -18,5 +18,3 @@ const runSeed = async () => {
 
   await app.close();
 };
-
-void runSeed();

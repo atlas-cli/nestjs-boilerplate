@@ -1,37 +1,31 @@
 import * as cdk from 'aws-cdk-lib';
 import { IVpc, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
+import { vpcCDIR } from '../../constants';
 import { createName } from '../../utils/create-name';
 import { createOutput } from '../../utils/create-output';
-import { AuroraDatabaseSecurityGroupProps } from './props/aurora-database-security-group.props';
+import { DocumentDBSecurityGroupProps } from './props/documentdb-security-group.props';
 
-export class AuroraDatabaseSecurityGroup extends Construct {
+export class DocumentDBSecurityGroup extends Construct {
   vpc: IVpc;
   securityGroup: SecurityGroup;
   constructor(
     scope: Construct,
     id: string,
-    props: AuroraDatabaseSecurityGroupProps,
+    props: DocumentDBSecurityGroupProps,
   ) {
     super(scope, id);
 
     //get vpc
     this.vpc = props.vpc;
 
-    // create a security group for aurora db
-    const SECURITY_GROUP_NAME = createName('security-group', props);
+    // create a security group for document db
+    const SECURITY_GROUP_NAME = createName('documentdb-security-group', props);
     this.securityGroup = new SecurityGroup(this, SECURITY_GROUP_NAME, {
       securityGroupName: SECURITY_GROUP_NAME,
       vpc: this.vpc, // use the vpc created above
       allowAllOutbound: true, // allow outbound traffic to anywhere
     });
-
-    // allow inbound traffic from anywhere to the db
-    this.securityGroup.addIngressRule(
-      Peer.anyIpv4(),
-      Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
-      'allow inbound traffic from anywhere to the db on port 5432',
-    );
 
     // export security group and vpc
     this.exportSecurityGroupAndVpc('security-group', props);
@@ -47,13 +41,23 @@ export class AuroraDatabaseSecurityGroup extends Construct {
     createOutput(this, createNameScoped('id', props), this.vpc.vpcId);
     createOutput(
       this,
-      createNameScoped('subnet-id-1', props),
+      createNameScoped('subnet-public-id-1', props),
       this.vpc.publicSubnets[0].subnetId,
     );
     createOutput(
       this,
-      createNameScoped('subnet-id-2', props),
+      createNameScoped('subnet-public-id-2', props),
       this.vpc.publicSubnets[1].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('subnet-private-id-1', props),
+      this.vpc.privateSubnets[0].subnetId,
+    );
+    createOutput(
+      this,
+      createNameScoped('subnet-private-id-2', props),
+      this.vpc.privateSubnets[1].subnetId,
     );
     createOutput(
       this,
@@ -71,17 +75,25 @@ export class AuroraDatabaseSecurityGroup extends Construct {
     // vpc resource
     const vpc = Vpc.fromVpcAttributes(scope, createNameScoped('id'), {
       vpcId: cdk.Fn.importValue(createNameScoped('id')),
-      availabilityZones: ['sa-east-1'],
+      availabilityZones: ['us-east-2a', 'us-east-2b'],
+      privateSubnetIds: [
+        cdk.Fn.importValue(createNameScoped('subnet-private-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-private-id-2')),
+      ],
       publicSubnetIds: [
-        cdk.Fn.importValue(createNameScoped('subnet-id-1')),
-        cdk.Fn.importValue(createNameScoped('subnet-id-2')),
+        cdk.Fn.importValue(createNameScoped('subnet-public-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-public-id-2')),
       ],
     });
+
     const securityGroup = SecurityGroup.fromSecurityGroupId(
       scope,
       createNameScoped('security-group-id'),
       cdk.Fn.importValue(createNameScoped('security-group-id')),
     );
+
+    securityGroup.addIngressRule(Peer.ipv4(vpcCDIR), Port.tcp(27017));
+
     return {
       vpc,
       securityGroup,

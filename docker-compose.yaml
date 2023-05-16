@@ -2,13 +2,13 @@ version: "3"
 
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:5.0
     environment:
       - MONGODB_DATABASE=${DATABASE_NAME}
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data_container:/data/db
+      - mongodb_data:/data/db
   api: 
     build: .
     volumes:
@@ -28,4 +28,4 @@ services:
     env_file:
       - .env
 volumes:
-  mongodb_data_container:
+  mongodb_data:

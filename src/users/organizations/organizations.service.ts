@@ -4,7 +4,6 @@ import { IPaginationOptions } from './../../common/utils/types/pagination-option
 import { Model, Types, UpdateQuery } from 'mongoose';
 import { User } from './../models/user.model';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import {
   Organization,
   OrganizationDocument,

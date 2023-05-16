@@ -1,11 +1,11 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApplicationProps } from '../props/application.props';
-import { AuroraDatabaseResource } from '../resources/aurora-database.resource';
+import { DocumentDBResource } from '../resources/documentdb.resource';
 import { createName } from '../utils/create-name';
 
 export class CoreLayerStack extends cdk.Stack {
-  auroraDatabaseResource: AuroraDatabaseResource;
+  documentDBResource: DocumentDBResource;
   constructor(
     scope: Construct,
     id: string,
@@ -13,14 +13,11 @@ export class CoreLayerStack extends cdk.Stack {
   ) {
     super(scope, id, applicationProps);
 
-    // aurora database
-    const AURORA_DATABASE_NAME = createName(
-      'aurora-database',
-      applicationProps,
-    );
-    this.auroraDatabaseResource = new AuroraDatabaseResource(
+    // create documentdb database
+    const CLUSTER_DATABASE_NAME = createName('documentdb', applicationProps);
+    this.documentDBResource = new DocumentDBResource(
       this,
-      AURORA_DATABASE_NAME,
+      CLUSTER_DATABASE_NAME,
       applicationProps,
     );
   }

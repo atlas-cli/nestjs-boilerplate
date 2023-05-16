@@ -21,10 +21,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "documentation": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe",
     "documentation:serve": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe -s",
-    "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
+    "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/index.ts"
   },
   "dependencies": {
     "@atlas-org/microservices": "^0.0.6",
+    "@aws-sdk/client-secrets-manager": "^3.329.0",
     "@golevelup/nestjs-stripe": "^0.6.1",
     "@nestjs/common": "^9.3.10",
     "@nestjs/config": "^2.3.1",
@@ -38,6 +39,7 @@
     "aws-sdk": "^2.1273.0",
     "aws-serverless-express": "^3.4.0",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "constructs": "^10.1.186",
