@@ -127,7 +127,7 @@ jobs:
           command: npm run build:infra
       - run:
           name: Diff
-          command: npx cdk diff --all
+          command: npx cdk diff --all > diff.txt && cat diff.txt
 
   deployment:
     working_directory: ~/nest-boilerplate
