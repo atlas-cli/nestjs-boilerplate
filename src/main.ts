@@ -1,19 +1,24 @@
 import 'reflect-metadata';
 
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { setupSwagger } from 'swagger';
+import { setupSwagger } from './swagger';
 import commonBootstrap from './common/bootstrap';
 
+/**
+ * Boots up the application.
+ */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // enable swagger documentation
-  if (configService.get('app.swaggerEnabled') === 'true') setupSwagger(app);
+  // Enable Swagger documentation
+  if (configService.get('app.swaggerEnabled') === 'true') {
+    setupSwagger(app);
+  }
 
-  // common bootstrap
+  // Common bootstrap
   commonBootstrap(app, AppModule);
 
   await app.listen(configService.get('app.port'));

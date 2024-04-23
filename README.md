@@ -1,4 +1,4 @@
-# NestJS in Serverless Application with CDK
+# NestJS - AWS Cloud with CDK
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
@@ -97,16 +97,16 @@ docker compose logs
 ```bash
 git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
 cd my-app/
-cp env-example .env
+cp env.example .env
 ```
 
-Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
-
-Run additional container:
+Run all using in docker compose:
 
 ```bash
-docker compose up -d postgres redis
+docker compose up
 ```
+
+Or run locally by updating your .env
 
 ```bash
 npm install
@@ -164,11 +164,6 @@ npm run test
 npm run test:e2e
 ```
 
-## Test benchmarking stress
-
-```bash
-docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
-```
 ## Inspirations:
 
 https://github.com/brocoders/nestjs-boilerplate

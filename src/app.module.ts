@@ -8,6 +8,11 @@ import { Role } from './common/roles/entities/role.entity';
 import { Status } from './common/statuses/entities/status.entity';
 import { Forgot } from './auth/forgot/entities/forgot.entity';
 
+/**
+ * AppModule is the main module of the application.
+ * It imports the SharedModule, DatabaseModule, UsersModule, and AuthModule.
+ * The DatabaseModule is configured with the entities of the application.
+ */
 @Module({
   imports: [
     SharedModule,
@@ -18,4 +23,4 @@ import { Forgot } from './auth/forgot/entities/forgot.entity';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
