@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - save_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/nest-boilerplate
   dependencies:
@@ -18,7 +18,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -34,7 +34,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -49,7 +49,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -68,7 +68,7 @@ jobs:
           POSTGRES_DB: postgres
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -96,7 +96,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -113,7 +113,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - restore_cache:
@@ -136,7 +136,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - restore_cache:
