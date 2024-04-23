@@ -27,8 +27,6 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :earth_americas: Internacionalization with I18N: This feature uses nestjs-i18n to support internationalization (I18N) in your application, allowing you to translate your application into different languages.
 
-- :paperclip: File uploads: This feature allows users to upload files to your application. It supports both local and Amazon S3 drivers for storing the uploaded files.
-
 - :bar_chart: Swagger: This feature uses Swagger, a tool for generating API documentation, to document your application's API.
 
 - :pill: E2E Tests: This feature includes end-to-end (E2E) tests, which test the full stack of your application to ensure it is working as expected.

@@ -5,7 +5,7 @@ jobs:
   checkout:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - checkout
       - save_cache:
@@ -15,7 +15,7 @@ jobs:
   dependencies:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -31,7 +31,7 @@ jobs:
   lint:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -46,7 +46,7 @@ jobs:
   unit_test:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -58,7 +58,7 @@ jobs:
   integration_test:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
       - image: cimg/postgres:14.6
         environment:
           POSTGRES_HOST: localhost
@@ -93,7 +93,7 @@ jobs:
   build:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -110,7 +110,7 @@ jobs:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -133,7 +133,7 @@ jobs:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
