@@ -104,7 +104,8 @@ Run all using in docker compose:
 docker compose up
 ```
 
-Or run locally by updating your .env
+Local use: localhost in host
+Inside a docker use: postgres host
 
 ```bash
 npm install

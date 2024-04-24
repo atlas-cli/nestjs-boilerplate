@@ -25,7 +25,7 @@ export class AuthService {
     private forgotService: ForgotService,
     private mailService: MailService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async validateLogin(
     loginDto: AuthEmailLoginDto,
@@ -58,6 +58,18 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+  }
+
+  async buildAccessToken(id: number) {
+    const user = await this.usersService.findOne({
+      id,
+    });
+
+    return await this.jwtService.sign({
+      id: user.id,
+      sub: user.id.toString(),
+      email: user.email,
+    });
   }
 
   async register(dto: AuthRegisterLoginDto): Promise<any> {
