@@ -36,11 +36,11 @@ const infraestructure = new AtlasInfraestructure({
     idPublicHostZone: 'Z1A2B3C4D5E6F7G8H9I0',
     env: {
       // AWS account ID for the environment
-      account: '123456789012',
+      account: '314201324660',
       // AWS region for the environment (e.g., 'us-east-1')
-      region: 'aws-region',
+      region: 'us-east-1',
     },
-    layersStack: createStacks('123456789012'),
+    layersStack: createStacks('314201324660'),
   },
   development: {
     // Name of your application
@@ -55,11 +55,11 @@ const infraestructure = new AtlasInfraestructure({
     idPublicHostZone: 'Z1A2B3C4D5E6F7G8H9I0',
     env: {
       // AWS account ID for the environment
-      account: '123456789012',
+      account: '314201324660',
       // AWS region for the environment (e.g., 'us-east-1')
-      region: 'aws-region',
+      region: 'us-east-1',
     },
-    layersStack: createStacks('123456789012'),
+    layersStack: createStacks('314201324660'),
   },
 });
 

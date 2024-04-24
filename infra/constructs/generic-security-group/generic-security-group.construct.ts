@@ -45,7 +45,9 @@ export class GenericSecurityGroup extends Construct {
     // outputs
     createOutput(this, createNameScoped('id', props), this.vpc.vpcId);
     createOutput(this, createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
+    createOutput(this, createNameScoped('subnet-route-table-id-1', props), this.vpc.publicSubnets[0].routeTable.routeTableId);
     createOutput(this, createNameScoped('subnet-id-2', props), this.vpc.publicSubnets[1].subnetId);
+    createOutput(this, createNameScoped('subnet-route-table-id-2', props), this.vpc.publicSubnets[1].routeTable.routeTableId);
     createOutput(this, createNameScoped('security-group-id', props), this.securityGroup.securityGroupId);
   }
 
@@ -62,6 +64,10 @@ export class GenericSecurityGroup extends Construct {
       publicSubnetIds: [
         cdk.Fn.importValue(createNameScoped('subnet-id-1')),
         cdk.Fn.importValue(createNameScoped('subnet-id-2')),
+      ],
+      publicSubnetRouteTableIds: [
+        cdk.Fn.importValue(createNameScoped('subnet-route-table-id-1')),
+        cdk.Fn.importValue(createNameScoped('subnet-route-table-id-2')),
       ],
     });
     const securityGroup = SecurityGroup.fromSecurityGroupId(
