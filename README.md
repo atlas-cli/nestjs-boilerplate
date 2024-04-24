@@ -1,4 +1,4 @@
-# NestJS in Serverless Application with CDK
+# NestJS - AWS Cloud with CDK
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
@@ -27,8 +27,6 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :earth_americas: Internacionalization with I18N: This feature uses nestjs-i18n to support internationalization (I18N) in your application, allowing you to translate your application into different languages.
 
-- :paperclip: File uploads: This feature allows users to upload files to your application. It supports both local and Amazon S3 drivers for storing the uploaded files.
-
 - :bar_chart: Swagger: This feature uses Swagger, a tool for generating API documentation, to document your application's API.
 
 - :pill: E2E Tests: This feature includes end-to-end (E2E) tests, which test the full stack of your application to ensure it is working as expected.
@@ -49,11 +47,11 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :key: AWS IAM authentication for database and environment setup: This feature allows you to use AWS IAM (Identity and Access Management) to authenticate and authorize access to the database and environment.
 
-- :loop: Multiples lambda services in the same repository: This feature allows you to store multiple lambda services, or small, independent units of code that are triggered by certain events, in the same repository. This can be useful for organizing your code and making it easier to maintain.
+- :loop: Multiple lambda services in the same repository: This feature allows you to store multiple lambda services, or small, independent units of code that are triggered by certain events, in the same repository. This can be useful for organizing your code and making it easier to maintain.
 
 - :file_folder: Common folder for share code between different services: This feature allows you to create a common folder that can be used to share code between different services. This can be useful for reducing duplication and improving code reuse.
 
-- :construction: Multiples infrastructure as a code layers: This feature allows you to define your infrastructure as code, meaning that you can use code to automate the process of creating and managing your infrastructure. The core layer is for database and storage, while the application layer is for lambda and clients.
+- :construction: Multiple infrastructure as a code layers: This feature allows you to define your infrastructure as code, meaning that you can use code to automate the process of creating and managing your infrastructure. The core layer is for database and storage, while the application layer is for lambda and clients.
 
 - :package: ESBuild for compilate small lambda zip: This feature uses ESBuild, a super-fast JavaScript bundler and minifier, to compile small lambda zip files. This can help improve the performance and efficiency of your lambdas.
 
@@ -63,7 +61,7 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :rocket: Create lambda for run migrations in staging: This feature allows you to create a lambda function that can be used to run migrations, or changes to the database schema, in the staging environment. This can be useful for testing and debugging your database.
 
-- :gateway: API Gateway: This feature allows you to use API Gateway, a fully managed service that makes it easy to create, publish, maintain, monitor, and secure APIs, to connect your backend services to your applications.
+- :train2: API Gateway: This feature allows you to use API Gateway, a fully managed service that makes it easy to create, publish, maintain, monitor, and secure APIs, to connect your backend services to your applications.
 
 - :twisted_rightwards_arrows: Lambda API Gateway proxy to NestJS: This feature allows you to use a lambda function as an API Gateway proxy to connect to NestJS, a modular, fast, and powerful server-side application framework built with TypeScript.
 
@@ -75,14 +73,14 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 
 - :rocket: A contribution template guide has been created for sharing with your team or for contributing to this project.
 
-- :security: Set up SonarCloud project settings to improve your code security
+- :shield: Set up SonarCloud project settings to improve your code security.
 
 ## Quick run
 
 ```bash
 git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
 cd my-app/
-cp env-example .env
+cp .env.example .env
 docker compose up -d
 ```
 
@@ -97,16 +95,17 @@ docker compose logs
 ```bash
 git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
 cd my-app/
-cp env-example .env
+cp env.example .env
 ```
 
-Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
-
-Run additional container:
+Run all using in docker compose:
 
 ```bash
-docker compose up -d postgres redis
+docker compose up
 ```
+
+Local use: localhost in host
+Inside a docker use: postgres host
 
 ```bash
 npm install
@@ -164,11 +163,6 @@ npm run test
 npm run test:e2e
 ```
 
-## Test benchmarking stress
-
-```bash
-docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
-```
 ## Inspirations:
 
 https://github.com/brocoders/nestjs-boilerplate

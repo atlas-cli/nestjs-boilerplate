@@ -5,7 +5,7 @@ import { User } from './../users/entities/user.entity';
 import { Role } from './../common/roles/entities/role.entity';
 import { Status } from './../common/statuses/entities/status.entity';
 import { Forgot } from './../auth/forgot/entities/forgot.entity';
-import { AuthModule } from 'auth/auth.module';
+import { AuthModule } from './../auth/auth.module';
 
 @Module({
   imports: [
