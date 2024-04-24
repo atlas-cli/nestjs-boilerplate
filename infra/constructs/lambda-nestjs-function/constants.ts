@@ -88,10 +88,8 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
 
     SESSIONS_TABLE_NAME: 'atlas-production-sessions',
 
-    SENDGRID_API_KEY:
-      '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',
     MAIL_TEMPLATES_PATH: 'templates',
-    MAIL_FROM: 'info@fiscalmax.com.br',
+    MAIL_FROM: 'info@yourdomain.com.br',
 
     AWS_STORAGE_CREDENTIAL: 'profile',
     AWS_STORAGE_REGION: 'us-east-1',
@@ -113,10 +111,8 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
 
     SESSIONS_TABLE_NAME: 'atlas-development-sessions',
 
-    SENDGRID_API_KEY:
-      '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',
     MAIL_TEMPLATES_PATH: 'templates',
-    MAIL_FROM: 'info@fiscalmax.com.br',
+    MAIL_FROM: 'info@yourdomain.com.br',
 
     AWS_STORAGE_CREDENTIAL: 'profile',
     AWS_STORAGE_REGION: 'us-east-1',
