@@ -1,30 +1,53 @@
 import { App } from 'aws-cdk-lib';
+import { DEFAULT_STAGE_NAME } from '../constants';
 import { ApplicationProps } from '../props/application.props';
 import { createName } from './../utils/create-name';
 
 export class AtlasInfraestructure {
   app: App;
-  constructor(config: ApplicationProps) {
-    // application
+  constructor(environments: { [key: string]: ApplicationProps }) {
+    // Create a new CDK app
     this.app = new App();
 
-    // core layer
-    const CORE_STACK_NAME = createName('core-layer', config);
-    const coreStack = new config.layersStack.core(this.app, CORE_STACK_NAME, config);
+    const environment =
+      this.app.node.tryGetContext('environment') ?? DEFAULT_STAGE_NAME;
 
-    // application layer
-    const APPLICATION_STACK_NAME = createName('application-layer', config);
-    const applicationStack = new config.layersStack.application(
-      this.app,
-      APPLICATION_STACK_NAME,
-      config,
-    );
+    if (!environments[environment]) {
+      console.log('This environment does not exists.');
+      return;
+    }
 
-    // dependencies
-    applicationStack.addDependency(coreStack);
+    const applicationProps = environments[environment];
+
+    const { layersStack } = applicationProps;
+    const layerCreated = {};
+
+    // Iterate through each layer in the stack
+    layersStack.map(({ name, provide, env, dependencies }) => {
+      // Generate a unique stack name for the current layer
+      const CORE_STACK_NAME = createName(name, applicationProps);
+      const config = { ...applicationProps };
+
+      if (env) {
+        config.env = env;
+      }
+
+      config.layersCreated = layerCreated;
+
+      // Create an instance of the current layer and store it in layerCreated object
+      layerCreated[name] = new provide(this.app, CORE_STACK_NAME, config);
+
+      if (dependencies) {
+        // Add dependencies to the current layer
+        dependencies.map((dependenceName) =>
+          layerCreated[name].addDependency(layerCreated[dependenceName]),
+        );
+      }
+    });
   }
+
   public synth() {
-    // run synth
+    // Generate CloudFormation templates and artifacts
     this.app.synth();
   }
 }

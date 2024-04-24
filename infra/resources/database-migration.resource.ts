@@ -26,7 +26,7 @@ export class DatabaseMigrationResource extends Construct {
 
     // add lambda function for run migrations
     const LAMBDA_ROLE_NAME = createName('lambda-role', applicationProps);
-    const { role } = new LambdaRole(this, LAMBDA_ROLE_NAME, applicationProps);
+    const { role } = new LambdaRole(this, LAMBDA_ROLE_NAME);
 
     // get vpc, security group from db
     const { vpc, securityGroup: databaseSecurityGroup } = GenericSecurityGroup.fromName(

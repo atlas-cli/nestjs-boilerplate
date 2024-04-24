@@ -10,10 +10,14 @@ export const DEFAULT_NESTJS_NODE_EXTERNALS = [
   'mqtt',
   'amqplib',
   'amqp-connection-manager',
+  'ioredis',
+  'redis',
   'nats',
   '@grpc/grpc-js',
   '@grpc/proto-loader',
   '@nestjs/websockets/socket-module',
+  '@nestjs/microservices',
+  '@nestjs/microservices/microservices-module',
   'class-transformer/storage',
   'pg-native',
   'hbs',
@@ -24,15 +28,21 @@ export const DEFAULT_NESTJS_NODE_EXTERNALS = [
   'swagger-ui-express',
 ];
 
-export const DEFAULT_NESTJS_NODE_MODULE = ['@nestjs/microservices', 'pg'];
+export const NESTJS_SWAGGER_MODULES = ['swagger-ui-express', '@nestjs/swagger', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
+export const DEFAULT_NESTJS_NODE_MODULE = [
+  'aws-sdk',
+  ...NESTJS_SWAGGER_MODULES,
+];
 
 export const DEFAULT_NESTJS_COMMAND_HOOKS = {
   beforeBundling: (inputDir: string, outputDir: string): string[] => {
     return [
       `mkdir ${outputDir}/cert`,
-      `cp -R ${inputDir}/src/common/config/certs/rds-ca-2019-root.pem ${outputDir}/cert`,
+      `cp -R ${inputDir}/src/common/config/certs/rds-combined-ca-bundle.pem ${outputDir}/cert`,
+      `mkdir ${outputDir}/templates`,
+      //`cp -R ${inputDir}/src/common/mail/templates/* ${outputDir}/templates`,
       `mkdir ${outputDir}/i18n`,
-      `cp -R ${inputDir}/src/i18n ${outputDir}/i18n`,
+      `cp -R ${inputDir}/src/i18n/* ${outputDir}/i18n`,
     ];
   },
   afterBundling: (): string[] => [],
@@ -50,10 +60,11 @@ export const DEFAULT_NESTJS_FUNCTION_PROPS = {
   ),
   memorySize: 2048,
   timeout: Duration.seconds(6),
-  runtime: Runtime.NODEJS_16_X,
+  runtime: Runtime.NODEJS_20_X,
   allowPublicSubnet: true,
   bundling: {
-    minify: false,
+    minify: true,
+    keepNames: true,
     externalModules: DEFAULT_NESTJS_NODE_EXTERNALS,
     nodeModules: DEFAULT_NESTJS_NODE_MODULE,
     commandHooks: DEFAULT_NESTJS_COMMAND_HOOKS,
@@ -61,13 +72,55 @@ export const DEFAULT_NESTJS_FUNCTION_PROPS = {
 };
 
 export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
-  NODE_ENV: 'development',
-  APP_PORT: '3000',
-  APP_NAME: '"NestJS Boilerplate"',
-  APP_FALLBACK_LANGUAGE: 'en',
-  APP_HEADER_LANGUAGE: 'x-custom-lang',
-  AUTH_JWT_SECRET: 'secret',
-  AUTH_JWT_TOKEN_EXPIRES_IN: '1d',
+  production: {
+    NODE_ENV: 'production',
+    APP_PORT: '3000',
+    APP_NAME: 'NestJS Boilerplate',
+    APP_FALLBACK_LANGUAGE: 'en',
+    APP_HEADER_LANGUAGE: 'x-custom-lang',
+
+    FRONTEND_DOMAIN: 'https://localhost:4200',
+    BACKEND_DOMAIN: 'https://api.yourdomain.com',
+    SWAGGER_ENABLED: 'true',
+    I18N_DIRECTORY: 'i18n',
+    AUTH_JWT_SECRET: 'put-your-secret-here',
+    AUTH_JWT_TOKEN_EXPIRES_IN: '1d',
+
+    SESSIONS_TABLE_NAME: 'atlas-production-sessions',
+
+    SENDGRID_API_KEY:
+      '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',
+    MAIL_TEMPLATES_PATH: 'templates',
+    MAIL_FROM: 'info@fiscalmax.com.br',
+
+    AWS_STORAGE_CREDENTIAL: 'profile',
+    AWS_STORAGE_REGION: 'us-east-1',
+  },
+  development: {
+    // App
+    NODE_ENV: 'development',
+    APP_PORT: '3000',
+    APP_NAME: 'NestJS Boilerplate',
+    APP_FALLBACK_LANGUAGE: 'en',
+    APP_HEADER_LANGUAGE: 'x-custom-lang',
+
+    FRONTEND_DOMAIN: 'https://localhost:4200',
+    BACKEND_DOMAIN: 'https://api.yourdomain.com',
+    SWAGGER_ENABLED: 'true',
+    I18N_DIRECTORY: 'i18n',
+    AUTH_JWT_SECRET: 'put-your-secret-here',
+    AUTH_JWT_TOKEN_EXPIRES_IN: '1d',
+
+    SESSIONS_TABLE_NAME: 'atlas-development-sessions',
+
+    SENDGRID_API_KEY:
+      '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',
+    MAIL_TEMPLATES_PATH: 'templates',
+    MAIL_FROM: 'info@fiscalmax.com.br',
+
+    AWS_STORAGE_CREDENTIAL: 'profile',
+    AWS_STORAGE_REGION: 'us-east-1',
+  }
 };
 
 export const createDatabaseAuroraEnvironment = (name: string) => {

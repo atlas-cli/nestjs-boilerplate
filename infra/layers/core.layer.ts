@@ -18,6 +18,10 @@ export class CoreLayerStack extends cdk.Stack {
       'aurora-database',
       applicationProps,
     );
-    this.auroraDatabaseResource = new AuroraDatabaseResource(this, AURORA_DATABASE_NAME, applicationProps);
+    this.auroraDatabaseResource = new AuroraDatabaseResource(
+      this,
+      AURORA_DATABASE_NAME,
+      applicationProps,
+    );
   }
 }

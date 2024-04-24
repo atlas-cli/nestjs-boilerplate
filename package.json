@@ -32,6 +32,7 @@
     "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
   },
   "dependencies": {
+    "@atlas-org/database": "^0.0.6",
     "@aws-sdk/client-dynamodb": "^3.556.0",
     "@aws-sdk/rds-signer": "^3.556.0",
     "@nestjs/common": "^10.0.0",
@@ -55,9 +56,11 @@
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.0",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.24.1",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
@@ -70,6 +73,8 @@
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "aws-cdk": "^2.138.0",
+    "aws-cdk-lib": "^2.138.0",
     "aws-lambda": "^1.0.7",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
