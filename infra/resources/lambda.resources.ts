@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Construct } from 'constructs';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
 import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
@@ -5,8 +6,9 @@ import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambd
 import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
 import { ApplicationProps } from '../props/application.props';
 import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
-import { AuroraDatabaseSecurityGroup } from '../constructs/aurora-database-security-group/aurora-database-security-group.construct';
+import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
 import { createName as defaultCreateName } from '../utils/create-name';
+import { Port } from 'aws-cdk-lib/aws-ec2';
 
 export class LambdaResource extends Construct {
   constructor(
@@ -20,17 +22,38 @@ export class LambdaResource extends Construct {
       defaultCreateName(`lambda-${name}`, config);
 
     // import vpc, and rds proxy
-    const { vpc, securityGroup } = AuroraDatabaseSecurityGroup.fromName(
+    const { vpc, securityGroup: databaseSecurityGroup } = GenericSecurityGroup.fromName(
       this,
-      'security-group',
+      'database-sg',
       applicationProps,
     );
+
+    // get proxy sg
+    const { securityGroup: databaseProxySecurityGroup } = GenericSecurityGroup.fromName(
+      this,
+      'database-proxy-sg',
+      applicationProps,
+    );
+
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
       'aurora-database-proxy',
-      securityGroup,
+      databaseProxySecurityGroup,
       applicationProps,
     );
+
+    //Lambda SG
+    const lambdaSecurityGroup = new GenericSecurityGroup(
+      this,
+      createName('lambda-sg', applicationProps),
+      {
+        vpc,
+        ...applicationProps,
+      },
+    );
+
+    // Lambda access to proxy
+    databaseProxySecurityGroup.addIngressRule(lambdaSecurityGroup.securityGroup, Port.tcp(5432), `Allows access from lambdas to the ${proxy.dbProxyName}`);
 
     // create iam role
     const LAMBDA_ROLE_NAME = createName('role', applicationProps);
@@ -53,7 +76,7 @@ export class LambdaResource extends Construct {
         moduleName: 'users',
         role,
         vpc,
-        securityGroups: [securityGroup],
+        securityGroups: [lambdaSecurityGroup.securityGroup],
       },
     );
 

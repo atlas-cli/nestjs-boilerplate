@@ -1,10 +1,12 @@
+/* eslint-disable prettier/prettier */
 import { ApplicationProps } from '../props/application.props';
 import { Construct } from 'constructs';
 import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
 import { AuroraDatabaseProxy } from '../constructs/aurora-database-proxy/aurora-database-proxy.construct';
-import { AuroraDatabaseSecurityGroup } from '../constructs/aurora-database-security-group/aurora-database-security-group.construct';
+import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
 import { LambdaDatabaseMigration } from '../constructs/lambda-database-migration/lambda-database-migration.construct';
 import { createName as defaultCreateName } from '../utils/create-name';
+import { Port } from 'aws-cdk-lib/aws-ec2';
 
 export class DatabaseMigrationResource extends Construct {
   lambdaDatabaseMigration: LambdaDatabaseMigration;
@@ -26,10 +28,17 @@ export class DatabaseMigrationResource extends Construct {
     const LAMBDA_ROLE_NAME = createName('lambda-role', applicationProps);
     const { role } = new LambdaRole(this, LAMBDA_ROLE_NAME, applicationProps);
 
-    // get vpc, security group
-    const { vpc, securityGroup } = AuroraDatabaseSecurityGroup.fromName(
+    // get vpc, security group from db
+    const { vpc, securityGroup: databaseSecurityGroup } = GenericSecurityGroup.fromName(
       this,
-      'security-group',
+      'database-sg',
+      applicationProps,
+    );
+
+    // get vpc, security group from proxy
+    const { securityGroup: databaseProxySecurityGroup } = GenericSecurityGroup.fromName(
+      this,
+      'database-proxy-sg',
       applicationProps,
     );
 
@@ -37,12 +46,26 @@ export class DatabaseMigrationResource extends Construct {
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
       'aurora-database-proxy',
-      securityGroup,
+      databaseProxySecurityGroup,
       applicationProps,
     );
 
     // grant access to lambda role
     proxy.grantConnect(role, 'postgres');
+
+    //Lambda SG
+    const lambdaSecurityGroup = new GenericSecurityGroup(
+      this,
+      createName('lambda-migration-sg', applicationProps),
+      {
+        vpc,
+        ...applicationProps,
+      },
+    );
+
+    // Lambda access to proxy
+    databaseProxySecurityGroup.addIngressRule(lambdaSecurityGroup.securityGroup, Port.tcp(5432), `Allows access from the migrations lambda to the ${proxy.dbProxyName}`);
+
 
     // add lambda function for run migrations
     const LAMBDA_DATABASE_MIGRATION_NAME = createAuroraDatabaseName(
@@ -53,7 +76,7 @@ export class DatabaseMigrationResource extends Construct {
       ...applicationProps,
       role,
       vpc: vpc,
-      securityGroups: [securityGroup],
+      securityGroups: [lambdaSecurityGroup.securityGroup],
     });
   }
 }
