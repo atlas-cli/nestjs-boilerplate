@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 
 /**
  * This class represents the Data Transfer Object for the AuthResetPassword operation.
- * It provides validation rules for the password and hash fields, which are both required, 
+ * It provides validation rules for the password and hash fields, which are both required,
  * and are exposed in the API documentation through the ApiProperty decorator.
  */
 export class AuthResetPasswordDto {

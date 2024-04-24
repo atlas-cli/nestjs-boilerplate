@@ -13,7 +13,7 @@ export class IsExist implements ValidatorConstraintInterface {
   constructor(
     @InjectDataSource()
     private dataSource: DataSource,
-  ) { }
+  ) {}
 
   async validate(value: string, validationArguments: ValidationArguments) {
     const repository = validationArguments.constraints[0];

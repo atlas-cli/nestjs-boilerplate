@@ -19,7 +19,6 @@ import { EntityHelper } from './../../../common/utils/entity-helper';
  */
 @Entity()
 export class Forgot extends EntityHelper {
-
   /**
    * Primary Generated Column decorator for id column.
    *

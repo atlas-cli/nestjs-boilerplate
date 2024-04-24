@@ -4,10 +4,6 @@ import { AuthModule } from './auth.module';
 import { DatabaseModule } from './../shared/database.module';
 
 @Module({
-    imports: [
-        SharedModule,
-        DatabaseModule.forRoot(),
-        AuthModule,
-    ],
+  imports: [SharedModule, DatabaseModule.forRoot(), AuthModule],
 })
-export class AuthServerModule { }
+export class AuthServerModule {}

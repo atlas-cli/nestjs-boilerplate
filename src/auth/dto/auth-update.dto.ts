@@ -7,7 +7,7 @@ import { IsNotEmpty, IsOptional, MinLength } from 'class-validator';
  * @class
  */
 export class AuthUpdateDto {
-  /** 
+  /**
    * Optional first name field.
    * @example 'John'
    * @property {string} firstName
@@ -17,7 +17,7 @@ export class AuthUpdateDto {
   @IsNotEmpty({ message: 'mustBeNotEmpty' })
   firstName?: string;
 
-  /** 
+  /**
    * Optional last name field.
    * @example 'Doe'
    * @property {string} lastName
@@ -27,8 +27,8 @@ export class AuthUpdateDto {
   @IsNotEmpty({ message: 'mustBeNotEmpty' })
   lastName?: string;
 
-  /** 
-   * Optional password field. 
+  /**
+   * Optional password field.
    * Must be at least 6 characters long.
    * @property {string} password
    */
@@ -38,7 +38,7 @@ export class AuthUpdateDto {
   @MinLength(6)
   password?: string;
 
-  /** 
+  /**
    * Optional field for the old password.
    * @property {string} oldPassword
    */

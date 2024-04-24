@@ -8,9 +8,7 @@ type JwtPayload = Pick<User, 'id' | 'role'> & { iat: number; exp: number };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    configService: ConfigService,
-  ) {
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('auth.secret'),
