@@ -89,7 +89,7 @@ jobs:
           command: npm run start
       - run:
           name: Integration E2E test
-          command: npx wait-on http://localhost:3000 & npm run test:e2e
+          command: npx wait-on --delay 2000 http://localhost:3000 & npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
