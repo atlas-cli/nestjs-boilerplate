@@ -61,7 +61,7 @@ jobs:
       - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
