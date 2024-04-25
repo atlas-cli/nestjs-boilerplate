@@ -18,6 +18,9 @@ services:
       - ${APP_PORT}:${APP_PORT}
     command: npm run start:dev
     env_file:
-      - .env
+      - path: ./.env
+        required: true
+      - path: ./docker.env
+        required: true
     depends_on:
       - postgres
