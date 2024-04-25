@@ -1,11 +1,11 @@
 import * as cdk from 'aws-cdk-lib';
-import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
+import { BasePathMapping, DomainName, EndpointType, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import {
   Certificate,
   CertificateValidation,
 } from 'aws-cdk-lib/aws-certificatemanager';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { PublicHostedZone } from 'aws-cdk-lib/aws-route53';
+import { CnameRecord, PublicHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { ApiGateway } from '../constructs/api-gateway/api-gateway.construct';
 import {
@@ -46,10 +46,13 @@ export class ApplicationLayerStack extends cdk.Stack {
       'api-gateway',
       applicationProps,
     );
-    const publicHostedZone = PublicHostedZone.fromHostedZoneId(
+    const publicHostedZone = PublicHostedZone.fromHostedZoneAttributes(
       this,
       'Zone',
-      applicationProps.idPublicHostZone,
+      {
+        hostedZoneId: applicationProps.idPublicHostZone,
+        zoneName: applicationProps.domainName,
+      },
     );
     const certificate = new Certificate(this, 'Certificate', {
       domainName: applicationProps.domainName,
@@ -110,6 +113,17 @@ export class ApplicationLayerStack extends cdk.Stack {
       ],
       lambdaSecurityGroup,
     );
+
+    // Finally, add a CName record in the hosted zone with a value of the new custom domain that was created above:
+    const CNAME_RECORD_SET_NAME = createName(
+      'api-gateway-cname-record-set',
+      applicationProps,
+    );
+    new CnameRecord(this, CNAME_RECORD_SET_NAME, {
+      zone: publicHostedZone,
+      recordName: 'api',
+      domainName: api.domainName.domainNameAliasDomainName
+    });
   }
 
   createLambdaResources(
