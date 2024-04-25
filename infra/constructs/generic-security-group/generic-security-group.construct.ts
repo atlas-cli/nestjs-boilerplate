@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import * as cdk from 'aws-cdk-lib';
-import { ISecurityGroup, IVpc, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { ISecurityGroup, IVpc, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { createName } from '../../utils/create-name';
 import { createOutput } from '../../utils/create-output';

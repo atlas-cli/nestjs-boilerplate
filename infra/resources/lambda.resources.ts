@@ -5,7 +5,6 @@ import { LambdaNestJsFunction } from '../constructs/lambda-nestjs-function/lambd
 import { LambdaRole } from '../constructs/lambda-role/lambda-role.construct';
 import { LambdaProps } from '../props/lambda.props';
 import { createName as defaultCreateName } from '../utils/create-name';
-import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
 
 export class LambdaResource extends Construct {
   nodejsFunction: NodejsFunction;

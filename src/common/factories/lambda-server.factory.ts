@@ -4,6 +4,7 @@ import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const express = require('express');
 import commonBootstrap from './../bootstrap';
 import { setupSwagger } from './../../swagger';

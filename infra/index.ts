@@ -5,10 +5,9 @@ import { CoreLayerStack } from './layers/core.layer';
 /**
  * Function to create layers stack. It creates 'core-layer' and 'application-layer'.
  *
- * @param accountId - Account Id which will be used for creating the layers.
  * @returns array of layers.
  */
-const createStacks = (accountId: string) => {
+const createStacks = () => {
   return [
     { name: 'core-layer', provide: CoreLayerStack },
     {
@@ -40,7 +39,7 @@ const infraestructure = new AtlasInfraestructure({
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },
-    layersStack: createStacks('767397837500'),
+    layersStack: createStacks(),
   },
   development: {
     // Name of your application
@@ -59,7 +58,7 @@ const infraestructure = new AtlasInfraestructure({
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },
-    layersStack: createStacks('767397837500'),
+    layersStack: createStacks(),
   },
 });
 

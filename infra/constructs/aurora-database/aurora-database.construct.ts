@@ -1,7 +1,5 @@
 import { Aspects } from 'aws-cdk-lib';
 import {
-  InstanceClass,
-  InstanceSize,
   InstanceType,
   SubnetType,
 } from 'aws-cdk-lib/aws-ec2';

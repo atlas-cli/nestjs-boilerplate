@@ -3,7 +3,6 @@ import { Construct } from 'constructs';
 import { ApplicationProps } from '../props/application.props';
 import { AuroraDatabaseResource } from '../resources/aurora-database.resource';
 import { createName } from '../utils/create-name';
-import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
 
 export class CoreLayerStack extends cdk.Stack {
   auroraDatabaseResource: AuroraDatabaseResource;
