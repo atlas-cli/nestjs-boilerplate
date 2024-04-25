@@ -30,6 +30,7 @@ lerna-debug.log*
 
 # infra outputs
 cdk.out/*
+cdk.context.json
 
 # compodoc
 documentation/*
