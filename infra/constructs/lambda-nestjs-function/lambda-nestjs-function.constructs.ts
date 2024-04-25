@@ -49,6 +49,7 @@ export class LambdaNestJsFunction extends Construct {
     };
 
     if (functionProps.swaggerBundling) {
+      console.log('!!!!!!!!!!!!!!!11');
       functionProps.bundling.nodeModules = NESTJS_SWAGGER_MODULES;
     }
 

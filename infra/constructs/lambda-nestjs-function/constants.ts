@@ -5,7 +5,6 @@ import { join } from 'path';
 
 // Import ignore packages NODE_EXTERNALS
 export const DEFAULT_NESTJS_NODE_EXTERNALS = [
-  'aws-sdk',
   'kafkajs',
   'mqtt',
   'amqplib',
@@ -26,13 +25,12 @@ export const DEFAULT_NESTJS_NODE_EXTERNALS = [
   'fsevents',
   'fastify-swagger',
   'swagger-ui-express',
+  'typescript',
+  '@nestjs/cli',
 ];
 
-export const NESTJS_SWAGGER_MODULES = ['swagger-ui-express', '@nestjs/swagger', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
-export const DEFAULT_NESTJS_NODE_MODULE = [
-  'aws-sdk',
-  ...NESTJS_SWAGGER_MODULES,
-];
+export const NESTJS_SWAGGER_MODULES = ['oidc-provider', 'swagger-ui-express', '@nestjs/swagger', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
+export const DEFAULT_NESTJS_NODE_MODULE = ['oidc-provider', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
 
 export const DEFAULT_NESTJS_COMMAND_HOOKS = {
   beforeBundling: (inputDir: string, outputDir: string): string[] => {
@@ -65,6 +63,8 @@ export const DEFAULT_NESTJS_FUNCTION_PROPS = {
   bundling: {
     minify: true,
     keepNames: true,
+    sourcemap: true,
+    zip: true,
     externalModules: DEFAULT_NESTJS_NODE_EXTERNALS,
     nodeModules: DEFAULT_NESTJS_NODE_MODULE,
     commandHooks: DEFAULT_NESTJS_COMMAND_HOOKS,
