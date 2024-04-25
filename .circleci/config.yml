@@ -71,15 +71,18 @@ jobs:
           name: Run Docker API Build
           command: docker compose build api
       - run:
-          name: Run seeds
-          command: docker compose exec api npm run seed:run
-      - run:
           name: Run start
           background: true
           command: docker compose up
       - run:
           name: Wait port
           command: sleep 20 && docker compose exec api node test/wait-on.js
+      - run:
+          name: Run Migrations
+          command: docker compose exec api npm run migration:run
+      - run:
+          name: Run seeds
+          command: docker compose exec api npm run seed:run
       - run:
           name: Integration E2E test
           command: docker compose exec api npm run test:e2e
