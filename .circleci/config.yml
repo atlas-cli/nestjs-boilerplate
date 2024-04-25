@@ -57,8 +57,15 @@ jobs:
           command: npm run test
   integration_test:
     working_directory: ~/nest-boilerplate
-    machine:
-      image: ubuntu-2204:2023.04.2
+    docker:
+      - image: cimg/node:20.12.2-browsers
+      - image: cimg/postgres:14.6
+        environment:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
     steps:
       - restore_cache:
           key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -66,26 +73,26 @@ jobs:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
           name: Copy .env
-          command: cp .env.example .env
+          command: cp .env.example .env && source .env
       - run:
-          name: Run Docker API Build
-          command: docker compose build api
+          name: Wait for Postgres to start
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Run migrations
+          command: npm run migration:run
+      - run:
+          name: Run seeds
+          command: npm run seed:run
       - run:
           name: Run start
           background: true
-          command: docker compose up
+          command: npm run start
       - run:
           name: Wait port
-          command: sleep 20 && docker compose exec api node test/wait-on.js
-      - run:
-          name: Run Migrations
-          command: docker compose exec api npm run migration:run
-      - run:
-          name: Run seeds
-          command: docker compose exec api npm run seed:run
+          command: sleep 20 && node test/wait-on.js
       - run:
           name: Integration E2E test
-          command: docker compose exec api npm run test:e2e
+          command: npx wait-on http://localhost:3000 --delay=10000 & npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
