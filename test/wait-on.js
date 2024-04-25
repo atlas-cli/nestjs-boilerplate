@@ -1,7 +1,7 @@
 const http = require('http');
 
 async function waitFor404() {
-  const url = 'http://api:3000';
+  const url = 'http://localhost:3000';
 
   while (true) {
     try {
