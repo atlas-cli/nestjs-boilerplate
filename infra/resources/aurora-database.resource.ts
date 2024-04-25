@@ -30,6 +30,7 @@ export class AuroraDatabaseResource extends Construct {
       this,
       createName('database-sg', applicationProps),
       {
+        name: 'database-sg',
         vpc,
         ...applicationProps,
       },
@@ -40,6 +41,7 @@ export class AuroraDatabaseResource extends Construct {
       this,
       createName('database-proxy-sg', applicationProps),
       {
+        name: 'database-proxy-sg',
         vpc,
         ...applicationProps,
       },

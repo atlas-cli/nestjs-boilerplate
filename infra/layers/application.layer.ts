@@ -16,6 +16,8 @@ import { DatabaseMigrationResource } from '../resources/database-migration.resou
 import { LambdaResource } from '../resources/lambda.resources';
 import { createSessionsTable } from '../tables/sessions';
 import { createName } from '../utils/create-name';
+import { GenericSecurityGroup } from '../constructs/generic-security-group/generic-security-group.construct';
+import { Port } from 'aws-cdk-lib/aws-ec2';
 
 export class ApplicationLayerStack extends cdk.Stack {
   databaseMigrationResource: DatabaseMigrationResource;
@@ -69,6 +71,27 @@ export class ApplicationLayerStack extends cdk.Stack {
       certificate: certificate,
     });
 
+    // Security Group
+    const { vpc, securityGroup: databaseProxySecurityGroup } = GenericSecurityGroup.fromName(
+      this,
+      'database-proxy-sg',
+      applicationProps,
+    );
+
+    //Lambda SG
+    const lambdaSecurityGroup = new GenericSecurityGroup(
+      this,
+      createName('lambda-sg', applicationProps),
+      {
+        name: 'lambda-sg',
+        vpc,
+        ...applicationProps,
+      },
+    );
+
+    // Lambda access to proxy
+    databaseProxySecurityGroup.addIngressRule(lambdaSecurityGroup.securityGroup, Port.tcp(5432), `Allows access from the migrations lambda to the proxy`);
+
     this.createLambdaResources(
       this,
       applicationProps,
@@ -85,6 +108,7 @@ export class ApplicationLayerStack extends cdk.Stack {
           swaggerBundling: true,
         },
       ],
+      lambdaSecurityGroup,
     );
   }
 
@@ -94,6 +118,7 @@ export class ApplicationLayerStack extends cdk.Stack {
     api: any,
     tables: { sessions: Table },
     resources: IApplicationResource[],
+    genericSecurityGroup: GenericSecurityGroup,
   ): void {
     resources.forEach(({ functionName, moduleName, swaggerBundling }) => {
       const lambdaName = createName(functionName, applicationProps);
@@ -101,6 +126,7 @@ export class ApplicationLayerStack extends cdk.Stack {
         functionName,
         moduleName,
         swaggerBundling,
+        genericSecurityGroup,
         ...applicationProps,
       });
       Object.keys(tables).forEach((key) =>

@@ -34,12 +34,10 @@ export class LambdaNestJsFunction extends Construct {
       ...DEFAULT_NESTJS_LAMBDA_ENVIRONMENT[props.stageName],
     };
 
-    if (!props.dispenseDatabaseEnvironment) {
-      environment = {
-        ...environment,
-        ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
-      };
-    }
+    environment = {
+      ...environment,
+      ...createDatabaseAuroraEnvironment(AURORA_DATABASE_NAME),
+    };
 
     const functionProps = {
       ...props,

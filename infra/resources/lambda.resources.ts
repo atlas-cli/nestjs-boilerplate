@@ -17,16 +17,10 @@ export class LambdaResource extends Construct {
 
     const { functionName, moduleName } = lambdaProps;
 
-    // import vpc, and rds proxy
-    const { vpc, securityGroup } = GenericSecurityGroup.fromName(
-      this,
-      'security-group',
-      lambdaProps,
-    );
     const { proxy } = AuroraDatabaseProxy.fromNameAndSecurityGroup(
       this,
       'aurora-database-proxy',
-      securityGroup,
+      lambdaProps.genericSecurityGroup.securityGroup,
       lambdaProps,
     );
 
@@ -47,8 +41,8 @@ export class LambdaResource extends Construct {
         functionName,
         moduleName,
         role,
-        vpc,
-        securityGroups: [securityGroup],
+        vpc: lambdaProps.genericSecurityGroup.vpc,
+        securityGroups: [lambdaProps.genericSecurityGroup.securityGroup],
       },
     );
 

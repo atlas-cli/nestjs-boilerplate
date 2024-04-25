@@ -29,7 +29,7 @@ export class DatabaseMigrationResource extends Construct {
     const { role } = new LambdaRole(this, LAMBDA_ROLE_NAME);
 
     // get vpc, security group from db
-    const { vpc, securityGroup: databaseSecurityGroup } = GenericSecurityGroup.fromName(
+    const { vpc } = GenericSecurityGroup.fromName(
       this,
       'database-sg',
       applicationProps,
@@ -58,6 +58,7 @@ export class DatabaseMigrationResource extends Construct {
       this,
       createName('lambda-migration-sg', applicationProps),
       {
+        name: 'lambda-migration-sg',
         vpc,
         ...applicationProps,
       },

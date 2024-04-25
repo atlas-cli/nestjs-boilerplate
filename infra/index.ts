@@ -29,18 +29,18 @@ const infraestructure = new AtlasInfraestructure({
     // Stage name for the environment
     stageName: 'production',
     // Domain name  environment
-    domainName: 'your-domain.com',
+    domainName: 'sandbox.slingui.com',
     // API domain name for the environment
-    apiDomainName: 'api.your-domain.com',
-    // Public host zone ID for the  environment (AWS Route 53 Hosted Zone ID)
-    idPublicHostZone: 'Z1A2B3C4D5E6F7G8H9I0',
+    apiDomainName: 'api.sandbox.slingui.com',
+    // Public host ID for the  environment (AWS Route 53 Hosted Zone ID)
+    idPublicHostZone: 'Z01545163ANT5OQYS99UY',
     env: {
       // AWS account ID for the environment
-      account: '314201324660',
+      account: '767397837500',
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },
-    layersStack: createStacks('314201324660'),
+    layersStack: createStacks('767397837500'),
   },
   development: {
     // Name of your application
@@ -48,18 +48,18 @@ const infraestructure = new AtlasInfraestructure({
     // Stage name for the environment
     stageName: 'development',
     // Domain name  environment
-    domainName: 'your-domain.com',
+    domainName: 'sandbox.slingui.com',
     // API domain name for the environment
-    apiDomainName: 'api.your-domain.com',
+    apiDomainName: 'api.sandbox.slingui.com',
     // Public host zone ID for the  environment (AWS Route 53 Hosted Zone ID)
-    idPublicHostZone: 'Z1A2B3C4D5E6F7G8H9I0',
+    idPublicHostZone: 'Z01545163ANT5OQYS99UY',
     env: {
       // AWS account ID for the environment
-      account: '314201324660',
+      account: '767397837500',
       // AWS region for the environment (e.g., 'us-east-1')
       region: 'us-east-1',
     },
-    layersStack: createStacks('314201324660'),
+    layersStack: createStacks('767397837500'),
   },
 });
 

@@ -12,5 +12,4 @@ export interface LambdaNestJsFunctionPropsRequired
   buckets?: any;
   cloudfronts?: any;
   appPath?: string[];
-  dispenseDatabaseEnvironment?: boolean;
 }

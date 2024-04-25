@@ -4,8 +4,8 @@ import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { default as express } from 'express';
-import { default as commonBootstrap } from './../bootstrap';
+const express = require('express');
+import commonBootstrap from './../bootstrap';
 import { setupSwagger } from './../../swagger';
 import { ConfigService } from '@nestjs/config';
 

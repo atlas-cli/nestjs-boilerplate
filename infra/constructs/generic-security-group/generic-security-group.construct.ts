@@ -20,18 +20,18 @@ export class GenericSecurityGroup extends Construct {
     this.vpc = props.vpc;
 
     // create a security group for aurora db
-    const SECURITY_GROUP_NAME = createName('security-group', props);
+    const SECURITY_GROUP_NAME = createName(id, props);
     this.securityGroup = new SecurityGroup(this, SECURITY_GROUP_NAME, {
       securityGroupName: SECURITY_GROUP_NAME,
       vpc: this.vpc, // use the vpc created above
       allowAllOutbound: true, // allow outbound traffic to anywhere
     });
-    
+
     // export security group and vpc
-    this.exportSecurityGroupAndVpc('security-group', props);
+    this.exportSecurityGroupAndVpc(props.name, props);
   }
 
-  addIngressSecurityGroup(ingressSg: ISecurityGroup, port: Port, description: string){
+  addIngressSecurityGroup(ingressSg: ISecurityGroup, port: Port, description: string) {
     this.securityGroup.addIngressRule(ingressSg, port, description);
 
   }
@@ -43,6 +43,7 @@ export class GenericSecurityGroup extends Construct {
       createName(`${scopedName}-${name}`, config);
 
     // outputs
+    console.log('export', createNameScoped('id', props));
     createOutput(this, createNameScoped('id', props), this.vpc.vpcId);
     createOutput(this, createNameScoped('subnet-id-1', props), this.vpc.publicSubnets[0].subnetId);
     createOutput(this, createNameScoped('subnet-route-table-id-1', props), this.vpc.publicSubnets[0].routeTable.routeTableId);
@@ -56,6 +57,7 @@ export class GenericSecurityGroup extends Construct {
     // create name scoped
     const createNameScoped = (name) =>
       createName(`${scopedName}-${name}`, props);
+    console.log('import', createNameScoped('id'));
 
     // vpc resource
     const vpc = Vpc.fromVpcAttributes(scope, createNameScoped('id'), {

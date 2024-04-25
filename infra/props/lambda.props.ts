@@ -5,6 +5,7 @@ export interface LambdaProps extends ApplicationProps {
   moduleName: string;
   queues?: any;
   buckets?: any;
+  genericSecurityGroup: any;
   cloudfronts?: any;
   swaggerBundling?: boolean;
 }
