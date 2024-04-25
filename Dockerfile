@@ -7,8 +7,6 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
 
-RUN rimraf ./dist
-
 # Install app dependencies
 RUN npm install
 
