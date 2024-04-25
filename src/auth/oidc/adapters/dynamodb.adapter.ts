@@ -1,5 +1,5 @@
 import { Adapter, AdapterPayload } from 'oidc-provider';
-import { BatchWriteItemCommand, BatchWriteItemInput, DeleteItemCommand, DeleteItemInput, DynamoDBClient, GetItemCommand, GetItemInput, ListBackupsCommand, QueryCommand, QueryInput, UpdateItemCommand, UpdateItemInput } from "@aws-sdk/client-dynamodb";
+import { BatchWriteItemCommand, BatchWriteItemInput, DeleteItemCommand, DeleteItemInput, DynamoDBClient, GetItemCommand, GetItemInput, QueryCommand, QueryInput, UpdateItemCommand, UpdateItemInput } from "@aws-sdk/client-dynamodb";
 
 const TABLE_NAME = process.env.SESSIONS_TABLE_NAME;
 const TABLE_REGION = process.env.AWS_REGION;
