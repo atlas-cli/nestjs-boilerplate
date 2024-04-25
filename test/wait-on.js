@@ -1,21 +1,32 @@
-const axios = require('axios');
+const http = require('http');
 
 async function waitFor404() {
   const url = 'http://api:3000';
 
   while (true) {
     try {
-      await axios.get(url);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
+      const response = await httpRequest(url);
+      if (response.statusCode === 404) {
         console.log('API response 404');
         break;
       }
+    } catch (error) {
+      console.error('Error occurred:', error);
     }
 
-    console.log('not response 404 try again in 1 second...');
+    console.log('No 404 response; trying again in 1 second...');
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+}
+
+function httpRequest(url) {
+  return new Promise((resolve, reject) => {
+    http.get(url, (response) => {
+      resolve(response);
+    }).on('error', (error) => {
+      reject(error);
+    });
+  });
 }
 
 function withTimeout(promise, timeout) {
