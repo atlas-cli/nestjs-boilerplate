@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import { BasePathMapping, DomainName, EndpointType, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
+import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import {
   Certificate,
   CertificateValidation,
