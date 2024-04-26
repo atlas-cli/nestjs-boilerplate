@@ -1,11 +1,11 @@
-# NestJS - AWS Cloud with CDK
+# NestJS and PostgreSQL on AWS using CDK
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 
 ## Description
 
-NestJS in Serverless Application with postgres(typeorm) CDK for startup projects.
+Provide a robust backend solution leveraging NestJS with PostgreSQL on AWS infrastructure orchestrated with CDK (Cloud Development Kit). Employing a combination of AWS Lambda, Relational Database Service (RDS), RDS Proxy, CloudFormation, and CDK, this project ensures continuous deployment and management of your backend architecture using Infrastructure as Code (IAC) principles. Leverage the scalability, reliability, and flexibility of AWS services while maintaining efficient development workflows with CDK's programmable infrastructure approach.
 
 ## Table of Contents
 
