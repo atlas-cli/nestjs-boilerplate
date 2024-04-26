@@ -4,7 +4,12 @@ import { ApplicationProps } from '../../../props/application.props';
 export type LambdaNestJsFunctionProps = LambdaNestJsFunctionPropsRequired;
 export interface LambdaNestJsFunctionPropsRequired
   extends NodejsFunctionProps,
-    ApplicationProps {
+  ApplicationProps {
   functionName: string;
   moduleName: string;
+  swaggerBundling?: boolean;
+  queues?: any;
+  buckets?: any;
+  cloudfronts?: any;
+  appPath?: string[];
 }

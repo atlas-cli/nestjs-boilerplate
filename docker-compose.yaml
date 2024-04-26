@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15.1
+    image: postgres:16.2
     ports:
       - ${DATABASE_PORT}:5432
     volumes:
@@ -9,3 +9,18 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+  api: 
+    build: .
+    volumes:
+      - .:/app
+      - ./node_modules:/app/node_modules
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    command: npm run start:dev
+    env_file:
+      - path: ./.env
+        required: true
+      - path: ./docker.env
+        required: true
+    depends_on:
+      - postgres

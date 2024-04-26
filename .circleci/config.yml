@@ -5,20 +5,20 @@ jobs:
   checkout:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - checkout
       - save_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/nest-boilerplate
   dependencies:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -31,10 +31,10 @@ jobs:
   lint:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -46,10 +46,10 @@ jobs:
   unit_test:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -58,7 +58,7 @@ jobs:
   integration_test:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
       - image: cimg/postgres:14.6
         environment:
           POSTGRES_HOST: localhost
@@ -68,12 +68,12 @@ jobs:
           POSTGRES_DB: postgres
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
           name: Copy .env
-          command: cp .env.example .env
+          command: cp .env.example .env && source .env
       - run:
           name: Wait for Postgres to start
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
@@ -88,15 +88,18 @@ jobs:
           background: true
           command: npm run start
       - run:
+          name: Wait port
+          command: sleep 20 && node test/wait-on.js
+      - run:
           name: Integration E2E test
-          command: npx wait-on http://localhost:3000 & npm run test:e2e
+          command: npx wait-on http://localhost:3000 --delay=10000 & npm run test:e2e
   build:
     working_directory: ~/nest-boilerplate
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
@@ -110,10 +113,10 @@ jobs:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - restore_cache:
@@ -127,16 +130,16 @@ jobs:
           command: npm run build:infra
       - run:
           name: Diff
-          command: npx cdk diff --all
+          command: npx cdk diff --all > diff.txt && cat diff.txt
 
   deployment:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
     docker:
-      - image: cimg/node:16.18.1-browsers
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
-          key: v0-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v0-node-modules-{{ .Branch }}-{{ checksum "package.json" }}
       - restore_cache:
@@ -171,48 +174,48 @@ workflows:
       - build:
           requires:
             - dependencies
-      - diff:
-          name: diff_to_development
-          context: development
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - diff:
-          name: diff_to_production
-          context: production
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - approve_deploy_to_development:
-          type: approval
-          context: development
-          filters:
-            branches:
-              only:
-                - master
-                - main
-                - develop
-          requires:
-            - diff_to_development
-      - approve_deploy_to_production:
-          type: approval
-          context: production
-          requires:
-            - diff_to_production
-      - deployment:
-          name: deployment_to_development
-          context: development
-          requires:
-            - approve_deploy_to_development
-      - deployment:
-          name: deployment_to_production
-          context: production
-          requires:
-            - approve_deploy_to_production
+      # - diff:
+      #     name: diff_to_development
+      #     context: development
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - diff:
+      #     name: diff_to_production
+      #     context: production
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         ignore: /.*/
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - approve_deploy_to_development:
+      #     type: approval
+      #     context: development
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      #           - main
+      #           - develop
+      #     requires:
+      #       - diff_to_development
+      # - approve_deploy_to_production:
+      #     type: approval
+      #     context: production
+      #     requires:
+      #       - diff_to_production
+      # - deployment:
+      #     name: deployment_to_development
+      #     context: development
+      #     requires:
+      #       - approve_deploy_to_development
+      # - deployment:
+      #     name: deployment_to_production
+      #     context: production
+      #     requires:
+      #       - approve_deploy_to_production

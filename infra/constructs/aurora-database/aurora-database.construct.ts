@@ -1,10 +1,13 @@
-import * as rds from 'aws-cdk-lib/aws-rds';
 import { Aspects } from 'aws-cdk-lib';
-import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
+import {
+  InstanceType,
+  SubnetType,
+} from 'aws-cdk-lib/aws-ec2';
+import * as rds from 'aws-cdk-lib/aws-rds';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { AuroraDatabaseProps } from './props/aurora-database.props';
 import { createName } from '../../utils/create-name';
+import { AuroraDatabaseProps } from './props/aurora-database.props';
 
 export class AuroraDatabase extends Construct {
   databaseCluster: rds.DatabaseCluster;
@@ -29,14 +32,13 @@ export class AuroraDatabase extends Construct {
         iamAuthentication: true,
         port: 5432,
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_6,
+          version: rds.AuroraPostgresEngineVersion.VER_16_1,
         }),
         storageEncrypted: true,
         instanceProps: {
           vpc: vpc,
           instanceType: new InstanceType('serverless'),
           autoMinorVersionUpgrade: true,
-          publiclyAccessible: false,
           securityGroups: [securityGroup],
           vpcSubnets: vpc.selectSubnets({
             subnetType: SubnetType.PUBLIC, // use the public subnet created above for the db

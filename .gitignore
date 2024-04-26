@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/build
 
 # Logs
 logs
@@ -27,6 +28,13 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
+# infra outputs
+cdk.out/*
+cdk.context.json
+
+# compodoc
+documentation/*
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -34,13 +42,22 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# infra outputs
-cdk.out/*
-
-# documentatin dist
-documentation
-
-.data
-/files
+# dotenv environment variable files
 .env
-/ormconfig.json
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

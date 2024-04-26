@@ -1,10 +1,10 @@
 import * as cdk from 'aws-cdk-lib';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
-import { createName } from '../../utils/create-name';
-import { AuroraDatabaseProxyProps } from './props/aurora-database-proxy.props';
 import { ApplicationProps } from '../../props/application.props';
+import { createName } from '../../utils/create-name';
 import { createOutput } from '../../utils/create-output';
+import { AuroraDatabaseProxyProps } from './props/aurora-database-proxy.props';
 
 export class AuroraDatabaseProxy extends Construct {
   proxy: rds.DatabaseProxy;
@@ -36,7 +36,11 @@ export class AuroraDatabaseProxy extends Construct {
     // outputs
     createOutput(this, createNameScoped('arn', props), this.proxy.dbProxyArn);
     createOutput(this, createNameScoped('name', props), this.proxy.dbProxyName);
-    createOutput(this, createNameScoped('endpoint', props), this.proxy.endpoint);
+    createOutput(
+      this,
+      createNameScoped('endpoint', props),
+      this.proxy.endpoint,
+    );
     createOutput(this, createNameScoped('host', props), this.proxy.endpoint);
   }
 

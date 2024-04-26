@@ -22,7 +22,7 @@
 
     ```bash
     cd my-app/
-    cp env-example .env
+    cp env.example .env
     ```
 
 1. Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
@@ -30,7 +30,7 @@
 1. Run additional container:
 
     ```bash
-    docker compose up -d postgres redis
+    docker compose up
     ```
 
 1. Install dependency
@@ -96,7 +96,7 @@ If you want quick run your app, you can use following commands:
 
 ## Links
 
-- Swagger (API docs): http://localhost:3000/docs
+- Swagger (API docs): http://localhost:3000/swagger/docs
 
 ---
 

@@ -1,11 +1,11 @@
-# NestJS in Serverless Application with CDK
+# NestJS and PostgreSQL on AWS using CDK
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=atlas-cli_nestjs-boilerplate)](https://sonarcloud.io/summary/new_code?id=atlas-cli_nestjs-boilerplate)
 [![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=svg)](https://circleci.com/gh/circleci/circleci-docs)
 
 ## Description
 
-NestJS in Serverless Application with postgres(typeorm) CDK for startup projects.
+Provide a robust backend solution leveraging NestJS with PostgreSQL on AWS infrastructure orchestrated with CDK (Cloud Development Kit). Employing a combination of AWS Lambda, Relational Database Service (RDS), RDS Proxy, CloudFormation, and CDK, this project ensures continuous deployment and management of your backend architecture using Infrastructure as Code (IAC) principles. Leverage the scalability, reliability, and flexibility of AWS services while maintaining efficient development workflows with CDK's programmable infrastructure approach.
 
 ## Table of Contents
 
@@ -26,8 +26,6 @@ NestJS in Serverless Application with postgres(typeorm) CDK for startup projects
 - :key: Use Admin and User roles: This feature allows you to define different roles for users of your application, such as Admin and User, and control access to certain features based on these roles.
 
 - :earth_americas: Internacionalization with I18N: This feature uses nestjs-i18n to support internationalization (I18N) in your application, allowing you to translate your application into different languages.
-
-- :paperclip: File uploads: This feature allows users to upload files to your application. It supports both local and Amazon S3 drivers for storing the uploaded files.
 
 - :bar_chart: Swagger: This feature uses Swagger, a tool for generating API documentation, to document your application's API.
 
@@ -97,16 +95,17 @@ docker compose logs
 ```bash
 git clone --depth 1 https://github.com/atlas-cli/nestjs-boilerplate.git my-app
 cd my-app/
-cp env-example .env
+cp env.example .env
 ```
 
-Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
-
-Run additional container:
+Run all using in docker compose:
 
 ```bash
-docker compose up -d postgres redis
+docker compose up
 ```
+
+Local use: localhost in host
+Inside a docker use: postgres host
 
 ```bash
 npm install
@@ -164,11 +163,6 @@ npm run test
 npm run test:e2e
 ```
 
-## Test benchmarking stress
-
-```bash
-docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
-```
 ## Inspirations:
 
 https://github.com/brocoders/nestjs-boilerplate

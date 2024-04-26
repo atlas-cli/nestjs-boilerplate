@@ -4,4 +4,5 @@ import { ApplicationProps } from '../../../props/application.props';
 export type LambdaDatabaseMigrationProps = LambdaDatabaseMigrationPropsRequired;
 export interface LambdaDatabaseMigrationPropsRequired
   extends NodejsFunctionProps,
-    ApplicationProps {}
+  ApplicationProps {
+}
