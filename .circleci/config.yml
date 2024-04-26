@@ -112,7 +112,8 @@ jobs:
   diff:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
-    machine: true
+    docker:
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -134,7 +135,8 @@ jobs:
   deployment:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
-    machine: true
+    docker:
+      - image: cimg/node:20.12.2-browsers
     steps:
       - restore_cache:
           key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -172,48 +174,48 @@ workflows:
       - build:
           requires:
             - dependencies
-      - diff:
-          name: diff_to_development
-          context: development
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - diff:
-          name: diff_to_production
-          context: production
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build
-            - integration_test
-            - unit_test
-      - approve_deploy_to_development:
-          type: approval
-          context: development
-          filters:
-            branches:
-              only:
-                - master
-                - main
-                - develop
-          requires:
-            - diff_to_development
-      - approve_deploy_to_production:
-          type: approval
-          context: production
-          requires:
-            - diff_to_production
-      - deployment:
-          name: deployment_to_development
-          context: development
-          requires:
-            - approve_deploy_to_development
-      - deployment:
-          name: deployment_to_production
-          context: production
-          requires:
-            - approve_deploy_to_production
+      # - diff:
+      #     name: diff_to_development
+      #     context: development
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - diff:
+      #     name: diff_to_production
+      #     context: production
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         ignore: /.*/
+      #     requires:
+      #       - build
+      #       - integration_test
+      #       - unit_test
+      # - approve_deploy_to_development:
+      #     type: approval
+      #     context: development
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      #           - main
+      #           - develop
+      #     requires:
+      #       - diff_to_development
+      # - approve_deploy_to_production:
+      #     type: approval
+      #     context: production
+      #     requires:
+      #       - diff_to_production
+      # - deployment:
+      #     name: deployment_to_development
+      #     context: development
+      #     requires:
+      #       - approve_deploy_to_development
+      # - deployment:
+      #     name: deployment_to_production
+      #     context: production
+      #     requires:
+      #       - approve_deploy_to_production
