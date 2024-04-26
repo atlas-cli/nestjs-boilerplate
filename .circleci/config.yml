@@ -112,8 +112,7 @@ jobs:
   diff:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
-    docker:
-      - image: cimg/node:20.12.2-browsers
+    machine: true
     steps:
       - restore_cache:
           key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -135,8 +134,7 @@ jobs:
   deployment:
     working_directory: ~/nest-boilerplate
     executor: aws-cli/default
-    docker:
-      - image: cimg/node:20.12.2-browsers
+    machine: true
     steps:
       - restore_cache:
           key: v1-src-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
