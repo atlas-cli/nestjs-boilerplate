@@ -1,5 +1,5 @@
-import databaseConfig from '../config/database.config';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import databaseConfig from '../config/database.config';
 
 const config = databaseConfig();
 export const AppDataSource = new DataSource({
@@ -23,7 +23,7 @@ export const AppDataSource = new DataSource({
   extra: config.sslEnabled
     ? {
         sslmode: 'verify-full',
-        sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
+          sslrootcert: __dirname + '/certs/rds-combined-ca-bundle.pem',
       }
     : {},
 } as DataSourceOptions);

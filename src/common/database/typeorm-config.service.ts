@@ -31,7 +31,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       extra: this.configService.get('database.sslEnabled')
         ? {
             sslmode: 'verify-full',
-            sslrootcert: __dirname + '/cert/rds-ca-2019-root.pem',
+            sslrootcert: __dirname + '/certs/rds-combined-ca-bundle.pem',
           }
         : {},
     } as PostgresConnectionOptions;
