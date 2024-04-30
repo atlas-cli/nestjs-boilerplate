@@ -119,7 +119,7 @@ npm run start:dev
 
 ## Links
 
-- Swagger: http://localhost:3000/docs
+- Swagger: http://localhost:3000/swagger/docs
 
 ## Database utils
 
