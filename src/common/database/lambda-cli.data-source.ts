@@ -15,6 +15,7 @@ export const AppDataSource = new DataSource({
   logging: true,
   ssl: config.sslEnabled,
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
   cli: {
     entitiesDir: 'dist',
     migrationsDir: 'dist/database/migrations',
