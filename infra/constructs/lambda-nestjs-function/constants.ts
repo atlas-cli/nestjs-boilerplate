@@ -86,7 +86,7 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
     AUTH_JWT_SECRET: 'put-your-secret-here',
     AUTH_JWT_TOKEN_EXPIRES_IN: '1d',
 
-    // SESSIONS_TABLE_NAME: 'atlas-production-sessions',
+    SESSIONS_TABLE_NAME: 'atlas-production-sessions',
 
     MAIL_TEMPLATES_PATH: 'templates',
     MAIL_FROM: 'info@yourdomain.com.br',
@@ -109,7 +109,7 @@ export const DEFAULT_NESTJS_LAMBDA_ENVIRONMENT = {
     AUTH_JWT_SECRET: 'put-your-secret-here',
     AUTH_JWT_TOKEN_EXPIRES_IN: '1d',
 
-    // SESSIONS_TABLE_NAME: 'atlas-development-sessions',
+    SESSIONS_TABLE_NAME: 'atlas-development-sessions',
 
     MAIL_TEMPLATES_PATH: 'templates',
     MAIL_FROM: 'info@yourdomain.com.br',

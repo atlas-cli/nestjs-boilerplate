@@ -95,15 +95,20 @@ You can configure your AWS credentials in two ways:
    // this is important because we generate all the necessary certificates and publish 
    // the records on the domain, as well as link all the APIs in a subdomain.domain.com.
 ```
+Also in the file infra/constructs/lambda-nestjs-function/constants.ts, the variable DEFAULT_NESTJS_LAMBDA_ENVIRONMENT contains the environment variables for your AWS Lambda functions using NestJS.
 
-## Step 5: Deploy Your Stack
+If you change the applicationName in infra/index.ts, you should update the SESSIONS_TABLE_NAME to 'atlas-production-sessions'.
+
+## Step 4: Deploy Your Stack
 
 1. Specify the profile and deploy your stack:
 ```bash
+npm run build
+npm run build:infra
 npx cdk deploy --all --profile AdministratorAccess-767397837500
 ```
 
-## Step 6: Run Your Lambda Function to run migrations
+## Step 5: Run Your Lambda Function to run migrations
 
 If you have a Lambda function to run, use the following command, replacing `LAMBDA_NAME` with the appropriate name:
 ```bash
