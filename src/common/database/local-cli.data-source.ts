@@ -1,5 +1,5 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-
+  console.log(process.env.DATABASE_HOST);
 export const AppDataSource = new DataSource({
   type: process.env.DATABASE_TYPE,
   url: process.env.DATABASE_URL,
