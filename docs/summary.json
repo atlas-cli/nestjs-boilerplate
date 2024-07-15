@@ -10,6 +10,9 @@
     {
         "title": "Installing and Running",
         "file": "installing-and-running.md"
+    },{
+        "title": "Deploy",
+        "file": "deploy.md"
     },
     {
         "title": "Contribution",
