@@ -8,7 +8,6 @@
   "scripts": {
     "prebuild": "rimraf dist/app",
     "build": "nest build",
-    "build:infra": "tsc -p tsconfig.infra.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -20,14 +19,14 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "npx env-cmd ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "lambda:typeorm": "npx typeorm-lambda-proxy $LAMBDA_NAME node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/lambda-cli.data-source.js",
-    "migration:generate": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts migration:generate",
+    "lambda:typeorm": "npx typeorm-lambda-proxy $LAMBDA_NAME node ./node_modules/typeorm/cli.js --dataSource=dist/app/common/database/cli.data-source.js",
+    "migration:generate": "npm run typeorm -- --dataSource=src/common/database/cli.data-source.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
-    "migration:run": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts migration:run",
-    "migration:revert": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts migration:revert",
+    "migration:run": "npm run typeorm -- --dataSource=src/common/database/cli.data-source.ts migration:run",
+    "migration:revert": "npm run typeorm -- --dataSource=src/common/database/cli.data-source.ts migration:revert",
     "documentation": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe",
     "documentation:serve": "npx @compodoc/compodoc -p tsconfig.json --includesName Documentation --includes docs --theme stripe -s",
-    "schema:drop": "npm run typeorm -- --dataSource=src/common/database/local-cli.data-source.ts schema:drop",
+    "schema:drop": "npm run typeorm -- --dataSource=src/common/database/cli.data-source.ts schema:drop",
     "seed:run": "ts-node -r tsconfig-paths/register ./src/common/database/seeds/run-seed.ts"
   },
   "dependencies": {

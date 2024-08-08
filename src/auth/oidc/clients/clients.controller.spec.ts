@@ -8,9 +8,7 @@ describe('ClientsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule,
-      ],
+      imports: [ConfigModule],
       controllers: [ClientsController],
       providers: [ClientsService],
     }).compile();

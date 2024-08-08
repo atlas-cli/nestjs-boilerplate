@@ -24,7 +24,7 @@ export const AppDataSource = new DataSource({
   extra: config.sslEnabled
     ? {
         sslmode: 'verify-full',
-          sslrootcert: __dirname + '/certs/rds-combined-ca-bundle.pem',
+        sslrootcert: __dirname + '/certs/rds-combined-ca-bundle.pem',
       }
     : {},
 } as DataSourceOptions);

@@ -14,4 +14,6 @@ export default registerAs('database', () => ({
   ca: process.env.DATABASE_CA,
   key: process.env.DATABASE_KEY,
   cert: process.env.DATABASE_CERT,
+  secretArn: process.env.DATABASE_SECRET_ARN,
+  resourceArn: process.env.DATABASE_RESOURCE_ARN,
 }));
