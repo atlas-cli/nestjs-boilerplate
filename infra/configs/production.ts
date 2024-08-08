@@ -5,18 +5,18 @@ import { config } from 'dotenv';
 const environment = config({ path: '.env.production' });
 
 export const production: ApplicationProps = {
-  applicationName: 'FinanceBaas',
-  stageName: 'production',
+  applicationName: environment.parsed.INFRA_APPLICATION_NAME ?? 'Atlas',
+  stageName: environment.parsed.INFRA_STAGE_NAME ?? 'production',
   env: {
-    account: '025066284119',
-    region: 'us-east-1',
+    account: environment.parsed.INFRA_AWS_ACCOUNT,
+    region: environment.parsed.INFRA_AWS_REGION,
   },
   githubOrganizationId: environment.parsed.ORGANIZATION_GITHUB_ORGANIZATION_ID,
   layersStack: stacks,
   applications: {
     core: {
-      domainName: 'finance.atlascli.io',
-      apiDomainName: 'api.finance.atlascli.io',
+      domainName: 'boilerplate.atlascli.io',
+      apiDomainName: 'api.boilerplate.atlascli.io',
       idPublicHostZone: 'Z03396972KP6M49QCZJPD',
       applicationEnvironment: {
         NODE_ENV: environment.parsed.NODE_ENV || 'development',

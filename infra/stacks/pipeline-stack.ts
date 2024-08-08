@@ -12,9 +12,9 @@ export class PipelineRoleStack extends cdk.Stack {
         'You need add githubOrganizationId in your application props on configs/.',
       );
     }
+    
     // Define o provedor OpenID Connect
     const organizationId = props.githubOrganizationId;
-
     const providerUrl = `https://oidc.circleci.com/org/${organizationId}`;
     const provider = new iam.OpenIdConnectProvider(
       this,
@@ -34,6 +34,9 @@ export class PipelineRoleStack extends cdk.Stack {
       ),
       description: 'Role for ECS update and ECR push permissions',
     });
+
+    const account = props.env.account;
+    const region = props.env.region;
 
     // Attach policies to allow ECS task execution and image push
     pipelineRole.addToPolicy(
@@ -57,7 +60,12 @@ export class PipelineRoleStack extends cdk.Stack {
           'ecr:PutImage',
           'ecs:TagResource', // Adicionada a permissão ecs:TagResource
         ],
-        resources: ['*'], // You can scope down the resources if needed
+        resources: [
+          `arn:aws:ecs:${region}:${account}:service/*`,
+          `arn:aws:ecs:${region}:${account}:task-definition/*`,
+          `arn:aws:ecs:${region}:${account}:cluster/*`,
+          `arn:aws:ecr:${region}:${account}:repository/*`,
+        ],
       }),
     );
 
@@ -65,7 +73,7 @@ export class PipelineRoleStack extends cdk.Stack {
     pipelineRole.addToPolicy(
       new iam.PolicyStatement({
         actions: ['ecr:GetAuthorizationToken'],
-        resources: ['*'], // Specify the appropriate resource if needed
+        resources: [`arn:aws:ecr:${region}:${account}:repository/*`],
       }),
     );
 
@@ -81,7 +89,7 @@ export class PipelineRoleStack extends cdk.Stack {
           'ssm:ListCommandInvocations',
           'ssm:TerminateSession',
         ],
-        resources: ['*'], // You can scope down the resources if needed
+        resources: [`arn:aws:ssm:${region}:${account}:*`],
       }),
     );
 
@@ -96,7 +104,7 @@ export class PipelineRoleStack extends cdk.Stack {
           'rds:DescribeDBInstances',
           'rds:DescribeDBClusters',
         ],
-        resources: ['*'], // You can scope down the resources if needed
+        resources: [`arn:aws:ec2:${region}:${account}:*`, `arn:aws:rds:${region}:${account}:*`],
       }),
     );
 
@@ -107,7 +115,7 @@ export class PipelineRoleStack extends cdk.Stack {
           'secretsmanager:GetSecretValue',
           'secretsmanager:DescribeSecret',
         ],
-        resources: ['*'], // You can scope down the resources if needed
+        resources: [`arn:aws:secretsmanager:${region}:${account}:secret:*`],
       }),
     );
 
