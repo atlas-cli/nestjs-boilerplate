@@ -1,5 +1,17 @@
 import { Adapter, AdapterPayload } from 'oidc-provider';
-import { BatchWriteItemCommand, BatchWriteItemInput, DeleteItemCommand, DeleteItemInput, DynamoDBClient, GetItemCommand, GetItemInput, QueryCommand, QueryInput, UpdateItemCommand, UpdateItemInput } from "@aws-sdk/client-dynamodb";
+import {
+  BatchWriteItemCommand,
+  BatchWriteItemInput,
+  DeleteItemCommand,
+  DeleteItemInput,
+  DynamoDBClient,
+  GetItemCommand,
+  GetItemInput,
+  QueryCommand,
+  QueryInput,
+  UpdateItemCommand,
+  UpdateItemInput,
+} from '@aws-sdk/client-dynamodb';
 
 const TABLE_NAME = process.env.SESSIONS_TABLE_NAME;
 const TABLE_REGION = process.env.AWS_REGION;
@@ -55,13 +67,13 @@ export class DynamoDBAdapter implements Adapter {
     };
     const command = new GetItemCommand(params);
 
+    const result = <{ payload?: string; expiresAt?: number } | undefined>(
+      (await dynamoClient.send(command)).Item
+    );
 
-    const result = <
-      { payload?: string; expiresAt?: number } | undefined
-      >(await dynamoClient.send(command)).Item;
-
-    const payload: AdapterPayload = result.payload ? JSON.parse(result.payload) : undefined;
-
+    const payload: AdapterPayload = result.payload
+      ? JSON.parse(result.payload)
+      : undefined;
 
     // DynamoDB can take upto 48 hours to drop expired items, so a check is required
     if (!result || (result.expiresAt && Date.now() > result.expiresAt * 1000)) {
@@ -84,11 +96,13 @@ export class DynamoDBAdapter implements Adapter {
 
     const command = new QueryCommand(params);
 
-    const result = <
-      { payload?: string; expiresAt?: number } | undefined
-      >(await dynamoClient.send(command)).Items?.[0];
+    const result = <{ payload?: string; expiresAt?: number } | undefined>(
+      (await dynamoClient.send(command)).Items?.[0]
+    );
 
-    const payload: AdapterPayload = result.payload ? JSON.parse(result.payload) : undefined;
+    const payload: AdapterPayload = result.payload
+      ? JSON.parse(result.payload)
+      : undefined;
 
     // DynamoDB can take upto 48 hours to drop expired items, so a check is required
     if (!result || (result.expiresAt && Date.now() > result.expiresAt * 1000)) {
@@ -111,11 +125,13 @@ export class DynamoDBAdapter implements Adapter {
     };
     const command = new QueryCommand(params);
 
-    const result = <
-      { payload?: string; expiresAt?: number } | undefined
-      >(await dynamoClient.send(command)).Items?.[0];
+    const result = <{ payload?: string; expiresAt?: number } | undefined>(
+      (await dynamoClient.send(command)).Items?.[0]
+    );
 
-    const payload: AdapterPayload = result.payload ? JSON.parse(result.payload) : undefined;
+    const payload: AdapterPayload = result.payload
+      ? JSON.parse(result.payload)
+      : undefined;
 
     // DynamoDB can take upto 48 hours to drop expired items, so a check is required
     if (!result || (result.expiresAt && Date.now() > result.expiresAt * 1000)) {
@@ -148,7 +164,7 @@ export class DynamoDBAdapter implements Adapter {
   async destroy(id: string): Promise<void> {
     const params: DeleteItemInput = {
       TableName: TABLE_NAME,
-      Key: { modelId: {S: this.name + '-' + id} },
+      Key: { modelId: { S: this.name + '-' + id } },
     };
     const command = new DeleteItemCommand(params);
 
@@ -164,7 +180,7 @@ export class DynamoDBAdapter implements Adapter {
         IndexName: 'grantIdIndex',
         KeyConditionExpression: 'grantId = :grantId',
         ExpressionAttributeValues: {
-          ':grantId': {S: grantId},
+          ':grantId': { S: grantId },
         },
         ProjectionExpression: 'modelId',
         Limit: 25,

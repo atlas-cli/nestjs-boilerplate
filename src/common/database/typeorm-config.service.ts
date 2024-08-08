@@ -6,10 +6,10 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    if(this.configService.get<string>('database.type') === 'aurora-postgres') {
+    if (this.configService.get<string>('database.type') === 'aurora-postgres') {
       return {
         type: this.configService.get<string>('database.type'),
         database: this.configService.get<string>('database.name'),

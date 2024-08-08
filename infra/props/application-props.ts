@@ -25,7 +25,7 @@ export interface ApplicationConfig<Env> {
   /** The ID of the public hosted zone. */
   idPublicHostZone: string;
   /** The environment variables for the application. */
-  applicationEnvironment: any;
+  applicationEnvironment: Env;
 }
 
 /**

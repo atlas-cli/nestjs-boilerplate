@@ -8,6 +8,6 @@ export const generatePasswordWithRdsSigner = async () => {
     username: process.env.DATABASE_USER,
   };
   const signer = new Signer(configSigner);
-  const password = (await signer.getAuthToken());
+  const password = await signer.getAuthToken();
   return password;
 };

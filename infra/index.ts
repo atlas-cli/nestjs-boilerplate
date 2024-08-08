@@ -3,5 +3,5 @@ import { bootstrap } from './helpers/bootstrap';
 
 // Execute the infraestructure application
 bootstrap({
-    production,
+  production,
 });

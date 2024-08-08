@@ -1,4 +1,3 @@
-import { BastionStack } from './stacks/bastion-stack';
 import { CoreStack } from './stacks/core-stack';
 import { PipelineRoleStack } from './stacks/pipeline-stack';
 import { ApplicationStack } from './stacks/application-stack';

@@ -20,14 +20,16 @@ const createCloudFrontDistribution = (
   certificate: ICertificate,
   resizeEdgeEnabled?: boolean,
   lambdaEdge?: any,
-  behaviors: Behavior[] = [{ isDefaultBehavior: true }]
+  behaviors: Behavior[] = [{ isDefaultBehavior: true }],
 ): CloudFrontWebDistribution | Distribution => {
-
   const createOriginAccessIdentity = (
     id: string,
-    bucket: Bucket
+    bucket: Bucket,
   ): OriginAccessIdentity => {
-    const originAccessIdentity = new OriginAccessIdentity(scope, `${id}OriginAccessIdentity`);
+    const originAccessIdentity = new OriginAccessIdentity(
+      scope,
+      `${id}OriginAccessIdentity`,
+    );
     bucket.grantRead(originAccessIdentity);
     return originAccessIdentity;
   };
@@ -38,7 +40,7 @@ const createCloudFrontDistribution = (
     bucket: Bucket,
     originPath: string,
     certificate: ICertificate,
-    behaviors: Behavior[]
+    behaviors: Behavior[],
   ): CloudFrontWebDistribution => {
     const originAccessIdentity = createOriginAccessIdentity(id, bucket);
     const props: any = {
@@ -60,7 +62,14 @@ const createCloudFrontDistribution = (
     return new CloudFrontWebDistribution(scope, id + 'WebDistribution', props);
   };
 
-  const distribution = createDistributionWithoutCachePolicy(id, domainName, bucket, originPath, certificate, behaviors);
+  const distribution = createDistributionWithoutCachePolicy(
+    id,
+    domainName,
+    bucket,
+    originPath,
+    certificate,
+    behaviors,
+  );
 
   createOutput(scope, `${id}DistributionId`, distribution.distributionId);
 
@@ -79,7 +88,7 @@ export class CloudFrontDistribution extends Construct {
     certificate: ICertificate,
     resizeEdgeEnabled?: boolean,
     lambdaEdge?: any,
-    behaviors: Behavior[] = [{ isDefaultBehavior: true }]
+    behaviors: Behavior[] = [{ isDefaultBehavior: true }],
   ) {
     super(scope, id);
     this.distribution = createCloudFrontDistribution(
@@ -91,7 +100,7 @@ export class CloudFrontDistribution extends Construct {
       certificate,
       resizeEdgeEnabled,
       lambdaEdge,
-      behaviors
+      behaviors,
     );
   }
 }

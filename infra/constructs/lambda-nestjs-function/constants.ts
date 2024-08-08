@@ -26,11 +26,21 @@ export const DEFAULT_NESTJS_NODE_EXTERNALS = [
   'swagger-ui-express',
   'typescript',
   '@nestjs/cli',
-  '@babel'
+  '@babel',
 ];
 
-export const NESTJS_SWAGGER_MODULES = ['oidc-provider', 'swagger-ui-express', '@nestjs/swagger', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
-export const DEFAULT_NESTJS_NODE_MODULE = ['oidc-provider', '@babel/plugin-proposal-export-namespace-from', '@babel/plugin-transform-modules-commonjs'];
+export const NESTJS_SWAGGER_MODULES = [
+  'oidc-provider',
+  'swagger-ui-express',
+  '@nestjs/swagger',
+  '@babel/plugin-proposal-export-namespace-from',
+  '@babel/plugin-transform-modules-commonjs',
+];
+export const DEFAULT_NESTJS_NODE_MODULE = [
+  'oidc-provider',
+  '@babel/plugin-proposal-export-namespace-from',
+  '@babel/plugin-transform-modules-commonjs',
+];
 
 export const DEFAULT_NESTJS_COMMAND_HOOKS = {
   beforeBundling: (inputDir: string, outputDir: string): string[] => {
@@ -64,4 +74,3 @@ export const DEFAULT_NESTJS_FUNCTION_PROPS = {
     commandHooks: DEFAULT_NESTJS_COMMAND_HOOKS,
   },
 };
-

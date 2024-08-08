@@ -18,7 +18,7 @@ export class ClientsStack extends cdk.Stack {
   constructor(
     scope: Construct,
     id: string,
-    applicationProps: ApplicationProps
+    applicationProps: ApplicationProps,
   ) {
     super(scope, id, applicationProps);
 
@@ -28,7 +28,7 @@ export class ClientsStack extends cdk.Stack {
       {
         hostedZoneId: applicationProps.applications.core.idPublicHostZone,
         zoneName: applicationProps.applications.core.domainName,
-      }
+      },
     );
 
     const certificate = new Certificate(this, 'ClientsCertificate', {
@@ -62,12 +62,14 @@ export class ClientsStack extends cdk.Stack {
       domainApp,
       clientsBucket,
       '/app',
-      certificate
+      certificate,
     );
 
     new ARecord(this, 'AppARecord', {
       zone: publicHostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(clientAppDistribution.distribution)),
+      target: RecordTarget.fromAlias(
+        new CloudFrontTarget(clientAppDistribution.distribution),
+      ),
       recordName: domainApp,
     });
   }
