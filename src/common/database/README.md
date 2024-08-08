@@ -1,7 +1,8 @@
 # Configuration Files Documentation
+In this folder, we have 2 different configuration files for the database connection:
 
-In this folder, we have 3 different configuration files for the database connection:
+'typeorm-config.service.ts'
+This configuration is used by the application. It sets up the TypeORM connection options utilizing the TypeOrmConfigService class which sources its settings from environment variables managed by the ConfigService. This ensures that the application connects to the correct database with the proper credentials and settings in a secure and configurable manner.
 
-1. `typeorm-config.service.ts` - This configuration is used by a server both locally and in the lambdas for HTTP requests.
-2. `lambda-cli.data-source` - This configuration is used to run the TypeORM CLI within the production environment with the lambdas.
-3. `local-cli.data-source.ts` - it is used to run migrations and seeds locally.
+'cli.data-source.ts'
+This configuration is used by the command line data source and inside of Lambda. It is designed to facilitate database operations through command line tools and to support the execution of database-related tasks within AWS Lambda functions. This configuration ensures that migrations, seeders, and other database utilities can be executed properly in both local and cloud environments.

@@ -126,9 +126,6 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
       - run:
-          name: Build infra
-          command: npm run build:infra
-      - run:
           name: Diff
           command: npx cdk diff --all > diff.txt && cat diff.txt
 
@@ -148,9 +145,6 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
-      - run:
-          name: Build infra
-          command: npm run build:infra
       - run:
           name: Deploy
           command: npx cdk deploy --all --require-approval never

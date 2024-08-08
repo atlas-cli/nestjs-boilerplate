@@ -46,50 +46,39 @@ You can configure your AWS credentials in two ways:
 
 ## Step 3: Define Your Infrastructure
 
-1. Open the `infra/index.ts` file and update it with the following content:
+1. Open the `infra/configs/production.ts` file and update it with the following content:
 ```typescript
-   import { AtlasInfraestructure, createStacks } from 'path-to-your-AtlasInfraestructure-module';
-
-   const infrastructure = new AtlasInfraestructure({
-     production: {
-       // Name of your application
-       applicationName: 'atlas',
-       // Stage name for the environment
-       stageName: 'production',
-       // Domain name for the environment
-       domainName: 'sandbox.slingui.com',
-       // API domain name for the environment
-       apiDomainName: 'api.sandbox.slingui.com',
-       // Public host zone ID for the environment (AWS Route 53 Hosted Zone ID)
-       idPublicHostZone: 'Z01545163ANT5OQYS99UY',
-       env: {
-         // AWS account ID for the environment
-         account: '767397837500',
-         // AWS region for the environment (e.g., 'us-east-1')
-         region: 'us-east-1',
-       },
-       layersStack: createStacks(),
-     },
-     development: {
-       // Name of your application
-       applicationName: 'atlas',
-       // Stage name for the environment
-       stageName: 'development',
-       // Domain name for the environment
-       domainName: 'sandbox.slingui.com',
-       // API domain name for the environment
-       apiDomainName: 'api.sandbox.slingui.com',
-       // Public host zone ID for the environment (AWS Route 53 Hosted Zone ID)
-       idPublicHostZone: 'Z01545163ANT5OQYS99UY',
-       env: {
-         // AWS account ID for the environment
-         account: '767397837500',
-         // AWS region for the environment (e.g., 'us-east-1')
-         region: 'us-east-1',
-       },
-       layersStack: createStacks(),
-     },
-   });
+export const production: ApplicationProps = {
+    applicationName: 'FinanceBaas',
+    stageName: 'production',
+    env: {
+        account: '025066284119',
+        region: 'us-east-1',
+    },
+    githubOrganizationId: environment.parsed.ORGANIZATION_GITHUB_ORGANIZATION_ID,
+    layersStack: stacks,
+    applications: {
+        core: {
+            domainName: 'boilerplate.atlascli.io',
+            apiDomainName: 'api.boilerplate.atlascli.io',
+            idPublicHostZone: 'Z03396972KP6M49QCZJPD',
+            applicationEnvironment: {
+                NODE_ENV: environment.parsed.NODE_ENV || 'development',
+                APP_PORT: environment.parsed.APP_PORT || '3000',
+                APP_NAME: environment.parsed.APP_NAME || 'NestJS Boilerplate',
+                API_PREFIX: environment.parsed.API_PREFIX || 'api',
+                APP_FALLBACK_LANGUAGE: environment.parsed.APP_FALLBACK_LANGUAGE || 'en',
+                APP_HEADER_LANGUAGE: environment.parsed.APP_HEADER_LANGUAGE || 'x-custom-lang',
+                BACKEND_DOMAIN: environment.parsed.BACKEND_DOMAIN || 'http://localhost:3000',
+                FRONTEND_DOMAIN: environment.parsed.BACKEND_DOMAIN || 'http://localhost:4200',
+                SWAGGER_ENABLED: environment.parsed.SWAGGER_ENABLED || 'true',
+                I18N_DIRECTORY: environment.parsed.I18N_DIRECTORY || 'src/i18n',
+                AUTH_JWT_SECRET: environment.parsed.AUTH_JWT_SECRET || 'secret',
+                AUTH_JWT_TOKEN_EXPIRES_IN: environment.parsed.AUTH_JWT_TOKEN_EXPIRES_IN || '1d',
+            },
+        },
+    },
+};
 
    // To start this repository on AWS, you need to have a Hosted Zone on Route53 on AWS,
    // this is important because we generate all the necessary certificates and publish 
@@ -104,8 +93,7 @@ If you change the applicationName in infra/index.ts, you should update the SESSI
 1. Specify the profile and deploy your stack:
 ```bash
 npm run build
-npm run build:infra
-npx cdk deploy --all --profile AdministratorAccess-767397837500
+npx cdk deploy --all --profile AdministratorAccess-XXXXXXXXXXXX
 ```
 
 ## Step 5: Run Your Lambda Function to run migrations

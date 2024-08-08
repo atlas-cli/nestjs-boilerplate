@@ -1,27 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { AuroraPostgresConnectionOptions } from 'typeorm/driver/aurora-postgres/AuroraPostgresConnectionOptions';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import { generatePasswordWithRdsSigner } from './utils/generatePasswordWithRdsSigner';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    console.log({
-      type: this.configService.get('database.type'),
-      url: this.configService.get('database.url'),
-      host: this.configService.get('database.host'),
-      port: this.configService.get('database.port'),
-      username: this.configService.get('database.username'),});
+    if(this.configService.get<string>('database.type') === 'aurora-postgres') {
+      return {
+        type: this.configService.get<string>('database.type'),
+        database: this.configService.get<string>('database.name'),
+        secretArn: this.configService.get<string>('database.secretArn'),
+        resourceArn: this.configService.get<string>('database.resourceArn'),
+        region: this.configService.get<string>('aws.region'),
+      } as AuroraPostgresConnectionOptions;
+    }
+
     return {
       type: this.configService.get('database.type'),
       url: this.configService.get('database.url'),
       host: this.configService.get('database.host'),
       port: this.configService.get('database.port'),
       username: this.configService.get('database.username'),
-      password: generatePasswordWithRdsSigner,
+      password: this.configService.get('database.password'),
       database: this.configService.get('database.name'),
       synchronize: this.configService.get('database.synchronize'),
       dropSchema: false,
